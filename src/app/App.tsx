@@ -1,6 +1,6 @@
 ﻿import { useEffect, useRef, useState } from "react";
 import { motion, useAnimationControls } from "motion/react";
-import { ShoppingCart, Search, User, Menu, X, ChevronDown, ChevronUp, Star, Check, ArrowLeft, Plus, Minus, Package, Truck, Shield, Gift } from "lucide-react";
+import { ShoppingCart, Search, User, Menu, X, ChevronDown, ChevronUp, Star, Check, ArrowLeft, Plus, Minus, Package, Truck, Shield, Gift, Play, Pause } from "lucide-react";
 
 // â”€â”€â”€ Real product images from imports â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 import imgBottle from "@/imports/HomePage-1/4e133df77e9b8b91ca178974f96996d69407baa3.png";
@@ -12,10 +12,11 @@ import imgProd1 from "@/imports/HomePage-1/910690fe86e0b700b11e2f8689a847f10ad88
 import imgProd2 from "@/imports/HomePage-1/03fe0c7f3499234efab093bf5442c043a6386b34.png";
 import imgDiscoveryBg from "@/imports/HomePage-1/7452b194aae37fa8a6c9f878f11df616d71b5669.png";
 import imgWhyBg from "@/imports/HomePage-1/why-joshua-scents.jpg";
+import imgWhyLuxuryBg from "@/imports/HomePage-1/why-discovery-luxury-bg.png";
 import imgCollProduct from "@/imports/Collections-1/2fead9763e6ed410e1c09e3afb4c82a010b439b5.png";
 
 // â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-type Page = "home" | "collections" | "bestsellers" | "discovery" | "decantguide" | "faq" | "product" | "cart" | "checkout" | "confirmation";
+type Page = "home" | "collections" | "bestsellers" | "discovery" | "discoverySet" | "decantguide" | "faq" | "product" | "cart" | "checkout" | "confirmation";
 
 interface Filters {
   categories: string[];
@@ -68,8 +69,28 @@ function GoldBar() {
   return <div className="h-[2px] w-20 bg-[#AE9766] rounded-full" />;
 }
 
+function GlobalTexture() {
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none fixed inset-0 z-[60]"
+      style={{
+        opacity: 0.18,
+        mixBlendMode: "multiply",
+        backgroundImage:
+          "radial-gradient(circle at 24% 18%, rgba(255,255,255,0.34), transparent 28%), radial-gradient(circle at 82% 76%, rgba(174,151,102,0.18), transparent 30%), repeating-linear-gradient(90deg, rgba(78,61,37,0.026) 0 1px, transparent 1px 54px), repeating-linear-gradient(0deg, rgba(78,61,37,0.018) 0 1px, transparent 1px 61px)",
+        backgroundSize: "100% 100%, 100% 100%, auto, auto",
+      }}
+    />
+  );
+}
+
+function cleanText(text: string) {
+  return text.replaceAll("â€¢", "•").replaceAll("â€”", "-").replaceAll("HermÃ¨s", "Hermes");
+}
+
 function cleanNotes(notes: string) {
-  return notes.replaceAll("â€¢", "•").replaceAll("â€”", "-").replaceAll("HermÃ¨s", "Hermes");
+  return cleanText(notes);
 }
 
 function DarkBtn({ onClick, children, className = "", type = "button" }: { onClick?: () => void; children: React.ReactNode; className?: string; type?: "button" | "submit" }) {
@@ -250,6 +271,30 @@ function CompactProductCard({ product, navigate, rank }: { product: Product; nav
   );
 }
 
+function RelatedProductCard({ product, navigate }: { product: Product; navigate: (p: Page, d?: unknown) => void }) {
+  return (
+    <button
+      onClick={() => navigate("product", product)}
+      className="group relative flex min-h-[350px] flex-col overflow-hidden rounded-[8px] border border-[#d7c8ae] bg-[#fbf8f1] p-4 text-left shadow-[0_14px_34px_rgba(42,34,25,0.08)] transition-shadow hover:shadow-[0_22px_48px_rgba(42,34,25,0.15)]"
+    >
+      <div className="flex h-[190px] items-center justify-center overflow-hidden bg-[#eee4d4]">
+        <img src={product.img} alt={product.name} className="h-[158px] object-contain transition-transform duration-700 group-hover:scale-105" />
+      </div>
+      <div className="flex flex-1 flex-col justify-between pt-4">
+        <div>
+          <p className="font-['IBM_Plex_Sans',sans-serif] text-[10px] font-semibold tracking-[0.16em] text-[#9a7d45]">{product.family.toUpperCase()}</p>
+          <p className="mt-2 break-words font-['Cormorant_Garamond',serif] text-[25px] font-semibold leading-[0.95] text-[#171717]">{product.name}</p>
+          <p className="mt-3 font-['IBM_Plex_Sans',sans-serif] text-[13px] font-light leading-relaxed text-[#171717]/60">{cleanNotes(product.notes)}</p>
+        </div>
+        <div className="mt-5 flex items-end justify-between gap-3">
+          <span className="font-['IBM_Plex_Sans',sans-serif] text-[13px] font-semibold leading-tight text-[#171717]">From<br />PHP {product.price}</span>
+          <span className="shrink-0 font-['IBM_Plex_Sans',sans-serif] text-[10px] font-semibold tracking-[0.16em] text-[#171717]">VIEW &rarr;</span>
+        </div>
+      </div>
+    </button>
+  );
+}
+
 function RevealSection({
   children,
   className,
@@ -260,6 +305,9 @@ function RevealSection({
   backgroundImage,
   backgroundOverlayClassName,
   overlap = true,
+  overlapAmount = 112,
+  revealOffset = 56,
+  fadeContent = true,
   hideUntilReveal = false,
   triggerRootMargin = "0px 0px -12% 0px",
 }: {
@@ -272,6 +320,9 @@ function RevealSection({
   backgroundImage?: string;
   backgroundOverlayClassName?: string;
   overlap?: boolean;
+  overlapAmount?: number;
+  revealOffset?: number;
+  fadeContent?: boolean;
   hideUntilReveal?: boolean;
   triggerRootMargin?: string;
 }) {
@@ -309,8 +360,8 @@ function RevealSection({
         if (!isScrollingDown.current) {
           hasRevealed.current = false;
           isAnimating.current = false;
-          cardControls.set({ y: 88, opacity: hideUntilReveal ? 0 : 1 });
-          contentControls.set({ y: 36, opacity: 0 });
+          cardControls.set({ y: revealOffset, opacity: hideUntilReveal ? 0 : 1 });
+          contentControls.set(fadeContent ? { y: 36, opacity: 0 } : { y: 0, opacity: 1 });
         }
       },
       { threshold: 0.06, rootMargin: triggerRootMargin }
@@ -332,20 +383,22 @@ function RevealSection({
 
     hasRevealed.current = true;
     isAnimating.current = true;
-    cardControls.set({ y: 88, opacity: hideUntilReveal ? 0 : 1 });
-    contentControls.set({ y: 36, opacity: 0 });
+    cardControls.set({ y: revealOffset, opacity: hideUntilReveal ? 0 : 1 });
+    contentControls.set(fadeContent ? { y: 36, opacity: 0 } : { y: 0, opacity: 1 });
     void cardControls.start({
       y: 0,
       opacity: 1,
-      transition: { duration: 1.28, ease: [0.19, 1, 0.22, 1] },
+      transition: { duration: 0.82, ease: [0.19, 1, 0.22, 1] },
     }).then(() => {
       isAnimating.current = false;
     });
-    void contentControls.start({
-      y: 0,
-      opacity: 1,
-      transition: { duration: 0.92, delay: 0.2, ease: [0.19, 1, 0.22, 1] },
-    });
+    if (fadeContent) {
+      void contentControls.start({
+        y: 0,
+        opacity: 1,
+        transition: { duration: 0.58, delay: 0.08, ease: [0.19, 1, 0.22, 1] },
+      });
+    }
   };
 
   return (
@@ -353,10 +406,11 @@ function RevealSection({
       ref={sectionRef}
       id={id}
       data-card-color={color}
-      className={`relative min-h-[106svh] overflow-visible bg-transparent ${overlap ? "-mt-[88px]" : ""}`}
+      className="relative min-h-[106svh] overflow-visible bg-transparent"
+      style={{ backgroundColor: backdropColor ?? color, marginTop: overlap ? -overlapAmount : 0 }}
     >
       <motion.div
-        initial={{ y: 88, opacity: hideUntilReveal ? 0 : 1 }}
+        initial={{ y: revealOffset, opacity: hideUntilReveal ? 0 : 1 }}
         animate={cardControls}
         className={`relative z-10 w-full ${className}`}
       >
@@ -366,7 +420,7 @@ function RevealSection({
             <div className={`absolute inset-0 ${backgroundOverlayClassName ?? ""}`} />
           </div>
         ) : null}
-        <motion.div initial={{ y: 36, opacity: 0 }} animate={contentControls} className="relative h-full min-h-[inherit] w-full">
+        <motion.div initial={fadeContent ? { y: 36, opacity: 0 } : { y: 0, opacity: 1 }} animate={contentControls} className="relative h-full min-h-[inherit] w-full">
           {children}
         </motion.div>
       </motion.div>
@@ -374,9 +428,126 @@ function RevealSection({
   );
 }
 
+function CustomCursor() {
+  const [enabled, setEnabled] = useState(false);
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const lastPointer = useRef({ x: 0, y: 0 });
+  const rafId = useRef<number | null>(null);
+
+  useEffect(() => {
+    const finePointer = window.matchMedia("(pointer: fine)");
+    if (!finePointer.matches) return;
+
+    document.body.classList.add("joshua-custom-cursor");
+    setEnabled(true);
+
+    const show = () => cursorRef.current?.classList.remove("opacity-0");
+    const hide = () => cursorRef.current?.classList.add("opacity-0");
+    const draw = () => {
+      rafId.current = null;
+      const cursorElement = cursorRef.current;
+      if (!cursorElement) return;
+
+      cursorElement.style.transform = `translate3d(${lastPointer.current.x - 22}px, ${lastPointer.current.y - 22}px, 0)`;
+      cursorElement.classList.remove("opacity-0");
+    };
+    const move = (event: PointerEvent) => {
+      lastPointer.current = { x: event.clientX, y: event.clientY };
+      if (rafId.current === null) {
+        rafId.current = window.requestAnimationFrame(draw);
+      }
+    };
+
+    window.addEventListener("pointermove", move, { passive: true });
+    window.addEventListener("pointerenter", show);
+    window.addEventListener("pointerleave", hide);
+
+    return () => {
+      document.body.classList.remove("joshua-custom-cursor");
+      if (rafId.current !== null) window.cancelAnimationFrame(rafId.current);
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerenter", show);
+      window.removeEventListener("pointerleave", hide);
+    };
+  }, []);
+
+  if (!enabled) return null;
+
+  return (
+    <>
+      <style>{`
+        @media (pointer: fine) {
+          body.joshua-custom-cursor,
+          body.joshua-custom-cursor * {
+            cursor: none !important;
+          }
+          .joshua-cursor {
+            border-color: rgba(111, 88, 49, 0.78);
+            background: rgba(243, 234, 217, 0.12);
+            box-shadow: 0 0 0 1px rgba(243, 234, 217, 0.42), 0 0 18px rgba(111, 88, 49, 0.18);
+            will-change: transform;
+          }
+          .joshua-cursor::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            height: 10px;
+            width: 10px;
+            border-radius: 999px;
+            transform: translate(-50%, -50%);
+            transition: background-color 150ms ease, box-shadow 150ms ease;
+            background: #6f5831;
+            box-shadow: 0 0 0 2px rgba(243, 234, 217, 0.76), 0 0 10px rgba(111, 88, 49, 0.35);
+          }
+        }
+      `}</style>
+      <div
+        ref={cursorRef}
+        aria-hidden
+        className="joshua-cursor pointer-events-none fixed left-0 top-0 z-[9999] h-11 w-11 rounded-full border opacity-0 transition-[border-color,box-shadow,opacity] duration-150"
+      />
+    </>
+  );
+}
+
 // â”€â”€â”€ HOME PAGE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
   const bestSellers = ALL_PRODUCTS.filter((p) => p.bestSeller).slice(0, 3);
+  const [activeDiscoveryIndex, setActiveDiscoveryIndex] = useState(0);
+  const [carouselDirection, setCarouselDirection] = useState(1);
+  const [isDiscoveryPaused, setIsDiscoveryPaused] = useState(false);
+  const activeDiscoverySet = DISCOVERY_SETS[activeDiscoveryIndex];
+  const activeDiscoveryProducts = ALL_PRODUCTS.filter((p) => activeDiscoverySet.productIds.includes(p.id));
+  const previousDiscoveryIndex = (activeDiscoveryIndex - 1 + DISCOVERY_SETS.length) % DISCOVERY_SETS.length;
+  const nextDiscoveryIndex = (activeDiscoveryIndex + 1) % DISCOVERY_SETS.length;
+  const goDiscovery = (direction: number) => {
+    setCarouselDirection(direction);
+    setActiveDiscoveryIndex((current) => (current + direction + DISCOVERY_SETS.length) % DISCOVERY_SETS.length);
+  };
+  const showDiscovery = (index: number) => {
+    if (index === activeDiscoveryIndex) return;
+    setCarouselDirection(index > activeDiscoveryIndex ? 1 : -1);
+    setActiveDiscoveryIndex(index);
+  };
+  const toggleDiscoveryPlayback = () => {
+    setIsDiscoveryPaused((paused) => {
+      if (paused) {
+        setCarouselDirection(1);
+        setActiveDiscoveryIndex((current) => (current + 1) % DISCOVERY_SETS.length);
+      }
+      return !paused;
+    });
+  };
+
+  useEffect(() => {
+    if (isDiscoveryPaused) return undefined;
+    const timer = window.setInterval(() => {
+      setCarouselDirection(1);
+      setActiveDiscoveryIndex((current) => (current + 1) % DISCOVERY_SETS.length);
+    }, 7600);
+    return () => window.clearInterval(timer);
+  }, [isDiscoveryPaused]);
 
   const collections = [
     { label: "FRESH", subtitle: "Clean. Light. Everyday.", img: imgFresh, cat: "FRESH" },
@@ -396,7 +567,7 @@ function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
     <div className="bg-[#39384f]">
       <div className="w-full bg-[#f8f2e8]">
         <div className="scroll-smooth">
-          <section className="relative flex min-h-[100svh] flex-col items-center justify-start overflow-hidden bg-[#fbf8f1] px-6 pb-8 pt-8 md:px-20 md:pt-9 xl:px-28">
+          <section className="relative flex min-h-[114svh] flex-col items-center justify-start overflow-hidden bg-[#fbf8f1] px-6 pb-20 pt-8 md:px-20 md:pb-28 md:pt-9 xl:px-28">
             <div className="absolute inset-0">
               <img src={imgDiscoveryBg} alt="" className="h-full w-full object-cover" />
               <div className="absolute inset-0 bg-[#fbf8f1]/82" />
@@ -413,7 +584,7 @@ function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
                   <DarkBtn onClick={() => navigate("collections")} className="px-8 py-[10px] text-[14px]">SHOP COLLECTION</DarkBtn>
                 </div>
               </div>
-              <div className="relative mt-7 h-[260px] w-full max-w-[1640px] overflow-visible md:mt-8 md:h-[330px] xl:h-[360px]">
+              <div className="relative mt-7 h-[330px] w-full max-w-[1640px] overflow-visible md:mt-8 md:h-[430px] xl:h-[500px]">
                 {[
                   { left: "8%", height: "h-[128px] md:h-[178px] xl:h-[205px]", top: "top-[70px] md:top-[88px] xl:top-[96px]" },
                   { left: "28%", height: "h-[156px] md:h-[218px] xl:h-[250px]", top: "top-[42px] md:top-[52px] xl:top-[60px]" },
@@ -439,11 +610,14 @@ function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
 
           <RevealSection
             color="#e9dece"
-            backdropColor="#fbf8f1"
+            backdropColor="transparent"
             backdropImage
             id="home-collections"
-            overlap={false}
-            hideUntilReveal
+            overlap
+            overlapAmount={112}
+            revealOffset={88}
+            fadeContent={false}
+            triggerRootMargin="0px 0px -6% 0px"
             className="flex min-h-[108svh] items-start overflow-hidden rounded-t-[64px] bg-[#e9dece] px-6 pb-28 pt-[76px] shadow-[0_-18px_40px_rgba(50,41,30,0.08)] md:px-20 md:pb-36 md:pt-[92px] xl:px-28"
           >
               <div className="w-full">
@@ -505,7 +679,7 @@ function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
                       <img src={p.img} alt={p.name} className={`${i === 1 ? "h-[215px]" : "h-[170px]"} object-contain transition-transform duration-700 group-hover:scale-105`} />
                     </div>
                     <p className="font-['Cormorant_Garamond',serif] text-[20px] font-semibold leading-tight text-[#171717]">{p.name}</p>
-                    <p className="font-['IBM_Plex_Sans',sans-serif] text-[12px] font-light text-[rgba(23,23,23,0.58)]">{p.notes}</p>
+                    <p className="font-['IBM_Plex_Sans',sans-serif] text-[12px] font-light text-[rgba(23,23,23,0.58)]">{cleanNotes(p.notes)}</p>
                     <p className="mt-1 font-['IBM_Plex_Sans',sans-serif] text-[12px] font-semibold text-[#171717]">From PHP {p.price}</p>
                     <span className="mt-3 inline-block font-['IBM_Plex_Sans',sans-serif] text-[10px] font-semibold tracking-[0.14em] text-[#171717]">
                       EXPLORE &rarr;
@@ -527,18 +701,24 @@ function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
           <RevealSection
             color="#e5dac9"
             backdropColor="#f7f1e7"
-            backgroundImage={imgWhyBg}
-            backgroundOverlayClassName="bg-[#e5dac9]/89"
-            className="flex min-h-[106svh] items-center overflow-hidden rounded-t-[64px] bg-[#e5dac9] pb-24 pt-[76px] shadow-[0_-18px_40px_rgba(50,41,30,0.08)] md:pb-32 md:pt-[92px]"
+            backgroundImage={imgWhyLuxuryBg}
+            backgroundOverlayClassName="bg-[linear-gradient(90deg,rgba(229,218,201,0.94),rgba(229,218,201,0.9)_48%,rgba(229,218,201,0.86))]"
+            className="flex min-h-[92svh] items-center overflow-hidden rounded-t-[64px] bg-[#e5dac9] py-16 shadow-[0_-18px_40px_rgba(50,41,30,0.08)] md:py-20"
           >
-            <div className="relative mx-auto w-full max-w-[1050px] px-6 md:px-20 xl:px-0">
-              <h2 className="text-center font-['Cormorant_Garamond',serif] text-[40px] font-bold leading-none tracking-[0.06em] text-[#171717] md:text-[58px]">
+            <div className="pointer-events-none absolute inset-0 overflow-hidden">
+              <img src={imgBottle} alt="" className="absolute -bottom-10 left-[6%] h-[260px] rotate-[8deg] object-contain opacity-[0.045] blur-[0.2px] md:h-[400px]" />
+              <img src={imgBottle} alt="" className="absolute bottom-[7%] right-[7%] h-[220px] rotate-[-10deg] object-contain opacity-[0.05] blur-[0.2px] md:h-[340px]" />
+              <div className="absolute inset-x-[8%] top-[22%] h-px rotate-[-6deg] bg-[#b59a63]/18" />
+              <div className="absolute bottom-[16%] left-[16%] h-24 w-[68%] rounded-full bg-[#6e5c42]/10 blur-3xl" />
+            </div>
+            <div className="relative mx-auto flex min-h-[68svh] w-full max-w-[1120px] flex-col justify-center px-6 md:px-20 xl:px-0">
+              <h2 className="text-center font-['Cormorant_Garamond',serif] text-[38px] font-bold leading-none tracking-[0.06em] text-[#171717] md:text-[56px]">
                 WHY DECANTS BY JOSHUA
               </h2>
               <p className="mx-auto mt-3 max-w-[620px] text-center font-['IBM_Plex_Sans',sans-serif] text-[15px] font-light leading-relaxed text-[rgba(23,23,23,0.62)]">
                 Crafted to make fragrance discovery simple, authentic, and memorable.
               </p>
-              <div className="mt-12 grid gap-8 sm:grid-cols-2">
+              <div className="mx-auto mt-14 grid w-full max-w-[1040px] gap-x-24 gap-y-12 sm:grid-cols-2">
                 {featureItems.map(({ Icon, title, desc }) => (
                   <div
                     key={title}
@@ -552,7 +732,7 @@ function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
                   </div>
                 ))}
               </div>
-              <p className="mt-12 text-center font-['IBM_Plex_Sans',sans-serif] text-[14px] font-light text-[rgba(23,23,23,0.58)]">
+              <p className="mt-16 text-center font-['IBM_Plex_Sans',sans-serif] text-[14px] font-light text-[rgba(23,23,23,0.58)]">
                 We believe discovering fragrance should be as memorable as wearing it.
               </p>
             </div>
@@ -585,57 +765,81 @@ function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
                     <span className="ml-[43px] block h-4 w-4 rounded-full border border-[#171717]" />
                   </button>
                 </div>
-                <img
-                  src={imgBottle}
-                  alt="starter collection decant"
+                <motion.img
+                  key={`discovery-bottle-${activeDiscoverySet.id}`}
+                  src={activeDiscoveryProducts[0]?.img ?? imgBottle}
+                  alt={`${activeDiscoverySet.name} decant`}
+                  initial={{ opacity: 0, x: carouselDirection * 34, rotate: -9 }}
+                  animate={{ opacity: 1, x: 0, rotate: -9 }}
+                  transition={{ duration: 0.32, ease: [0.19, 1, 0.22, 1] }}
                   className="mx-auto h-[440px] rotate-[-9deg] object-contain drop-shadow-[0_30px_42px_rgba(30,24,18,0.22)] md:h-[660px] xl:h-[760px]"
                 />
-                <div className="relative">
+                <motion.div
+                  key={`discovery-copy-${activeDiscoverySet.id}`}
+                  initial={{ opacity: 0, x: carouselDirection * 24 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3, ease: [0.19, 1, 0.22, 1], delay: 0.03 }}
+                  className="relative lg:pr-20"
+                >
                   <div className="mb-5 flex items-center gap-5">
                     <div className="h-px w-24 bg-[#cbbd9f]" />
-                    <span className="font-['Cormorant_Garamond',serif] text-[52px] font-semibold leading-none text-[#171717]">01</span>
+                    <span className="font-['Cormorant_Garamond',serif] text-[52px] font-semibold leading-none text-[#171717]">{String(activeDiscoveryIndex + 1).padStart(2, "0")}</span>
                     <div className="h-px flex-1 bg-[#cbbd9f]" />
                   </div>
                   <h3 className="font-['Cormorant_Garamond',serif] text-[38px] font-semibold leading-[0.98] tracking-[0.04em] text-[#171717] md:text-[54px]">
-                    THE STARTER<br />COLLECTION
+                    {activeDiscoverySet.name.toUpperCase()}
                   </h3>
                   <p className="mt-5 max-w-[380px] font-['IBM_Plex_Sans',sans-serif] text-[16px] font-light leading-relaxed text-[rgba(23,23,23,0.64)]">
-                    Five timeless fragrances to begin your journey.
+                    {activeDiscoverySet.subtitle}
                   </p>
                   <button
-                    onClick={() => navigate("discovery")}
+                    onClick={() => navigate("discoverySet", activeDiscoverySet.id)}
                     className="mt-12 font-['Cormorant_Garamond',serif] text-[22px] text-[#171717] tracking-wide border-b border-[#171717] pb-px hover:opacity-55 transition-opacity"
                   >
                     EXPLORE SET
                   </button>
-                  <div className="absolute right-0 top-5 hidden space-y-7 font-['IBM_Plex_Sans',sans-serif] text-[12px] text-[rgba(23,23,23,0.55)] lg:block">
-                    {["01", "02", "03", "04"].map((n) => <p key={n}>{n}</p>)}
+                  <div className="absolute right-0 top-1/2 hidden -translate-y-1/2 flex-col items-center gap-6 font-['Cormorant_Garamond',serif] text-[18px] lg:flex">
+                    {DISCOVERY_SETS.map((set, idx) => (
+                      <button
+                        key={set.id}
+                        onClick={() => showDiscovery(idx)}
+                        className={`relative leading-none transition-colors ${idx === activeDiscoveryIndex ? "text-[#171717]" : "text-[rgba(23,23,23,0.42)] hover:text-[#171717]"}`}
+                        aria-label={`Show ${set.name}`}
+                      >
+                        {idx === activeDiscoveryIndex && <span className="absolute -left-5 top-1/2 h-9 w-px -translate-y-1/2 bg-[#b59a63]/55" />}
+                        {String(idx + 1).padStart(2, "0")}
+                      </button>
+                    ))}
                   </div>
-                </div>
+                </motion.div>
               </div>
               <div className="relative grid items-center gap-5 bg-[#ded3bf] px-8 py-8 md:grid-cols-[auto_1fr_auto_1fr_auto] md:px-14">
-                <button className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-[#a79368] text-[#171717]" aria-label="Previous discovery set">
+                <button onClick={() => goDiscovery(-1)} className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-[#a79368] text-[#171717]" aria-label="Previous discovery set">
                   <ArrowLeft size={30} strokeWidth={1.4} />
                 </button>
-                <div className="text-center">
-                  <p className="font-['Cormorant_Garamond',serif] text-[34px] text-[#171717]">02</p>
-                  <p className="font-['Cormorant_Garamond',serif] text-[22px] leading-tight text-[#171717]">WANDERLUST<br />COLLECTION</p>
-                  <p className="font-['Cormorant_Garamond',serif] text-[13px] text-[rgba(23,23,23,0.62)]">3 Fragrances</p>
-                </div>
-                <button className="mx-auto flex h-24 w-24 items-center justify-center rounded-full border border-[#a79368] font-['IBM_Plex_Sans',sans-serif] text-[34px] font-bold text-[#171717]" aria-label="Pause discovery carousel">
-                  ||
+                <button onClick={() => navigate("discoverySet", DISCOVERY_SETS[previousDiscoveryIndex].id)} className="text-center transition-opacity hover:opacity-60">
+                  <p className="font-['Cormorant_Garamond',serif] text-[34px] text-[#171717]">{String(previousDiscoveryIndex + 1).padStart(2, "0")}</p>
+                  <p className="font-['Cormorant_Garamond',serif] text-[22px] leading-tight text-[#171717]">{DISCOVERY_SETS[previousDiscoveryIndex].name.toUpperCase()}</p>
+                  <p className="font-['Cormorant_Garamond',serif] text-[13px] text-[rgba(23,23,23,0.62)]">{DISCOVERY_SETS[previousDiscoveryIndex].count} Fragrances</p>
                 </button>
-                <div className="text-center">
-                  <p className="font-['Cormorant_Garamond',serif] text-[34px] text-[#171717]">03</p>
-                  <p className="font-['Cormorant_Garamond',serif] text-[22px] leading-tight text-[#171717]">VELVET UNDERGROUND<br />COLLECTION</p>
-                  <p className="font-['Cormorant_Garamond',serif] text-[13px] text-[rgba(23,23,23,0.62)]">4 Fragrances</p>
-                </div>
-                <button className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-[#a79368] text-[#171717]" aria-label="Next discovery set">
+                <button
+                  onClick={toggleDiscoveryPlayback}
+                  className="mx-auto flex h-24 w-24 items-center justify-center rounded-full border border-[#a79368] text-[#171717] transition-colors hover:bg-[#d4c8b2]"
+                  aria-label={isDiscoveryPaused ? "Resume discovery carousel" : "Pause discovery carousel"}
+                >
+                  {isDiscoveryPaused ? <Play size={24} strokeWidth={1.6} fill="currentColor" /> : <Pause size={26} strokeWidth={1.8} fill="currentColor" />}
+                </button>
+                <button onClick={() => navigate("discoverySet", DISCOVERY_SETS[nextDiscoveryIndex].id)} className="text-center transition-opacity hover:opacity-60">
+                  <p className="font-['Cormorant_Garamond',serif] text-[34px] text-[#171717]">{String(nextDiscoveryIndex + 1).padStart(2, "0")}</p>
+                  <p className="font-['Cormorant_Garamond',serif] text-[22px] leading-tight text-[#171717]">{DISCOVERY_SETS[nextDiscoveryIndex].name.toUpperCase()}</p>
+                  <p className="font-['Cormorant_Garamond',serif] text-[13px] text-[rgba(23,23,23,0.62)]">{DISCOVERY_SETS[nextDiscoveryIndex].count} Fragrances</p>
+                </button>
+                <button onClick={() => goDiscovery(1)} className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-[#a79368] text-[#171717]" aria-label="Next discovery set">
                   <ArrowLeft size={30} strokeWidth={1.4} className="rotate-180" />
                 </button>
                 <div className="col-span-full mt-2 flex justify-center gap-2">
-                  {[0, 1, 2, 3, 4].map((dot) => (
-                    <span key={dot} className={`h-2 w-2 rounded-full ${dot === 0 ? "bg-[#b8aa7d]" : "border border-[#b8aa7d]"}`} />
+                  {DISCOVERY_SETS.map((set, dot) => (
+                    <button key={set.id} onClick={() => showDiscovery(dot)} className={`h-2 w-2 rounded-full ${dot === activeDiscoveryIndex ? "bg-[#b8aa7d]" : "border border-[#b8aa7d]"}`} aria-label={`Show ${set.name}`} />
                   ))}
                 </div>
               </div>
@@ -912,7 +1116,13 @@ function BestSellersPage({ navigate }: { navigate: (p: Page, d?: unknown) => voi
   );
 }
 
-function DiscoveryPage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
+function DiscoveryPage({ navigate, selectedSetId }: { navigate: (p: Page, d?: unknown) => void; selectedSetId?: number | null }) {
+  const [activeSetId, setActiveSetId] = useState<number>(selectedSetId ?? DISCOVERY_SETS[0].id);
+
+  useEffect(() => {
+    if (selectedSetId) setActiveSetId(selectedSetId);
+  }, [selectedSetId]);
+
   return (
     <div className="bg-[#f7f5f1] min-h-screen">
       {/* Header section */}
@@ -930,7 +1140,7 @@ function DiscoveryPage({ navigate }: { navigate: (p: Page, d?: unknown) => void 
         </p>
 
         {/* Feature columns */}
-        <div className="flex flex-col md:flex-row justify-center gap-14 mt-12">
+        <div className="mx-auto mt-12 grid max-w-[1040px] gap-10 md:grid-cols-3">
           {[
             {
               icon: (
@@ -957,11 +1167,11 @@ function DiscoveryPage({ navigate }: { navigate: (p: Page, d?: unknown) => void 
               desc: "Beautifully packaged and ready to impress",
             },
           ].map(({ icon, title, desc }, i) => (
-            <div key={i} className="flex flex-col items-center max-w-[220px] mx-auto text-left">
-              <div className="flex items-center gap-3 mb-3 w-full">
+            <div key={i} className="mx-auto flex w-full max-w-[310px] flex-col items-center text-left">
+              <div className="flex w-full items-start gap-4">
                 <div className="text-[#171717] flex-shrink-0">{icon}</div>
                 <div>
-                  <p className="font-['Cormorant_Garamond',serif] font-semibold text-[22px] text-[#171717] leading-tight">{title}</p>
+                  <p className="whitespace-nowrap font-['Cormorant_Garamond',serif] font-semibold text-[22px] text-[#171717] leading-tight">{title}</p>
                   <p className="font-['IBM_Plex_Sans',sans-serif] font-light text-[13px] text-[rgba(23,23,23,0.65)] leading-relaxed mt-1">{desc}</p>
                 </div>
               </div>
@@ -983,21 +1193,31 @@ function DiscoveryPage({ navigate }: { navigate: (p: Page, d?: unknown) => void 
               const setProducts = ALL_PRODUCTS.filter((p) => set.productIds.includes(p.id));
               const heroProduct = setProducts[0];
               const reverse = i % 2 === 1;
+              const isActive = activeSetId === set.id;
               return (
-                <div key={set.id} className={`group relative grid items-stretch gap-0 overflow-hidden rounded-[8px] border border-[#d9cdb9] bg-[#fbf8f1] shadow-[0_24px_70px_rgba(42,34,25,0.12)] transition-transform duration-500 hover:-translate-y-1 md:grid-cols-[1.05fr_0.95fr] ${reverse ? "md:[&>*:first-child]:order-2" : ""}`}>
-                  <div className={`relative flex min-h-[390px] items-center justify-center overflow-hidden bg-[#efe3d1] p-8 ${reverse ? "md:order-2" : ""}`}>
+                <div
+                  key={set.id}
+                  data-set-id={set.id}
+                  className={`group relative grid items-stretch gap-0 overflow-hidden rounded-[8px] border bg-[#fbf8f1] transition-all duration-500 hover:-translate-y-1 md:grid-cols-[1.05fr_0.95fr] ${reverse ? "md:[&>*:first-child]:order-2" : ""} ${
+                    isActive
+                      ? "border-[#ae9766] shadow-[0_34px_86px_rgba(42,34,25,0.18)]"
+                      : "border-[#d9cdb9] shadow-[0_24px_70px_rgba(42,34,25,0.12)]"
+                  }`}
+                >
+                  <div className={`relative flex min-h-[430px] items-center justify-center overflow-hidden bg-[#efe3d1] p-8 ${reverse ? "md:order-2" : ""}`}>
                       <img src={imgDiscoveryBg} alt="" className="absolute inset-0 h-full w-full object-cover opacity-26" />
-                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_48%_44%,rgba(255,255,255,0.64),rgba(239,227,209,0.58)_38%,rgba(183,156,111,0.22)_100%)]" />
-                      <div className="absolute left-[10%] top-[13%] h-px w-[78%] rotate-[-8deg] bg-[#b59a63]/25" />
-                      <div className="absolute bottom-[18%] left-[16%] h-[56px] w-[68%] rounded-full bg-[#4f4436]/12 blur-2xl" />
-                      <div className="relative h-[300px] w-full max-w-[360px]">
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(255,255,255,0.82),rgba(239,227,209,0.5)_42%,rgba(152,118,67,0.24)_100%)]" />
+                      <div className="absolute left-[8%] top-[13%] h-px w-[82%] rotate-[-8deg] bg-[#b59a63]/30" />
+                      <div className="absolute bottom-[15%] left-[13%] h-[74px] w-[74%] rounded-full bg-[#4f4436]/16 blur-2xl" />
+                      <div className="absolute inset-x-10 bottom-10 h-px bg-[#b59a63]/18" />
+                      <div className="relative h-[330px] w-full max-w-[410px]">
                         {setProducts.slice(0, 5).map((p, idx) => (
                           <button
                             key={p.id}
                             onClick={() => navigate("product", p)}
                             className="absolute bottom-0 transition-all duration-700 hover:-translate-y-3"
                             style={{
-                              left: `${idx * 19}%`,
+                              left: `${idx * 18}%`,
                               zIndex: 10 - idx,
                               transform: `rotate(${(idx - 2) * 5}deg)`,
                             }}
@@ -1011,7 +1231,8 @@ function DiscoveryPage({ navigate }: { navigate: (p: Page, d?: unknown) => void 
                         ))}
                       </div>
                     </div>
-                  <div className="relative flex min-h-[390px] flex-col justify-between p-7 md:p-9">
+                  <div className="relative flex min-h-[430px] flex-col justify-between overflow-hidden p-7 md:p-9">
+                    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_90%_10%,rgba(174,151,102,0.14),transparent_30%)]" />
                     <div className="pointer-events-none absolute right-7 top-6 font-['Cormorant_Garamond',serif] text-[92px] leading-none text-[#171717]/7">0{i + 1}</div>
                     <div className="relative">
                       <div className="mb-5 h-[2px] w-14 bg-[#AE9766]" />
@@ -1041,7 +1262,12 @@ function DiscoveryPage({ navigate }: { navigate: (p: Page, d?: unknown) => void 
                           <p className="font-['IBM_Plex_Sans',sans-serif] text-[12px] font-light text-[#171717]/55">{set.count} Fragrances</p>
                           <p className="font-['IBM_Plex_Sans',sans-serif] text-[20px] font-semibold text-[#171717]">PHP {set.price}</p>
                         </div>
-                        <button onClick={() => navigate("collections")} className="border-b border-[#171717] pb-px font-['IBM_Plex_Sans',sans-serif] text-[11px] font-semibold tracking-[0.16em] text-[#171717] hover:opacity-55">EXPLORE SET &rarr;</button>
+                        <button
+                          onClick={() => navigate("discoverySet", set.id)}
+                          className="border-b border-[#171717] pb-px font-['IBM_Plex_Sans',sans-serif] text-[11px] font-semibold tracking-[0.16em] text-[#171717] hover:opacity-55"
+                        >
+                          EXPLORE SET &rarr;
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -1056,6 +1282,89 @@ function DiscoveryPage({ navigate }: { navigate: (p: Page, d?: unknown) => void 
 }
 
 // â”€â”€â”€ PRODUCT DETAIL PAGE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function DiscoverySetPage({ setId, navigate }: { setId: number | null; navigate: (p: Page, d?: unknown) => void }) {
+  const set = DISCOVERY_SETS.find((item) => item.id === setId) ?? DISCOVERY_SETS[0];
+  const setProducts = ALL_PRODUCTS.filter((product) => set.productIds.includes(product.id));
+
+  return (
+    <div className="min-h-screen bg-[#f7f1e7] text-[#171717]">
+      <section className="relative overflow-hidden border-b border-[#171717] bg-[#171614] px-6 py-10 text-[#f8f2e8] md:px-12 md:py-14">
+        <img src={imgDiscoveryBg} alt="" className="absolute inset-0 h-full w-full object-cover opacity-10" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_28%_36%,rgba(174,151,102,0.24),transparent_34%),linear-gradient(90deg,rgba(23,22,20,0.96),rgba(23,22,20,0.84))]" />
+        <div className="relative mx-auto grid max-w-[1220px] gap-10 md:grid-cols-[0.92fr_1.08fr] md:items-center">
+          <div className="relative min-h-[460px] overflow-hidden rounded-[8px] border border-[#c9b27a]/34 bg-[#efe3d1]">
+            <img src={imgDiscoveryBg} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(255,255,255,0.84),rgba(239,227,209,0.5)_42%,rgba(152,118,67,0.24)_100%)]" />
+            <div className="absolute bottom-[14%] left-[12%] h-[76px] w-[76%] rounded-full bg-[#4f4436]/16 blur-2xl" />
+            <div className="absolute left-8 right-8 top-10 h-px bg-[#b59a63]/24" />
+            <div className="absolute bottom-10 left-8 right-8 h-px bg-[#b59a63]/18" />
+            <div className="relative flex h-full min-h-[460px] items-center justify-center">
+              <div className="relative h-[330px] w-full max-w-[430px]">
+                {setProducts.slice(0, 5).map((product, idx) => (
+                  <button
+                    key={product.id}
+                    onClick={() => navigate("product", product)}
+                    className="absolute bottom-0 transition-transform duration-500 hover:-translate-y-3"
+                    style={{ left: `${idx * 18}%`, zIndex: 10 - idx, transform: `rotate(${(idx - 2) * 5}deg)` }}
+                  >
+                    <img src={product.img} alt={product.name} className={`${idx === 0 ? "h-[270px]" : "h-[210px]"} object-contain drop-shadow-[0_24px_28px_rgba(35,28,20,0.22)]`} />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <button onClick={() => navigate("discovery")} className="mb-8 flex items-center gap-1.5 font-['IBM_Plex_Sans',sans-serif] text-[13px] text-[#f8f2e8]/55 transition-colors hover:text-[#f8f2e8]">
+              <ArrowLeft size={13} /> Discovery Sets
+            </button>
+            <div className="mb-6 h-[2px] w-20 bg-[#AE9766]" />
+            <p className="font-['IBM_Plex_Sans',sans-serif] text-[11px] font-semibold tracking-[0.22em] text-[#c9b27a]">SET 0{set.id}</p>
+            <h1 className="mt-3 max-w-[680px] font-['Cormorant_Garamond',serif] text-[52px] font-bold leading-none tracking-[0.04em] md:text-[76px]">{set.name}</h1>
+            <p className="mt-5 max-w-[560px] font-['IBM_Plex_Sans',sans-serif] text-[16px] font-light leading-relaxed text-[#f8f2e8]/68">{set.subtitle}</p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {set.tags.map((tag) => (
+                <span key={tag} className="border border-[#c9b27a]/45 px-3 py-1 font-['IBM_Plex_Sans',sans-serif] text-[10px] tracking-[0.14em] text-[#f8f2e8]">{tag}</span>
+              ))}
+            </div>
+            <div className="mt-10 grid max-w-[560px] grid-cols-3 border-y border-[#c9b27a]/24 py-5">
+              <div>
+                <p className="font-['IBM_Plex_Sans',sans-serif] text-[10px] font-semibold tracking-[0.16em] text-[#c9b27a]">COUNT</p>
+                <p className="mt-1 font-['Cormorant_Garamond',serif] text-[26px]">{set.count}</p>
+              </div>
+              <div>
+                <p className="font-['IBM_Plex_Sans',sans-serif] text-[10px] font-semibold tracking-[0.16em] text-[#c9b27a]">PRICE</p>
+                <p className="mt-1 font-['Cormorant_Garamond',serif] text-[26px]">PHP {set.price}</p>
+              </div>
+              <div>
+                <p className="font-['IBM_Plex_Sans',sans-serif] text-[10px] font-semibold tracking-[0.16em] text-[#c9b27a]">STYLE</p>
+                <p className="mt-1 font-['Cormorant_Garamond',serif] text-[26px]">Curated</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="px-6 py-14 md:px-12">
+        <div className="mx-auto max-w-[1180px]">
+          <div className="mb-8 flex items-end justify-between gap-4 border-b border-[#171717]/14 pb-5">
+            <div>
+              <p className="font-['IBM_Plex_Sans',sans-serif] text-[11px] font-semibold tracking-[0.2em] text-[#9a7d45]">FRAGRANCE LINEUP</p>
+              <h2 className="mt-2 font-['Cormorant_Garamond',serif] text-[44px] font-bold leading-none tracking-[0.04em]">Inside This Set</h2>
+            </div>
+            <p className="hidden font-['IBM_Plex_Sans',sans-serif] text-[13px] text-[#171717]/55 md:block">Tap a fragrance to inspect notes, sizes, and pricing.</p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {setProducts.map((product) => (
+              <RelatedProductCard key={product.id} product={product} navigate={navigate} />
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 function ProductPage({ product, navigate, addToCart }: {
   product: Product;
   navigate: (p: Page, d?: unknown) => void;
@@ -1103,7 +1412,7 @@ function ProductPage({ product, navigate, addToCart }: {
               <span className="font-['IBM_Plex_Sans',sans-serif] text-[12px] text-[rgba(23,23,23,0.4)] ml-2">(89 reviews)</span>
             </div>
 
-            <p className="font-['IBM_Plex_Sans',sans-serif] font-light text-[14px] text-[rgba(23,23,23,0.72)] leading-[1.8] mb-7">{product.description}</p>
+            <p className="font-['IBM_Plex_Sans',sans-serif] font-light text-[14px] text-[rgba(23,23,23,0.72)] leading-[1.8] mb-7">{cleanText(product.description)}</p>
 
             {/* Size selector */}
             <p className="font-['Cormorant_Garamond',serif] font-semibold text-[17px] text-[#171717] mb-3">Select Size</p>
@@ -1155,8 +1464,8 @@ function ProductPage({ product, navigate, addToCart }: {
         {relatedProducts.length > 0 && (
           <div className="mt-20">
             <h2 className="font-['Cormorant_Garamond',serif] font-bold text-[34px] text-[#171717] tracking-wide mb-8">You Might Also Like</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {relatedProducts.map((p) => <ProductCard key={p.id} product={p} navigate={navigate} />)}
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {relatedProducts.map((p) => <RelatedProductCard key={p.id} product={p} navigate={navigate} />)}
             </div>
           </div>
         )}
@@ -1618,11 +1927,13 @@ function FAQPage() {
 export default function App() {
   const [page, setPage] = useState<Page>("home");
   const [selectedProduct, setSelectedProduct] = useState<Product>(ALL_PRODUCTS[0]);
+  const [selectedDiscoverySetId, setSelectedDiscoverySetId] = useState<number | null>(null);
   const [collectionFilters, setCollectionFilters] = useState<Partial<Filters>>({});
   const [cart, setCart] = useState<CartItem[]>([]);
 
   const navigate = (p: Page, data?: unknown) => {
     if (p === "product" && data) setSelectedProduct(data as Product);
+    if (p === "discovery" || p === "discoverySet") setSelectedDiscoverySetId(typeof data === "number" ? data : null);
     if (p === "collections" && data && typeof data === "object") {
       setCollectionFilters(data as Partial<Filters>);
     } else if (p === "collections") {
@@ -1655,7 +1966,8 @@ export default function App() {
       case "home":        return <HomePage navigate={navigate} />;
       case "collections": return <CollectionsPage navigate={navigate} initialFilters={collectionFilters} />;
       case "bestsellers": return <BestSellersPage navigate={navigate} />;
-      case "discovery":   return <DiscoveryPage navigate={navigate} />;
+      case "discovery":   return <DiscoveryPage navigate={navigate} selectedSetId={selectedDiscoverySetId} />;
+      case "discoverySet": return <DiscoverySetPage navigate={navigate} setId={selectedDiscoverySetId} />;
       case "decantguide": return <DecantGuidePage />;
       case "faq":         return <FAQPage />;
       case "product":     return <ProductPage product={selectedProduct} navigate={navigate} addToCart={addToCart} />;
@@ -1668,6 +1980,8 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f7f5f1]">
+      <CustomCursor />
+      <GlobalTexture />
       {page !== "confirmation" && (
         <Header page={page} navigate={navigate} cartCount={cartCount} />
       )}
