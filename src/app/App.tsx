@@ -254,17 +254,17 @@ function CompactProductCard({ product, navigate, rank }: { product: Product; nav
           {String(rank).padStart(2, "0")}
         </div>
       ) : null}
-      <div className="relative float-left mr-3 flex h-[148px] w-[118px] items-center justify-center overflow-hidden bg-[#eee4d4] min-[560px]:float-none min-[560px]:mb-4 min-[560px]:mr-0 min-[560px]:h-[170px] min-[560px]:w-full md:h-[190px]">
+      <div className="relative mb-3 flex h-[118px] w-full items-center justify-center overflow-hidden bg-[#eee4d4] min-[390px]:h-[132px] min-[560px]:h-[170px] md:h-[190px]">
         <img src={product.img} alt={product.name}
-          className="h-[126px] object-contain transition-transform duration-700 group-hover:scale-105 min-[560px]:h-[150px] md:h-[168px]" />
+          className="h-[102px] object-contain transition-transform duration-700 group-hover:scale-105 min-[390px]:h-[114px] min-[560px]:h-[150px] md:h-[168px]" />
       </div>
       <div className="relative">
         <p className="font-['IBM_Plex_Sans',sans-serif] text-[9px] font-semibold tracking-[0.16em] text-[#9a7d45] md:text-[10px]">{product.family.toUpperCase()}</p>
-        <p className="mt-1 font-['Cormorant_Garamond',serif] font-semibold text-[24px] text-[#171717] leading-none md:mt-2">{product.name}</p>
-        <p className="mt-2 font-['IBM_Plex_Sans',sans-serif] font-light text-[12px] leading-snug text-[#171717]/60 md:mt-3 md:text-[13px] md:leading-relaxed">{cleanNotes(product.notes)}</p>
+        <p className="mt-1 line-clamp-2 font-['Cormorant_Garamond',serif] font-semibold text-[21px] text-[#171717] leading-[0.95] md:mt-2 md:text-[24px]">{product.name}</p>
+        <p className="mt-2 line-clamp-2 font-['IBM_Plex_Sans',sans-serif] font-light text-[11px] leading-snug text-[#171717]/60 md:mt-3 md:text-[13px] md:leading-relaxed">{cleanNotes(product.notes)}</p>
         <div className="mt-4 flex items-center justify-between gap-3 min-[560px]:mt-7">
-          <span className="font-['IBM_Plex_Sans',sans-serif] text-[12px] font-semibold text-[#171717] md:text-[13px]">From PHP {product.price}</span>
-          <span className="font-['IBM_Plex_Sans',sans-serif] text-[10px] font-semibold tracking-[0.16em] text-[#171717]">VIEW &rarr;</span>
+          <span className="font-['IBM_Plex_Sans',sans-serif] text-[11px] font-semibold text-[#171717] md:text-[13px]">PHP {product.price}</span>
+          <span className="font-['IBM_Plex_Sans',sans-serif] text-[9px] font-semibold tracking-[0.14em] text-[#171717] md:text-[10px]">VIEW &rarr;</span>
         </div>
       </div>
     </button>
@@ -275,20 +275,20 @@ function RelatedProductCard({ product, navigate }: { product: Product; navigate:
   return (
     <button
       onClick={() => navigate("product", product)}
-      className="group relative flex min-h-[350px] flex-col overflow-hidden rounded-[8px] border border-[#d7c8ae] bg-[#fbf8f1] p-4 text-left shadow-[0_14px_34px_rgba(42,34,25,0.08)] transition-shadow hover:shadow-[0_22px_48px_rgba(42,34,25,0.15)]"
+      className="group relative flex min-h-[288px] flex-col overflow-hidden rounded-[8px] border border-[#d7c8ae] bg-[#fbf8f1] p-3 text-left shadow-[0_14px_34px_rgba(42,34,25,0.08)] transition-shadow hover:shadow-[0_22px_48px_rgba(42,34,25,0.15)] md:min-h-[350px] md:p-4"
     >
-      <div className="flex h-[190px] items-center justify-center overflow-hidden bg-[#eee4d4]">
-        <img src={product.img} alt={product.name} className="h-[158px] object-contain transition-transform duration-700 group-hover:scale-105" />
+      <div className="flex h-[132px] items-center justify-center overflow-hidden bg-[#eee4d4] md:h-[190px]">
+        <img src={product.img} alt={product.name} className="h-[112px] object-contain transition-transform duration-700 group-hover:scale-105 md:h-[158px]" />
       </div>
-      <div className="flex flex-1 flex-col justify-between pt-4">
+      <div className="flex flex-1 flex-col justify-between pt-3 md:pt-4">
         <div>
-          <p className="font-['IBM_Plex_Sans',sans-serif] text-[10px] font-semibold tracking-[0.16em] text-[#9a7d45]">{product.family.toUpperCase()}</p>
-          <p className="mt-2 break-words font-['Cormorant_Garamond',serif] text-[25px] font-semibold leading-[0.95] text-[#171717]">{product.name}</p>
-          <p className="mt-3 font-['IBM_Plex_Sans',sans-serif] text-[13px] font-light leading-relaxed text-[#171717]/60">{cleanNotes(product.notes)}</p>
+          <p className="font-['IBM_Plex_Sans',sans-serif] text-[9px] font-semibold tracking-[0.16em] text-[#9a7d45] md:text-[10px]">{product.family.toUpperCase()}</p>
+          <p className="mt-1 line-clamp-2 break-words font-['Cormorant_Garamond',serif] text-[21px] font-semibold leading-[0.95] text-[#171717] md:mt-2 md:text-[25px]">{product.name}</p>
+          <p className="mt-2 line-clamp-2 font-['IBM_Plex_Sans',sans-serif] text-[11px] font-light leading-snug text-[#171717]/60 md:mt-3 md:text-[13px] md:leading-relaxed">{cleanNotes(product.notes)}</p>
         </div>
-        <div className="mt-5 flex items-end justify-between gap-3">
-          <span className="font-['IBM_Plex_Sans',sans-serif] text-[13px] font-semibold leading-tight text-[#171717]">From<br />PHP {product.price}</span>
-          <span className="shrink-0 font-['IBM_Plex_Sans',sans-serif] text-[10px] font-semibold tracking-[0.16em] text-[#171717]">VIEW &rarr;</span>
+        <div className="mt-4 flex items-end justify-between gap-3 md:mt-5">
+          <span className="font-['IBM_Plex_Sans',sans-serif] text-[11px] font-semibold leading-tight text-[#171717] md:text-[13px]">PHP {product.price}</span>
+          <span className="shrink-0 font-['IBM_Plex_Sans',sans-serif] text-[9px] font-semibold tracking-[0.14em] text-[#171717] md:text-[10px]">VIEW &rarr;</span>
         </div>
       </div>
     </button>
@@ -632,11 +632,11 @@ function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
                   <button
                     key={col.label}
                     onClick={() => navigate("collections", { category: col.cat })}
-                    className="group relative aspect-[16/10] overflow-hidden rounded-[8px] text-left shadow-[0_20px_45px_rgba(28,23,17,0.18)] min-[520px]:aspect-[4/5]"
+                    className="group relative aspect-[16/11] overflow-hidden rounded-[8px] text-left shadow-[0_20px_45px_rgba(28,23,17,0.18)] min-[520px]:aspect-[4/5]"
                   >
                     <img src={col.img} alt={col.label} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-                    <div className="absolute bottom-0 left-0 p-5">
+                    <div className="absolute bottom-0 left-0 p-4 pb-5 md:p-5">
                       <div className="mb-3 h-[2px] w-9 bg-[#e0dfd8]" />
                       <p className="font-['Cormorant_Garamond',serif] text-[25px] font-bold leading-[0.98] tracking-[0.04em] text-[#f5efe5] md:text-[28px]">
                         {col.label}
@@ -1039,7 +1039,7 @@ function CollectionsPage({ navigate, initialFilters }: {
               <button onClick={clearAll} className="mt-4 font-['IBM_Plex_Sans',sans-serif] text-[13px] text-[#171717] border-b border-[#171717] pb-px">Clear all filters</button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-3 min-[560px]:grid-cols-2 lg:grid-cols-4 lg:gap-4">
+            <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
               {filtered.map((p) => <CompactProductCard key={p.id} product={p} navigate={navigate} />)}
             </div>
           )}
@@ -1139,7 +1139,7 @@ function BestSellersPage({ navigate }: { navigate: (p: Page, d?: unknown) => voi
             </button>
           </div>
 
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-2 md:gap-5 xl:grid-cols-3">
             {ranked.map((product, index) => (
               <ProductCard key={product.id} product={product} navigate={navigate} rank={index + 2} />
             ))}
@@ -1388,7 +1388,7 @@ function DiscoverySetPage({ setId, navigate }: { setId: number | null; navigate:
             </div>
             <p className="hidden font-['IBM_Plex_Sans',sans-serif] text-[13px] text-[#171717]/55 md:block">Tap a fragrance to inspect notes, sizes, and pricing.</p>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
             {setProducts.map((product) => (
               <RelatedProductCard key={product.id} product={product} navigate={navigate} />
             ))}
@@ -1498,8 +1498,12 @@ function ProductPage({ product, navigate, addToCart }: {
         {relatedProducts.length > 0 && (
           <div className="mt-20">
             <h2 className="font-['Cormorant_Garamond',serif] font-bold text-[34px] text-[#171717] tracking-wide mb-8">You Might Also Like</h2>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {relatedProducts.map((p) => <RelatedProductCard key={p.id} product={p} navigate={navigate} />)}
+            <div className="-mx-6 flex snap-x gap-3 overflow-x-auto px-6 pb-3 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4">
+              {relatedProducts.map((p) => (
+                <div key={p.id} className="w-[190px] shrink-0 snap-start sm:w-auto">
+                  <RelatedProductCard product={p} navigate={navigate} />
+                </div>
+              ))}
             </div>
           </div>
         )}
