@@ -863,7 +863,6 @@ function CollectionsPage({ navigate, initialFilters }: {
   const [selectedCats, setSelectedCats] = useState<string[]>(initialFilters?.categories ?? []);
   const [selectedFamilies, setSelectedFamilies] = useState<string[]>(initialFilters?.families ?? []);
   const [selectedBrands, setSelectedBrands] = useState<string[]>(initialFilters?.brands ?? []);
-  const [bestSellersOnly, setBestSellersOnly] = useState(initialFilters?.bestSellers ?? false);
   const [showMoreBrands, setShowMoreBrands] = useState(false);
   const [sortBy, setSortBy] = useState("Featured");
   const [minPrice, setMinPrice] = useState("");
@@ -875,13 +874,12 @@ function CollectionsPage({ navigate, initialFilters }: {
 
   const clearAll = () => {
     setSelectedCats([]); setSelectedFamilies([]); setSelectedBrands([]);
-    setBestSellersOnly(false); setMinPrice(""); setMaxPrice("");
+    setMinPrice(""); setMaxPrice("");
   };
 
   const visibleBrands = showMoreBrands ? BRANDS : BRANDS.slice(0, 5);
 
   let filtered = ALL_PRODUCTS;
-  if (bestSellersOnly) filtered = filtered.filter((p) => p.bestSeller);
   if (selectedCats.length) filtered = filtered.filter((p) => selectedCats.includes(p.category));
   if (selectedFamilies.length) filtered = filtered.filter((p) => selectedFamilies.includes(p.family));
   if (selectedBrands.length && !selectedBrands.includes("All Brands")) {
@@ -910,10 +908,10 @@ function CollectionsPage({ navigate, initialFilters }: {
       <div className="max-w-[1440px] mx-auto px-6 md:px-10 pt-12 pb-9 text-center">
         <p className="font-['IBM_Plex_Sans',sans-serif] text-[12px] font-semibold tracking-[0.22em] text-[#9a7d45]">FRAGRANCE INDEX</p>
         <h1 className="font-['Cormorant_Garamond',serif] font-bold text-[52px] md:text-[70px] text-[#171717] tracking-[0.04em] mt-2 mb-3 leading-none">
-          {bestSellersOnly ? "BEST SELLERS" : "COLLECTIONS"}
+          COLLECTIONS
         </h1>
         <p className="mx-auto max-w-[520px] font-['IBM_Plex_Sans',sans-serif] font-light text-[16px] text-[rgba(23,23,23,0.65)]">
-          {bestSellersOnly ? "Our most-loved fragrances, chosen by our community." : "Explore our curated selection of luxury decants."}
+          Explore our curated selection of luxury decants.
         </p>
         <div className="mx-auto mt-7 h-px max-w-[680px] bg-[#171717]/16" />
       </div>
@@ -926,11 +924,6 @@ function CollectionsPage({ navigate, initialFilters }: {
             <p className="font-['IBM_Plex_Sans',sans-serif] font-semibold text-[14px] tracking-[0.14em] text-[#171717]">FILTER</p>
             <button onClick={clearAll} className="font-['IBM_Plex_Sans',sans-serif] font-light text-[12px] text-[rgba(23,23,23,0.5)] hover:text-[#171717] transition-colors">Clear All</button>
           </div>
-
-          {/* Best Sellers toggle */}
-          <CheckRow label="Best Sellers" checked={bestSellersOnly} onChange={() => setBestSellersOnly(!bestSellersOnly)} />
-
-          <div className="h-[1px] bg-[rgba(0,0,0,0.1)] my-4" />
 
           {/* Category */}
           <p className="font-['IBM_Plex_Sans',sans-serif] font-semibold text-[12px] tracking-[0.12em] text-[#171717] mb-3">CATEGORY</p>
