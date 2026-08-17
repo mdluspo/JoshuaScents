@@ -218,26 +218,26 @@ function ProductCard({ product, navigate, rank }: { product: Product; navigate: 
   return (
     <button
       onClick={() => navigate("product", product)}
-      className="group relative min-h-[238px] overflow-hidden rounded-[8px] border border-[#d9cdb9] bg-[#fbf8f1] p-5 text-left shadow-[0_18px_42px_rgba(42,34,25,0.08)] transition-shadow hover:shadow-[0_26px_58px_rgba(42,34,25,0.16)]"
+      className="group relative min-h-[178px] overflow-hidden rounded-[8px] border border-[#d9cdb9] bg-[#fbf8f1] p-3 text-left shadow-[0_18px_42px_rgba(42,34,25,0.08)] transition-shadow hover:shadow-[0_26px_58px_rgba(42,34,25,0.16)] md:min-h-[238px] md:p-5"
     >
       {rank ? (
-        <div className="pointer-events-none absolute right-5 top-5 z-0 w-[88px] text-right font-['Cormorant_Garamond',serif] text-[62px] leading-none text-[#171717]/7">
+        <div className="pointer-events-none absolute right-3 top-3 z-0 w-[68px] text-right font-['Cormorant_Garamond',serif] text-[44px] leading-none text-[#171717]/7 md:right-5 md:top-5 md:w-[88px] md:text-[62px]">
           {String(rank).padStart(2, "0")}
         </div>
       ) : null}
-      <div className="relative z-10 flex h-full gap-5">
-        <div className="flex h-[190px] w-[150px] shrink-0 items-center justify-center bg-[#f0e6d7]">
-          <img src={product.img} alt={product.name} className="h-[162px] object-contain transition-transform duration-700 group-hover:scale-105" />
+      <div className="relative z-10 flex h-full gap-3 md:gap-5">
+        <div className="flex h-[150px] w-[116px] shrink-0 items-center justify-center bg-[#f0e6d7] md:h-[190px] md:w-[150px]">
+          <img src={product.img} alt={product.name} className="h-[128px] object-contain transition-transform duration-700 group-hover:scale-105 md:h-[162px]" />
         </div>
-        <div className={`flex min-h-[190px] flex-1 flex-col justify-between ${rank ? "pr-16" : ""}`}>
+        <div className={`flex min-h-[150px] flex-1 flex-col justify-between md:min-h-[190px] ${rank ? "pr-6 md:pr-16" : ""}`}>
           <div>
-            <p className="font-['IBM_Plex_Sans',sans-serif] text-[10px] font-semibold tracking-[0.16em] text-[#9a7d45]">{product.family.toUpperCase()}</p>
-            <p className="mt-2 font-['Cormorant_Garamond',serif] text-[27px] font-semibold leading-none text-[#171717]">{product.name}</p>
-            <p className="mt-3 font-['IBM_Plex_Sans',sans-serif] text-[13px] font-light leading-relaxed text-[#171717]/60">{cleanNotes(product.notes)}</p>
+            <p className="font-['IBM_Plex_Sans',sans-serif] text-[9px] font-semibold tracking-[0.16em] text-[#9a7d45] md:text-[10px]">{product.family.toUpperCase()}</p>
+            <p className="mt-1 font-['Cormorant_Garamond',serif] text-[23px] font-semibold leading-none text-[#171717] md:mt-2 md:text-[27px]">{product.name}</p>
+            <p className="mt-2 font-['IBM_Plex_Sans',sans-serif] text-[12px] font-light leading-snug text-[#171717]/60 md:mt-3 md:text-[13px] md:leading-relaxed">{cleanNotes(product.notes)}</p>
           </div>
-          <div className="mt-5 flex items-center justify-between gap-4">
-            <span className="font-['IBM_Plex_Sans',sans-serif] text-[13px] font-semibold text-[#171717]">From PHP {product.price}</span>
-            <span className="font-['IBM_Plex_Sans',sans-serif] text-[10px] font-semibold tracking-[0.16em] text-[#171717]">VIEW &rarr;</span>
+          <div className="mt-3 flex items-center justify-between gap-3 md:mt-5 md:gap-4">
+            <span className="font-['IBM_Plex_Sans',sans-serif] text-[12px] font-semibold text-[#171717] md:text-[13px]">From PHP {product.price}</span>
+            <span className="font-['IBM_Plex_Sans',sans-serif] text-[9px] font-semibold tracking-[0.16em] text-[#171717] md:text-[10px]">VIEW &rarr;</span>
           </div>
         </div>
       </div>
@@ -248,22 +248,22 @@ function ProductCard({ product, navigate, rank }: { product: Product; navigate: 
 function CompactProductCard({ product, navigate, rank }: { product: Product; navigate: (p: Page, d?: unknown) => void; rank?: number }) {
   return (
     <button onClick={() => navigate("product", product)}
-      className="group relative min-h-[360px] overflow-hidden rounded-[8px] border border-[#d7c8ae] bg-[#fbf8f1] p-4 text-left shadow-[0_14px_34px_rgba(42,34,25,0.09)] transition-shadow hover:shadow-[0_24px_52px_rgba(42,34,25,0.16)]">
+      className="group relative min-h-[172px] overflow-hidden rounded-[8px] border border-[#d7c8ae] bg-[#fbf8f1] p-3 text-left shadow-[0_14px_34px_rgba(42,34,25,0.09)] transition-shadow hover:shadow-[0_24px_52px_rgba(42,34,25,0.16)] min-[560px]:min-h-[320px] min-[560px]:p-4 md:min-h-[360px]">
       {rank ? (
         <div className="pointer-events-none absolute right-4 top-4 text-right font-['Cormorant_Garamond',serif] text-[48px] leading-none text-[#171717]/7">
           {String(rank).padStart(2, "0")}
         </div>
       ) : null}
-      <div className="relative mb-4 flex h-[190px] items-center justify-center overflow-hidden bg-[#eee4d4]">
+      <div className="relative float-left mr-3 flex h-[148px] w-[118px] items-center justify-center overflow-hidden bg-[#eee4d4] min-[560px]:float-none min-[560px]:mb-4 min-[560px]:mr-0 min-[560px]:h-[170px] min-[560px]:w-full md:h-[190px]">
         <img src={product.img} alt={product.name}
-          className="h-[168px] object-contain transition-transform duration-700 group-hover:scale-105" />
+          className="h-[126px] object-contain transition-transform duration-700 group-hover:scale-105 min-[560px]:h-[150px] md:h-[168px]" />
       </div>
       <div className="relative">
-        <p className="font-['IBM_Plex_Sans',sans-serif] text-[10px] font-semibold tracking-[0.16em] text-[#9a7d45]">{product.family.toUpperCase()}</p>
-        <p className="mt-2 font-['Cormorant_Garamond',serif] font-semibold text-[24px] text-[#171717] leading-none">{product.name}</p>
-        <p className="mt-3 font-['IBM_Plex_Sans',sans-serif] font-light text-[13px] leading-relaxed text-[#171717]/60">{cleanNotes(product.notes)}</p>
-        <div className="mt-7 flex items-center justify-between gap-3">
-          <span className="font-['IBM_Plex_Sans',sans-serif] text-[13px] font-semibold text-[#171717]">From PHP {product.price}</span>
+        <p className="font-['IBM_Plex_Sans',sans-serif] text-[9px] font-semibold tracking-[0.16em] text-[#9a7d45] md:text-[10px]">{product.family.toUpperCase()}</p>
+        <p className="mt-1 font-['Cormorant_Garamond',serif] font-semibold text-[24px] text-[#171717] leading-none md:mt-2">{product.name}</p>
+        <p className="mt-2 font-['IBM_Plex_Sans',sans-serif] font-light text-[12px] leading-snug text-[#171717]/60 md:mt-3 md:text-[13px] md:leading-relaxed">{cleanNotes(product.notes)}</p>
+        <div className="mt-4 flex items-center justify-between gap-3 min-[560px]:mt-7">
+          <span className="font-['IBM_Plex_Sans',sans-serif] text-[12px] font-semibold text-[#171717] md:text-[13px]">From PHP {product.price}</span>
           <span className="font-['IBM_Plex_Sans',sans-serif] text-[10px] font-semibold tracking-[0.16em] text-[#171717]">VIEW &rarr;</span>
         </div>
       </div>
@@ -624,7 +624,7 @@ function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
               <p className="text-center font-['IBM_Plex_Sans',sans-serif] text-[14px] font-light tracking-wide text-[rgba(23,23,23,0.58)]">
                 Curated scents for every mood and occasion.
               </p>
-              <h2 className="mb-8 text-center font-['Cormorant_Garamond',serif] text-[34px] font-bold leading-none tracking-[0.045em] text-[#171717] min-[390px]:text-[38px] md:text-[62px] md:tracking-[0.06em]">
+              <h2 className="mb-6 text-center font-['Cormorant_Garamond',serif] text-[31px] font-bold leading-none tracking-[0.035em] text-[#171717] min-[390px]:text-[34px] md:mb-8 md:text-[62px] md:tracking-[0.06em]">
                 FEATURED COLLECTIONS
               </h2>
               <div className="grid gap-4 min-[520px]:grid-cols-2 lg:grid-cols-4">
@@ -632,13 +632,13 @@ function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
                   <button
                     key={col.label}
                     onClick={() => navigate("collections", { category: col.cat })}
-                    className="group relative aspect-[4/5] overflow-hidden rounded-[8px] text-left shadow-[0_20px_45px_rgba(28,23,17,0.18)]"
+                    className="group relative aspect-[16/10] overflow-hidden rounded-[8px] text-left shadow-[0_20px_45px_rgba(28,23,17,0.18)] min-[520px]:aspect-[4/5]"
                   >
                     <img src={col.img} alt={col.label} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
                     <div className="absolute bottom-0 left-0 p-5">
                       <div className="mb-3 h-[2px] w-9 bg-[#e0dfd8]" />
-                      <p className="font-['Cormorant_Garamond',serif] text-[28px] font-bold leading-[0.98] tracking-[0.04em] text-[#f5efe5]">
+                      <p className="font-['Cormorant_Garamond',serif] text-[25px] font-bold leading-[0.98] tracking-[0.04em] text-[#f5efe5] md:text-[28px]">
                         {col.label}
                       </p>
                       <p className="mt-2 font-['IBM_Plex_Sans',sans-serif] text-[12px] font-light italic text-[#f5efe5]/80">{col.subtitle}</p>
@@ -661,7 +661,7 @@ function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
               <p className="text-center font-['IBM_Plex_Sans',sans-serif] text-[14px] font-light text-[rgba(23,23,23,0.58)]">
                 Our most-loved fragrances.
               </p>
-              <h2 className="mb-8 text-center font-['Cormorant_Garamond',serif] text-[38px] font-bold leading-none tracking-[0.045em] text-[#171717] md:mb-10 md:text-[60px] md:tracking-[0.06em]">
+              <h2 className="mb-6 text-center font-['Cormorant_Garamond',serif] text-[34px] font-bold leading-none tracking-[0.04em] text-[#171717] md:mb-10 md:text-[60px] md:tracking-[0.06em]">
                 BEST SELLERS
               </h2>
               <div className="mx-auto grid max-w-[1120px] items-center gap-5 min-[680px]:grid-cols-3 md:gap-8">
@@ -669,14 +669,14 @@ function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
                   <button
                     key={p.id}
                     onClick={() => navigate("product", p)}
-                    className={`group rounded-[22px] border border-white/70 bg-[#f3ede3] p-6 text-center transition-shadow hover:shadow-[0_22px_52px_rgba(35,28,20,0.18)] ${
+                    className={`group rounded-[16px] border border-white/70 bg-[#f3ede3] p-4 text-center transition-shadow hover:shadow-[0_22px_52px_rgba(35,28,20,0.18)] md:rounded-[22px] md:p-6 ${
                       i === 1
                         ? "shadow-[0_22px_56px_rgba(35,28,20,0.14)] min-[680px]:scale-105 lg:scale-110"
                         : "shadow-[0_14px_34px_rgba(35,28,20,0.1)]"
                     }`}
                   >
-                    <div className={`mb-4 flex items-center justify-center overflow-hidden ${i === 1 ? "h-[190px] md:h-[230px]" : "h-[170px] md:h-[190px]"}`}>
-                      <img src={p.img} alt={p.name} className={`${i === 1 ? "h-[176px] md:h-[215px]" : "h-[150px] md:h-[170px]"} object-contain transition-transform duration-700 group-hover:scale-105`} />
+                    <div className={`mb-3 flex items-center justify-center overflow-hidden md:mb-4 ${i === 1 ? "h-[150px] md:h-[230px]" : "h-[135px] md:h-[190px]"}`}>
+                      <img src={p.img} alt={p.name} className={`${i === 1 ? "h-[138px] md:h-[215px]" : "h-[120px] md:h-[170px]"} object-contain transition-transform duration-700 group-hover:scale-105`} />
                     </div>
                     <p className="font-['Cormorant_Garamond',serif] text-[20px] font-semibold leading-tight text-[#171717]">{p.name}</p>
                     <p className="font-['IBM_Plex_Sans',sans-serif] text-[12px] font-light text-[rgba(23,23,23,0.58)]">{cleanNotes(p.notes)}</p>
@@ -867,6 +867,7 @@ function CollectionsPage({ navigate, initialFilters }: {
   const [sortBy, setSortBy] = useState("Featured");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   const toggle = (arr: string[], setArr: (v: string[]) => void, val: string) => {
     setArr(arr.includes(val) ? arr.filter((x) => x !== val) : [...arr, val]);
@@ -905,19 +906,19 @@ function CollectionsPage({ navigate, initialFilters }: {
     <div className="bg-[#fbf8f1] min-h-screen">
       {/* Page title */}
       <div className="border-b border-[#171717]">
-      <div className="max-w-[1440px] mx-auto px-6 md:px-10 pt-12 pb-9 text-center">
-        <p className="font-['IBM_Plex_Sans',sans-serif] text-[12px] font-semibold tracking-[0.22em] text-[#9a7d45]">FRAGRANCE INDEX</p>
-        <h1 className="font-['Cormorant_Garamond',serif] font-bold text-[52px] md:text-[70px] text-[#171717] tracking-[0.04em] mt-2 mb-3 leading-none">
+      <div className="max-w-[1440px] mx-auto overflow-hidden px-4 pt-8 pb-7 text-center md:px-10 md:pt-12 md:pb-9">
+        <p className="font-['IBM_Plex_Sans',sans-serif] text-[10px] font-semibold tracking-[0.2em] text-[#9a7d45] md:text-[12px] md:tracking-[0.22em]">FRAGRANCE INDEX</p>
+        <h1 className="font-['Cormorant_Garamond',serif] font-bold text-[39px] min-[390px]:text-[45px] md:text-[70px] text-[#171717] tracking-[0.025em] md:tracking-[0.04em] mt-2 mb-3 leading-none">
           COLLECTIONS
         </h1>
-        <p className="mx-auto max-w-[520px] font-['IBM_Plex_Sans',sans-serif] font-light text-[16px] text-[rgba(23,23,23,0.65)]">
+        <p className="mx-auto max-w-[520px] font-['IBM_Plex_Sans',sans-serif] font-light text-[14px] text-[rgba(23,23,23,0.65)] md:text-[16px]">
           Explore our curated selection of luxury decants.
         </p>
-        <div className="mx-auto mt-7 h-px max-w-[680px] bg-[#171717]/16" />
+        <div className="mx-auto mt-5 h-px max-w-[680px] bg-[#171717]/16 md:mt-7" />
       </div>
       </div>
 
-      <div className="max-w-[1440px] mx-auto px-4 md:px-10 py-10 pb-20 flex gap-8">
+      <div className="max-w-[1440px] mx-auto px-4 md:px-10 py-6 pb-20 flex gap-8 md:py-10">
         {/* Sidebar */}
         <aside className="hidden md:block w-[220px] flex-shrink-0 border-r border-[#171717]/18 pr-6">
           <div className="flex items-center justify-between mb-5 border-b border-[#171717]/18 pb-4">
@@ -974,11 +975,19 @@ function CollectionsPage({ navigate, initialFilters }: {
         <div className="flex-1 min-w-0">
           {/* Top bar */}
           <div className="flex items-center justify-between mb-6 border-b border-[#171717]/16 pb-4">
-            <p className="font-['IBM_Plex_Sans',sans-serif] font-light text-[14px] text-[rgba(23,23,23,0.6)]">
-              {filtered.length} Decant{filtered.length !== 1 ? "s" : ""}
-            </p>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setMobileFiltersOpen((open) => !open)}
+                className="border border-[#171717]/18 px-3 py-2 font-['IBM_Plex_Sans',sans-serif] text-[11px] font-semibold tracking-[0.14em] text-[#171717] md:hidden"
+              >
+                FILTER
+              </button>
+              <p className="font-['IBM_Plex_Sans',sans-serif] font-light text-[13px] text-[rgba(23,23,23,0.6)] md:text-[14px]">
+                {filtered.length} Decant{filtered.length !== 1 ? "s" : ""}
+              </p>
+            </div>
             <div className="flex items-center gap-2">
-              <p className="font-['IBM_Plex_Sans',sans-serif] font-light text-[13px] text-[rgba(23,23,23,0.55)]">Sort By:</p>
+              <p className="hidden font-['IBM_Plex_Sans',sans-serif] font-light text-[13px] text-[rgba(23,23,23,0.55)] min-[380px]:block">Sort By:</p>
               <div className="relative">
                 <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}
                   className="appearance-none font-['IBM_Plex_Sans',sans-serif] text-[13px] text-[#171717] border border-[rgba(0,0,0,0.2)] rounded px-3 py-1.5 pr-7 bg-white focus:outline-none focus:border-[#171717] cursor-pointer">
@@ -990,6 +999,38 @@ function CollectionsPage({ navigate, initialFilters }: {
               </div>
             </div>
           </div>
+          {mobileFiltersOpen && (
+            <div className="mb-5 border border-[#d7c8ae] bg-[#fbf8f1] p-4 md:hidden">
+              <div className="mb-4 flex items-center justify-between">
+                <p className="font-['IBM_Plex_Sans',sans-serif] text-[12px] font-semibold tracking-[0.16em] text-[#171717]">FILTER</p>
+                <button onClick={clearAll} className="font-['IBM_Plex_Sans',sans-serif] text-[12px] text-[#171717]/55">Clear</button>
+              </div>
+              <p className="mb-2 font-['IBM_Plex_Sans',sans-serif] text-[11px] font-semibold tracking-[0.12em] text-[#171717]">CATEGORY</p>
+              <div className="mb-4 flex flex-wrap gap-2">
+                {CATEGORIES.map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => toggle(selectedCats, setSelectedCats, c)}
+                    className={`border px-3 py-1.5 font-['IBM_Plex_Sans',sans-serif] text-[11px] ${selectedCats.includes(c) ? "border-[#171717] bg-[#171717] text-white" : "border-[#171717]/18 text-[#171717]"}`}
+                  >
+                    {c.charAt(0) + c.slice(1).toLowerCase().replace(" & ", " & ")}
+                  </button>
+                ))}
+              </div>
+              <p className="mb-2 font-['IBM_Plex_Sans',sans-serif] text-[11px] font-semibold tracking-[0.12em] text-[#171717]">FAMILY</p>
+              <div className="flex flex-wrap gap-2">
+                {FAMILIES.map((f) => (
+                  <button
+                    key={f}
+                    onClick={() => toggle(selectedFamilies, setSelectedFamilies, f)}
+                    className={`border px-3 py-1.5 font-['IBM_Plex_Sans',sans-serif] text-[11px] ${selectedFamilies.includes(f) ? "border-[#171717] bg-[#171717] text-white" : "border-[#171717]/18 text-[#171717]"}`}
+                  >
+                    {f}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Product grid â€” 4 cols */}
           {filtered.length === 0 ? (
@@ -998,7 +1039,7 @@ function CollectionsPage({ navigate, initialFilters }: {
               <button onClick={clearAll} className="mt-4 font-['IBM_Plex_Sans',sans-serif] text-[13px] text-[#171717] border-b border-[#171717] pb-px">Clear all filters</button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 gap-3 min-[560px]:grid-cols-2 lg:grid-cols-4 lg:gap-4">
               {filtered.map((p) => <CompactProductCard key={p.id} product={p} navigate={navigate} />)}
             </div>
           )}
@@ -1021,7 +1062,7 @@ function BestSellersPage({ navigate }: { navigate: (p: Page, d?: unknown) => voi
           <p className="font-['IBM_Plex_Sans',sans-serif] text-[10px] font-semibold tracking-[0.22em] text-[#c9b27a] [writing-mode:vertical-rl]">BEST SELLERS INDEX</p>
           <p className="font-['Cormorant_Garamond',serif] text-[58px] leading-none text-[#f8f2e8]/10">01</p>
         </aside>
-        <div className="relative px-6 py-16 md:px-10 md:py-20">
+        <div className="relative px-4 py-10 md:px-10 md:py-20">
         <img src={imgDiscoveryBg} alt="" className="absolute inset-0 h-full w-full object-cover opacity-20" />
         <div className="absolute inset-0 bg-gradient-to-b from-[#171614]/88 via-[#171614]/82 to-[#2b251d]" />
         <div className="relative mx-auto grid max-w-[1180px] items-center gap-12 md:grid-cols-[0.95fr_1.05fr]">
@@ -1029,7 +1070,7 @@ function BestSellersPage({ navigate }: { navigate: (p: Page, d?: unknown) => voi
             <p className="font-['IBM_Plex_Sans',sans-serif] text-[12px] font-semibold tracking-[0.22em] text-[#c9b27a]">
               CUSTOMER FAVORITES
             </p>
-            <h1 className="mt-4 font-['Cormorant_Garamond',serif] text-[50px] font-bold leading-none tracking-[0.05em] md:text-[78px]">
+            <h1 className="mt-4 font-['Cormorant_Garamond',serif] text-[38px] font-bold leading-none tracking-[0.04em] min-[390px]:text-[44px] md:text-[78px] md:tracking-[0.05em]">
               BEST SELLERS
             </h1>
             <p className="mt-5 max-w-[520px] font-['IBM_Plex_Sans',sans-serif] text-[16px] font-light leading-relaxed text-[#e7ded0]/72">
@@ -1046,10 +1087,10 @@ function BestSellersPage({ navigate }: { navigate: (p: Page, d?: unknown) => voi
 
           <button
             onClick={() => navigate("product", signature)}
-            className="group relative min-h-[520px] overflow-hidden rounded-t-[64px] bg-[#f4eadc] text-left shadow-[0_34px_80px_rgba(0,0,0,0.34)]"
+            className="group relative min-h-[390px] overflow-hidden rounded-t-[34px] bg-[#f4eadc] text-left shadow-[0_34px_80px_rgba(0,0,0,0.34)] md:min-h-[520px] md:rounded-t-[64px]"
           >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_24%,rgba(255,255,255,0.92),rgba(235,221,201,0.42)_42%,rgba(177,149,101,0.18)_100%)]" />
-            <div className="relative flex h-full min-h-[520px] flex-col items-center justify-between px-8 pb-8 pt-10">
+            <div className="relative flex h-full min-h-[390px] flex-col items-center justify-between px-5 pb-5 pt-6 md:min-h-[520px] md:px-8 md:pb-8 md:pt-10">
               <div className="flex w-full items-center justify-between">
                 <span className="font-['IBM_Plex_Sans',sans-serif] text-[11px] font-semibold tracking-[0.18em] text-[#171717]/58">TOP PICK</span>
                 <span className="flex items-center gap-1 text-[#b1945d]">
@@ -1059,11 +1100,11 @@ function BestSellersPage({ navigate }: { navigate: (p: Page, d?: unknown) => voi
               <img
                 src={signature.img}
                 alt={signature.name}
-                className="h-[300px] object-contain drop-shadow-[0_32px_34px_rgba(24,19,13,0.24)] transition-transform duration-700 group-hover:scale-105 md:h-[340px]"
+                className="h-[205px] object-contain drop-shadow-[0_32px_34px_rgba(24,19,13,0.24)] transition-transform duration-700 group-hover:scale-105 md:h-[340px]"
               />
               <div className="w-full">
                 <div className="mb-4 h-px w-full bg-[#171717]/12" />
-                <p className="font-['Cormorant_Garamond',serif] text-[38px] font-semibold leading-none tracking-[0.035em] text-[#171717]">
+                <p className="font-['Cormorant_Garamond',serif] text-[30px] font-semibold leading-none tracking-[0.035em] text-[#171717] md:text-[38px]">
                   {signature.name}
                 </p>
                 <div className="mt-3 flex items-end justify-between gap-5">
@@ -1081,12 +1122,12 @@ function BestSellersPage({ navigate }: { navigate: (p: Page, d?: unknown) => voi
         </div>
       </section>
 
-      <section className="bg-[#f8f2e8] px-6 py-16 text-[#171717] md:px-10 md:py-20">
+      <section className="bg-[#f8f2e8] px-4 py-10 text-[#171717] md:px-10 md:py-20">
         <div className="mx-auto max-w-[1180px]">
           <div className="mb-10 flex flex-col justify-between gap-5 md:flex-row md:items-end">
             <div>
               <p className="font-['IBM_Plex_Sans',sans-serif] text-[12px] font-semibold tracking-[0.18em] text-[#9a7d45]">RANKED FAVORITES</p>
-              <h2 className="mt-2 font-['Cormorant_Garamond',serif] text-[42px] font-bold leading-none tracking-[0.05em] md:text-[60px]">
+              <h2 className="mt-2 font-['Cormorant_Garamond',serif] text-[34px] font-bold leading-none tracking-[0.04em] md:text-[60px] md:tracking-[0.05em]">
                 MOST REQUESTED DECANTS
               </h2>
             </div>
