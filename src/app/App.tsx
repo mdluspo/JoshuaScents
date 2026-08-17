@@ -406,7 +406,7 @@ function RevealSection({
       ref={sectionRef}
       id={id}
       data-card-color={color}
-      className="relative min-h-[106svh] overflow-visible bg-transparent"
+      className="relative min-h-[100svh] overflow-visible bg-transparent md:min-h-[106svh]"
       style={{ backgroundColor: backdropColor ?? color, marginTop: overlap ? -overlapAmount : 0 }}
     >
       <motion.div
@@ -567,14 +567,14 @@ function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
     <div className="bg-[#39384f]">
       <div className="w-full bg-[#f8f2e8]">
         <div className="scroll-smooth">
-          <section className="relative flex min-h-[114svh] flex-col items-center justify-start overflow-hidden bg-[#fbf8f1] px-6 pb-20 pt-8 md:px-20 md:pb-28 md:pt-9 xl:px-28">
+          <section className="relative flex min-h-[100svh] flex-col items-center justify-start overflow-hidden bg-[#fbf8f1] px-4 pb-16 pt-7 md:min-h-[114svh] md:px-20 md:pb-28 md:pt-9 xl:px-28">
             <div className="absolute inset-0">
               <img src={imgDiscoveryBg} alt="" className="h-full w-full object-cover" />
               <div className="absolute inset-0 bg-[#fbf8f1]/82" />
             </div>
             <div className="relative z-10 flex w-full flex-1 flex-col items-center">
               <div className="mx-auto max-w-[620px] text-center">
-                <h1 className="font-['Cormorant_Garamond',serif] text-[32px] font-bold leading-[1.08] tracking-[0.055em] text-[#171717] md:text-[44px] lg:text-[52px]">
+                <h1 className="font-['Cormorant_Garamond',serif] text-[31px] font-bold leading-[1.05] tracking-[0.035em] text-[#171717] min-[390px]:text-[36px] md:text-[44px] md:tracking-[0.055em] lg:text-[52px]">
                   FIND YOUR<br />SIGNATURE SCENT
                 </h1>
                 <p className="mx-auto mt-2 max-w-[420px] font-['IBM_Plex_Sans',sans-serif] text-[14px] font-light leading-relaxed text-[rgba(23,23,23,0.62)] md:text-[16px]">
@@ -584,13 +584,13 @@ function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
                   <DarkBtn onClick={() => navigate("collections")} className="px-8 py-[10px] text-[14px]">SHOP COLLECTION</DarkBtn>
                 </div>
               </div>
-              <div className="relative mt-7 h-[330px] w-full max-w-[1640px] overflow-visible md:mt-8 md:h-[430px] xl:h-[500px]">
+              <div className="relative mt-8 h-[240px] w-full max-w-[1640px] overflow-visible min-[390px]:h-[270px] md:mt-8 md:h-[430px] xl:h-[500px]">
                 {[
-                  { left: "8%", height: "h-[128px] md:h-[178px] xl:h-[205px]", top: "top-[70px] md:top-[88px] xl:top-[96px]" },
-                  { left: "28%", height: "h-[156px] md:h-[218px] xl:h-[250px]", top: "top-[42px] md:top-[52px] xl:top-[60px]" },
-                  { left: "50%", height: "h-[205px] md:h-[278px] xl:h-[318px]", top: "-top-2 md:-top-4" },
-                  { left: "72%", height: "h-[156px] md:h-[218px] xl:h-[250px]", top: "top-[42px] md:top-[52px] xl:top-[60px]" },
-                  { left: "92%", height: "h-[128px] md:h-[178px] xl:h-[205px]", top: "top-[70px] md:top-[88px] xl:top-[96px]" },
+                  { left: "-3%", height: "h-[118px] min-[390px]:h-[132px] md:h-[178px] xl:h-[205px]", top: "top-[82px] min-[390px]:top-[92px] md:top-[88px] xl:top-[96px]" },
+                  { left: "23%", height: "h-[146px] min-[390px]:h-[166px] md:h-[218px] xl:h-[250px]", top: "top-[52px] min-[390px]:top-[58px] md:top-[52px] xl:top-[60px]" },
+                  { left: "50%", height: "h-[190px] min-[390px]:h-[216px] md:h-[278px] xl:h-[318px]", top: "top-[4px] min-[390px]:top-0 md:-top-4" },
+                  { left: "77%", height: "h-[146px] min-[390px]:h-[166px] md:h-[218px] xl:h-[250px]", top: "top-[52px] min-[390px]:top-[58px] md:top-[52px] xl:top-[60px]" },
+                  { left: "103%", height: "h-[118px] min-[390px]:h-[132px] md:h-[178px] xl:h-[205px]", top: "top-[82px] min-[390px]:top-[92px] md:top-[88px] xl:top-[96px]" },
                 ].map((bottle, i) => (
                   <img
                     key={i}
@@ -618,16 +618,16 @@ function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
             revealOffset={88}
             fadeContent={false}
             triggerRootMargin="0px 0px -6% 0px"
-            className="flex min-h-[108svh] items-start overflow-hidden rounded-t-[64px] bg-[#e9dece] px-6 pb-28 pt-[76px] shadow-[0_-18px_40px_rgba(50,41,30,0.08)] md:px-20 md:pb-36 md:pt-[92px] xl:px-28"
+            className="flex min-h-[100svh] items-start overflow-hidden rounded-t-[34px] bg-[#e9dece] px-4 pb-24 pt-[58px] shadow-[0_-18px_40px_rgba(50,41,30,0.08)] md:min-h-[108svh] md:rounded-t-[64px] md:px-20 md:pb-36 md:pt-[92px] xl:px-28"
           >
               <div className="w-full">
               <p className="text-center font-['IBM_Plex_Sans',sans-serif] text-[14px] font-light tracking-wide text-[rgba(23,23,23,0.58)]">
                 Curated scents for every mood and occasion.
               </p>
-              <h2 className="mb-8 text-center font-['Cormorant_Garamond',serif] text-[42px] font-bold leading-none tracking-[0.06em] text-[#171717] md:text-[62px]">
+              <h2 className="mb-8 text-center font-['Cormorant_Garamond',serif] text-[34px] font-bold leading-none tracking-[0.045em] text-[#171717] min-[390px]:text-[38px] md:text-[62px] md:tracking-[0.06em]">
                 FEATURED COLLECTIONS
               </h2>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-4 min-[520px]:grid-cols-2 lg:grid-cols-4">
                 {collections.map((col) => (
                   <button
                     key={col.label}
@@ -655,28 +655,28 @@ function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
           <RevealSection
             color="#f7f1e7"
             backdropColor="#e9dece"
-            className="flex min-h-[108svh] items-start overflow-hidden rounded-t-[64px] bg-[#f7f1e7] px-6 pb-28 pt-[76px] shadow-[0_-18px_40px_rgba(50,41,30,0.08)] md:px-20 md:pb-36 md:pt-[92px] xl:px-28"
+            className="flex min-h-[100svh] items-start overflow-hidden rounded-t-[34px] bg-[#f7f1e7] px-4 pb-24 pt-[58px] shadow-[0_-18px_40px_rgba(50,41,30,0.08)] md:min-h-[108svh] md:rounded-t-[64px] md:px-20 md:pb-36 md:pt-[92px] xl:px-28"
           >
             <div className="w-full">
               <p className="text-center font-['IBM_Plex_Sans',sans-serif] text-[14px] font-light text-[rgba(23,23,23,0.58)]">
                 Our most-loved fragrances.
               </p>
-              <h2 className="mb-10 text-center font-['Cormorant_Garamond',serif] text-[42px] font-bold leading-none tracking-[0.06em] text-[#171717] md:text-[60px]">
+              <h2 className="mb-8 text-center font-['Cormorant_Garamond',serif] text-[38px] font-bold leading-none tracking-[0.045em] text-[#171717] md:mb-10 md:text-[60px] md:tracking-[0.06em]">
                 BEST SELLERS
               </h2>
-              <div className="mx-auto grid max-w-[1120px] items-center gap-8 sm:grid-cols-3">
+              <div className="mx-auto grid max-w-[1120px] items-center gap-5 min-[680px]:grid-cols-3 md:gap-8">
                 {bestSellers.map((p, i) => (
                   <button
                     key={p.id}
                     onClick={() => navigate("product", p)}
                     className={`group rounded-[22px] border border-white/70 bg-[#f3ede3] p-6 text-center transition-shadow hover:shadow-[0_22px_52px_rgba(35,28,20,0.18)] ${
                       i === 1
-                        ? "shadow-[0_22px_56px_rgba(35,28,20,0.14)] sm:scale-110"
+                        ? "shadow-[0_22px_56px_rgba(35,28,20,0.14)] min-[680px]:scale-105 lg:scale-110"
                         : "shadow-[0_14px_34px_rgba(35,28,20,0.1)]"
                     }`}
                   >
-                    <div className={`mb-4 flex items-center justify-center overflow-hidden ${i === 1 ? "h-[230px]" : "h-[190px]"}`}>
-                      <img src={p.img} alt={p.name} className={`${i === 1 ? "h-[215px]" : "h-[170px]"} object-contain transition-transform duration-700 group-hover:scale-105`} />
+                    <div className={`mb-4 flex items-center justify-center overflow-hidden ${i === 1 ? "h-[190px] md:h-[230px]" : "h-[170px] md:h-[190px]"}`}>
+                      <img src={p.img} alt={p.name} className={`${i === 1 ? "h-[176px] md:h-[215px]" : "h-[150px] md:h-[170px]"} object-contain transition-transform duration-700 group-hover:scale-105`} />
                     </div>
                     <p className="font-['Cormorant_Garamond',serif] text-[20px] font-semibold leading-tight text-[#171717]">{p.name}</p>
                     <p className="font-['IBM_Plex_Sans',sans-serif] text-[12px] font-light text-[rgba(23,23,23,0.58)]">{cleanNotes(p.notes)}</p>
@@ -703,7 +703,7 @@ function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
             backdropColor="#f7f1e7"
             backgroundImage={imgWhyLuxuryBg}
             backgroundOverlayClassName="bg-[linear-gradient(90deg,rgba(229,218,201,0.94),rgba(229,218,201,0.9)_48%,rgba(229,218,201,0.86))]"
-            className="flex min-h-[92svh] items-center overflow-hidden rounded-t-[64px] bg-[#e5dac9] py-16 shadow-[0_-18px_40px_rgba(50,41,30,0.08)] md:py-20"
+            className="flex min-h-[100svh] items-center overflow-hidden rounded-t-[34px] bg-[#e5dac9] py-14 shadow-[0_-18px_40px_rgba(50,41,30,0.08)] md:min-h-[92svh] md:rounded-t-[64px] md:py-20"
           >
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
               <img src={imgBottle} alt="" className="absolute -bottom-10 left-[6%] h-[260px] rotate-[8deg] object-contain opacity-[0.045] blur-[0.2px] md:h-[400px]" />
@@ -711,22 +711,22 @@ function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
               <div className="absolute inset-x-[8%] top-[22%] h-px rotate-[-6deg] bg-[#b59a63]/18" />
               <div className="absolute bottom-[16%] left-[16%] h-24 w-[68%] rounded-full bg-[#6e5c42]/10 blur-3xl" />
             </div>
-            <div className="relative mx-auto flex min-h-[68svh] w-full max-w-[1120px] flex-col justify-center px-6 md:px-20 xl:px-0">
-              <h2 className="text-center font-['Cormorant_Garamond',serif] text-[38px] font-bold leading-none tracking-[0.06em] text-[#171717] md:text-[56px]">
+            <div className="relative mx-auto flex min-h-[74svh] w-full max-w-[1120px] flex-col justify-center px-5 md:min-h-[68svh] md:px-20 xl:px-0">
+              <h2 className="text-center font-['Cormorant_Garamond',serif] text-[33px] font-bold leading-none tracking-[0.045em] text-[#171717] min-[390px]:text-[37px] md:text-[56px] md:tracking-[0.06em]">
                 WHY DECANTS BY JOSHUA
               </h2>
               <p className="mx-auto mt-3 max-w-[620px] text-center font-['IBM_Plex_Sans',sans-serif] text-[15px] font-light leading-relaxed text-[rgba(23,23,23,0.62)]">
                 Crafted to make fragrance discovery simple, authentic, and memorable.
               </p>
-              <div className="mx-auto mt-14 grid w-full max-w-[1040px] gap-x-24 gap-y-12 sm:grid-cols-2">
+              <div className="mx-auto mt-10 grid w-full max-w-[1040px] gap-x-24 gap-y-8 min-[680px]:grid-cols-2 md:mt-14 md:gap-y-12">
                 {featureItems.map(({ Icon, title, desc }) => (
                   <div
                     key={title}
-                    className="flex items-start gap-4"
+                    className="flex items-start gap-3 md:gap-4"
                   >
-                    <Icon size={30} strokeWidth={1.4} className="mt-1 shrink-0 text-[#171717]" />
+                    <Icon size={25} strokeWidth={1.4} className="mt-1 shrink-0 text-[#171717] md:size-[30px]" />
                     <div>
-                      <p className="font-['Cormorant_Garamond',serif] text-[28px] font-bold leading-tight text-[#171717]">{title}</p>
+                      <p className="font-['Cormorant_Garamond',serif] text-[23px] font-bold leading-tight text-[#171717] md:text-[28px]">{title}</p>
                       <p className="mt-1 max-w-[340px] font-['IBM_Plex_Sans',sans-serif] text-[13px] font-light leading-relaxed text-[rgba(23,23,23,0.6)]">{desc}</p>
                     </div>
                   </div>
@@ -742,18 +742,18 @@ function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
             color="#e5dac9"
             backdropColor="#e5dac9"
             triggerRootMargin="0px 0px 32% 0px"
-            className="flex min-h-[112svh] items-stretch overflow-visible bg-transparent"
+            className="flex min-h-[100svh] items-stretch overflow-visible bg-transparent md:min-h-[112svh]"
           >
-            <div className="relative flex min-h-[112svh] w-full flex-col overflow-hidden rounded-t-[64px] bg-[#fbf8f1] shadow-[0_24px_70px_rgba(42,34,25,0.12)]">
+            <div className="relative flex min-h-[100svh] w-full flex-col overflow-hidden rounded-t-[34px] bg-[#fbf8f1] shadow-[0_24px_70px_rgba(42,34,25,0.12)] md:min-h-[112svh] md:rounded-t-[64px]">
               <img src={imgDiscoveryBg} alt="" className="absolute inset-0 h-full w-full object-cover" />
               <div className="absolute inset-0 bg-[#fbf8f1]/68" />
-              <div className="relative grid flex-1 items-center gap-8 px-8 pb-12 pt-16 md:grid-cols-[0.85fr_1fr_1fr] md:px-20 lg:px-24">
-                <div className="self-start md:self-center">
-                  <h2 className="font-['Cormorant_Garamond',serif] text-[40px] font-bold leading-none tracking-[0.06em] text-[#171717] md:text-[58px]">
+              <div className="relative grid flex-1 items-center gap-7 px-5 pb-10 pt-14 md:grid-cols-[0.85fr_1fr_1fr] md:gap-8 md:px-20 md:pb-12 md:pt-16 lg:px-24">
+                <div className="self-start text-center md:self-center md:text-left">
+                  <h2 className="font-['Cormorant_Garamond',serif] text-[35px] font-bold leading-none tracking-[0.05em] text-[#171717] md:text-[58px] md:tracking-[0.06em]">
                     DISCOVERY SETS
                   </h2>
-                  <div className="my-7 h-[2px] w-28 bg-[#b6a06c]" />
-                  <p className="max-w-[360px] font-['Cormorant_Garamond',serif] text-[17px] italic leading-relaxed text-[rgba(23,23,23,0.6)]">
+                  <div className="mx-auto my-5 h-[2px] w-24 bg-[#b6a06c] md:mx-0 md:my-7 md:w-28" />
+                  <p className="mx-auto max-w-[360px] font-['Cormorant_Garamond',serif] text-[16px] italic leading-relaxed text-[rgba(23,23,23,0.6)] md:mx-0 md:text-[17px]">
                     Curated fragrance journeys for every occasion.
                   </p>
                   <button
@@ -772,29 +772,29 @@ function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
                   initial={{ opacity: 0, x: carouselDirection * 34, rotate: -9 }}
                   animate={{ opacity: 1, x: 0, rotate: -9 }}
                   transition={{ duration: 0.32, ease: [0.19, 1, 0.22, 1] }}
-                  className="mx-auto h-[440px] rotate-[-9deg] object-contain drop-shadow-[0_30px_42px_rgba(30,24,18,0.22)] md:h-[660px] xl:h-[760px]"
+                  className="mx-auto h-[260px] rotate-[-9deg] object-contain drop-shadow-[0_30px_42px_rgba(30,24,18,0.22)] min-[390px]:h-[310px] md:h-[660px] xl:h-[760px]"
                 />
                 <motion.div
                   key={`discovery-copy-${activeDiscoverySet.id}`}
                   initial={{ opacity: 0, x: carouselDirection * 24 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.3, ease: [0.19, 1, 0.22, 1], delay: 0.03 }}
-                  className="relative lg:pr-20"
+                  className="relative text-center md:text-left lg:pr-20"
                 >
-                  <div className="mb-5 flex items-center gap-5">
-                    <div className="h-px w-24 bg-[#cbbd9f]" />
-                    <span className="font-['Cormorant_Garamond',serif] text-[52px] font-semibold leading-none text-[#171717]">{String(activeDiscoveryIndex + 1).padStart(2, "0")}</span>
+                  <div className="mb-4 flex items-center gap-4 md:mb-5 md:gap-5">
+                    <div className="h-px flex-1 bg-[#cbbd9f] md:w-24 md:flex-none" />
+                    <span className="font-['Cormorant_Garamond',serif] text-[42px] font-semibold leading-none text-[#171717] md:text-[52px]">{String(activeDiscoveryIndex + 1).padStart(2, "0")}</span>
                     <div className="h-px flex-1 bg-[#cbbd9f]" />
                   </div>
-                  <h3 className="font-['Cormorant_Garamond',serif] text-[38px] font-semibold leading-[0.98] tracking-[0.04em] text-[#171717] md:text-[54px]">
+                  <h3 className="font-['Cormorant_Garamond',serif] text-[31px] font-semibold leading-[0.98] tracking-[0.035em] text-[#171717] min-[390px]:text-[35px] md:text-[54px] md:tracking-[0.04em]">
                     {activeDiscoverySet.name.toUpperCase()}
                   </h3>
-                  <p className="mt-5 max-w-[380px] font-['IBM_Plex_Sans',sans-serif] text-[16px] font-light leading-relaxed text-[rgba(23,23,23,0.64)]">
+                  <p className="mx-auto mt-4 max-w-[380px] font-['IBM_Plex_Sans',sans-serif] text-[14px] font-light leading-relaxed text-[rgba(23,23,23,0.64)] md:mx-0 md:mt-5 md:text-[16px]">
                     {activeDiscoverySet.subtitle}
                   </p>
                   <button
                     onClick={() => navigate("discoverySet", activeDiscoverySet.id)}
-                    className="mt-12 font-['Cormorant_Garamond',serif] text-[22px] text-[#171717] tracking-wide border-b border-[#171717] pb-px hover:opacity-55 transition-opacity"
+                    className="mt-7 font-['Cormorant_Garamond',serif] text-[20px] text-[#171717] tracking-wide border-b border-[#171717] pb-px hover:opacity-55 transition-opacity md:mt-12 md:text-[22px]"
                   >
                     EXPLORE SET
                   </button>
@@ -813,29 +813,29 @@ function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
                   </div>
                 </motion.div>
               </div>
-              <div className="relative grid items-center gap-5 bg-[#ded3bf] px-8 py-8 md:grid-cols-[auto_1fr_auto_1fr_auto] md:px-14">
-                <button onClick={() => goDiscovery(-1)} className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-[#a79368] text-[#171717]" aria-label="Previous discovery set">
-                  <ArrowLeft size={30} strokeWidth={1.4} />
+              <div className="relative grid grid-cols-[auto_1fr_auto] items-center gap-3 bg-[#ded3bf] px-4 py-5 md:grid-cols-[auto_1fr_auto_1fr_auto] md:gap-5 md:px-14 md:py-8">
+                <button onClick={() => goDiscovery(-1)} className="mx-auto flex h-11 w-11 items-center justify-center rounded-full border border-[#a79368] text-[#171717] md:h-14 md:w-14" aria-label="Previous discovery set">
+                  <ArrowLeft size={24} strokeWidth={1.4} />
                 </button>
-                <button onClick={() => navigate("discoverySet", DISCOVERY_SETS[previousDiscoveryIndex].id)} className="text-center transition-opacity hover:opacity-60">
+                <button onClick={() => navigate("discoverySet", DISCOVERY_SETS[previousDiscoveryIndex].id)} className="hidden text-center transition-opacity hover:opacity-60 md:block">
                   <p className="font-['Cormorant_Garamond',serif] text-[34px] text-[#171717]">{String(previousDiscoveryIndex + 1).padStart(2, "0")}</p>
                   <p className="font-['Cormorant_Garamond',serif] text-[22px] leading-tight text-[#171717]">{DISCOVERY_SETS[previousDiscoveryIndex].name.toUpperCase()}</p>
                   <p className="font-['Cormorant_Garamond',serif] text-[13px] text-[rgba(23,23,23,0.62)]">{DISCOVERY_SETS[previousDiscoveryIndex].count} Fragrances</p>
                 </button>
                 <button
                   onClick={toggleDiscoveryPlayback}
-                  className="mx-auto flex h-24 w-24 items-center justify-center rounded-full border border-[#a79368] text-[#171717] transition-colors hover:bg-[#d4c8b2]"
+                  className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-[#a79368] text-[#171717] transition-colors hover:bg-[#d4c8b2] md:h-24 md:w-24"
                   aria-label={isDiscoveryPaused ? "Resume discovery carousel" : "Pause discovery carousel"}
                 >
                   {isDiscoveryPaused ? <Play size={24} strokeWidth={1.6} fill="currentColor" /> : <Pause size={26} strokeWidth={1.8} fill="currentColor" />}
                 </button>
-                <button onClick={() => navigate("discoverySet", DISCOVERY_SETS[nextDiscoveryIndex].id)} className="text-center transition-opacity hover:opacity-60">
+                <button onClick={() => navigate("discoverySet", DISCOVERY_SETS[nextDiscoveryIndex].id)} className="hidden text-center transition-opacity hover:opacity-60 md:block">
                   <p className="font-['Cormorant_Garamond',serif] text-[34px] text-[#171717]">{String(nextDiscoveryIndex + 1).padStart(2, "0")}</p>
                   <p className="font-['Cormorant_Garamond',serif] text-[22px] leading-tight text-[#171717]">{DISCOVERY_SETS[nextDiscoveryIndex].name.toUpperCase()}</p>
                   <p className="font-['Cormorant_Garamond',serif] text-[13px] text-[rgba(23,23,23,0.62)]">{DISCOVERY_SETS[nextDiscoveryIndex].count} Fragrances</p>
                 </button>
-                <button onClick={() => goDiscovery(1)} className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-[#a79368] text-[#171717]" aria-label="Next discovery set">
-                  <ArrowLeft size={30} strokeWidth={1.4} className="rotate-180" />
+                <button onClick={() => goDiscovery(1)} className="mx-auto flex h-11 w-11 items-center justify-center rounded-full border border-[#a79368] text-[#171717] md:h-14 md:w-14" aria-label="Next discovery set">
+                  <ArrowLeft size={24} strokeWidth={1.4} className="rotate-180" />
                 </button>
                 <div className="col-span-full mt-2 flex justify-center gap-2">
                   {DISCOVERY_SETS.map((set, dot) => (
