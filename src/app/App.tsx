@@ -407,7 +407,7 @@ function RevealSection({
       id={id}
       data-card-color={color}
       className="relative min-h-[100svh] overflow-visible bg-transparent md:min-h-[106svh]"
-      style={{ backgroundColor: backdropColor ?? color, marginTop: overlap ? -overlapAmount : 0 }}
+      style={{ backgroundColor: backdropColor ?? color, marginTop: overlap ? `clamp(-${overlapAmount}px, -7vw, -48px)` : 0 }}
     >
       <motion.div
         initial={{ y: revealOffset, opacity: hideUntilReveal ? 0 : 1 }}
@@ -1141,7 +1141,7 @@ function BestSellersPage({ navigate }: { navigate: (p: Page, d?: unknown) => voi
 
           <div className="grid grid-cols-2 gap-3 md:grid-cols-2 md:gap-5 xl:grid-cols-3">
             {ranked.map((product, index) => (
-              <ProductCard key={product.id} product={product} navigate={navigate} rank={index + 2} />
+              <CompactProductCard key={product.id} product={product} navigate={navigate} rank={index + 2} />
             ))}
           </div>
         </div>
@@ -1498,9 +1498,9 @@ function ProductPage({ product, navigate, addToCart }: {
         {relatedProducts.length > 0 && (
           <div className="mt-20">
             <h2 className="font-['Cormorant_Garamond',serif] font-bold text-[34px] text-[#171717] tracking-wide mb-8">You Might Also Like</h2>
-            <div className="-mx-6 flex snap-x gap-3 overflow-x-auto px-6 pb-3 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4">
+            <div className="-mx-6 flex snap-x gap-3 overflow-x-auto px-6 pb-3 md:mx-0 md:grid md:grid-cols-2 md:overflow-visible md:px-0 md:pb-0 lg:grid-cols-4">
               {relatedProducts.map((p) => (
-                <div key={p.id} className="w-[190px] shrink-0 snap-start sm:w-auto">
+                <div key={p.id} className="w-[190px] shrink-0 snap-start md:w-auto">
                   <RelatedProductCard product={p} navigate={navigate} />
                 </div>
               ))}
