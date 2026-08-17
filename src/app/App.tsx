@@ -18,6 +18,15 @@ import imgCollProduct from "@/imports/Collections-1/2fead9763e6ed410e1c09e3afb4c
 // â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 type Page = "home" | "collections" | "bestsellers" | "discovery" | "discoverySet" | "decantguide" | "faq" | "product" | "cart" | "checkout" | "confirmation";
 
+type AppHistoryState = {
+  joshuaScents: true;
+  page: Page;
+  productId?: number;
+  discoverySetId?: number | null;
+  collectionFilters?: Partial<Filters>;
+  guard?: boolean;
+};
+
 interface Filters {
   categories: string[];
   families: string[];
@@ -1215,14 +1224,14 @@ function DiscoveryPage({ navigate, selectedSetId }: { navigate: (p: Page, d?: un
       </section>
 
       {/* Explore Our Sets */}
-      <section className="px-6 md:px-12 py-16">
+      <section className="px-4 py-12 md:px-12 md:py-16">
         <div className="max-w-[1180px] mx-auto">
           <div className="mb-12 text-center">
             <p className="font-['IBM_Plex_Sans',sans-serif] text-[12px] font-semibold tracking-[0.18em] text-[#9a7d45]">EXPLORE OUR SETS</p>
             <h2 className="mt-2 font-['Cormorant_Garamond',serif] font-bold text-[42px] text-[#171717] tracking-[0.05em] md:text-[60px] leading-none">SCENT JOURNEYS</h2>
           </div>
 
-          <div className="space-y-10">
+          <div className="grid grid-cols-2 gap-3 md:block md:space-y-10">
             {DISCOVERY_SETS.map((set, i) => {
               const setProducts = ALL_PRODUCTS.filter((p) => set.productIds.includes(p.id));
               const heroProduct = setProducts[0];
@@ -1238,13 +1247,13 @@ function DiscoveryPage({ navigate, selectedSetId }: { navigate: (p: Page, d?: un
                       : "border-[#d9cdb9] shadow-[0_24px_70px_rgba(42,34,25,0.12)]"
                   }`}
                 >
-                  <div className={`relative flex min-h-[430px] items-center justify-center overflow-hidden bg-[#efe3d1] p-8 ${reverse ? "md:order-2" : ""}`}>
+                  <div className={`relative flex min-h-[130px] items-center justify-center overflow-hidden bg-[#efe3d1] p-3 md:min-h-[430px] md:p-8 ${reverse ? "md:order-2" : ""}`}>
                       <img src={imgDiscoveryBg} alt="" className="absolute inset-0 h-full w-full object-cover opacity-26" />
                       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(255,255,255,0.82),rgba(239,227,209,0.5)_42%,rgba(152,118,67,0.24)_100%)]" />
                       <div className="absolute left-[8%] top-[13%] h-px w-[82%] rotate-[-8deg] bg-[#b59a63]/30" />
-                      <div className="absolute bottom-[15%] left-[13%] h-[74px] w-[74%] rounded-full bg-[#4f4436]/16 blur-2xl" />
-                      <div className="absolute inset-x-10 bottom-10 h-px bg-[#b59a63]/18" />
-                      <div className="relative h-[330px] w-full max-w-[410px]">
+                      <div className="absolute bottom-[15%] left-[13%] h-[34px] w-[74%] rounded-full bg-[#4f4436]/16 blur-2xl md:h-[74px]" />
+                      <div className="absolute inset-x-6 bottom-5 h-px bg-[#b59a63]/18 md:inset-x-10 md:bottom-10" />
+                      <div className="relative h-[118px] w-full max-w-[170px] md:h-[330px] md:max-w-[410px]">
                         {setProducts.slice(0, 5).map((p, idx) => (
                           <button
                             key={p.id}
@@ -1259,27 +1268,27 @@ function DiscoveryPage({ navigate, selectedSetId }: { navigate: (p: Page, d?: un
                             <img
                               src={p.img}
                               alt={p.name}
-                              className={`${idx === 0 ? "h-[270px]" : "h-[210px]"} object-contain drop-shadow-[0_24px_28px_rgba(35,28,20,0.22)]`}
+                              className={`${idx === 0 ? "h-[108px] md:h-[270px]" : "h-[84px] md:h-[210px]"} object-contain drop-shadow-[0_24px_28px_rgba(35,28,20,0.22)]`}
                             />
                           </button>
                         ))}
                       </div>
                     </div>
-                  <div className="relative flex min-h-[430px] flex-col justify-between overflow-hidden p-7 md:p-9">
+                  <div className="relative flex min-h-[210px] flex-col justify-between overflow-hidden p-3 md:min-h-[430px] md:p-9">
                     <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_90%_10%,rgba(174,151,102,0.14),transparent_30%)]" />
-                    <div className="pointer-events-none absolute right-7 top-6 font-['Cormorant_Garamond',serif] text-[92px] leading-none text-[#171717]/7">0{i + 1}</div>
+                    <div className="pointer-events-none absolute right-3 top-3 font-['Cormorant_Garamond',serif] text-[52px] leading-none text-[#171717]/7 md:right-7 md:top-6 md:text-[92px]">0{i + 1}</div>
                     <div className="relative">
-                      <div className="mb-5 h-[2px] w-14 bg-[#AE9766]" />
-                      <p className="font-['Cormorant_Garamond',serif] text-[38px] font-semibold leading-none tracking-[0.03em] text-[#171717]">{set.name}</p>
-                      <p className="mt-3 max-w-[420px] font-['IBM_Plex_Sans',sans-serif] text-[14px] font-light leading-relaxed text-[#171717]/62">{set.subtitle}</p>
-                      <div className="mt-5 flex flex-wrap gap-2">
+                      <div className="mb-3 h-[2px] w-10 bg-[#AE9766] md:mb-5 md:w-14" />
+                      <p className="line-clamp-2 font-['Cormorant_Garamond',serif] text-[22px] font-semibold leading-[0.95] tracking-[0.02em] text-[#171717] md:text-[38px] md:leading-none md:tracking-[0.03em]">{set.name}</p>
+                      <p className="mt-2 line-clamp-2 max-w-[420px] font-['IBM_Plex_Sans',sans-serif] text-[11px] font-light leading-snug text-[#171717]/62 md:mt-3 md:text-[14px] md:leading-relaxed">{set.subtitle}</p>
+                      <div className="mt-3 flex flex-wrap gap-1.5 md:mt-5 md:gap-2">
                         {set.tags.map((t) => (
-                          <span key={t} className="border border-[#c9b27a]/45 px-3 py-1 font-['IBM_Plex_Sans',sans-serif] text-[10px] tracking-[0.12em] text-[#171717]">{t}</span>
+                          <span key={t} className="border border-[#c9b27a]/45 px-2 py-1 font-['IBM_Plex_Sans',sans-serif] text-[8px] tracking-[0.1em] text-[#171717] md:px-3 md:text-[10px] md:tracking-[0.12em]">{t}</span>
                         ))}
                       </div>
                     </div>
-                    <div className="relative mt-9">
-                      <div className="mb-6 grid gap-3">
+                    <div className="relative mt-4 md:mt-9">
+                      <div className="mb-6 hidden gap-3 md:grid">
                         {setProducts.slice(0, 3).map((p, idx) => (
                           <button key={p.id} onClick={() => navigate("product", p)} className="grid grid-cols-[36px_1fr_auto] items-center gap-3 border-b border-[#d9cdb9] pb-3 text-left transition-opacity hover:opacity-60">
                             <span className="font-['Cormorant_Garamond',serif] text-[25px] text-[#AE9766]">0{idx + 1}</span>
@@ -1291,16 +1300,16 @@ function DiscoveryPage({ navigate, selectedSetId }: { navigate: (p: Page, d?: un
                           </button>
                         ))}
                       </div>
-                      <div className="flex items-end justify-between gap-4">
+                      <div className="flex items-end justify-between gap-3 md:gap-4">
                         <div>
-                          <p className="font-['IBM_Plex_Sans',sans-serif] text-[12px] font-light text-[#171717]/55">{set.count} Fragrances</p>
-                          <p className="font-['IBM_Plex_Sans',sans-serif] text-[20px] font-semibold text-[#171717]">PHP {set.price}</p>
+                          <p className="font-['IBM_Plex_Sans',sans-serif] text-[10px] font-light text-[#171717]/55 md:text-[12px]">{set.count} Fragrances</p>
+                          <p className="font-['IBM_Plex_Sans',sans-serif] text-[14px] font-semibold text-[#171717] md:text-[20px]">PHP {set.price}</p>
                         </div>
                         <button
                           onClick={() => navigate("discoverySet", set.id)}
-                          className="border-b border-[#171717] pb-px font-['IBM_Plex_Sans',sans-serif] text-[11px] font-semibold tracking-[0.16em] text-[#171717] hover:opacity-55"
+                          className="border-b border-[#171717] pb-px font-['IBM_Plex_Sans',sans-serif] text-[9px] font-semibold tracking-[0.12em] text-[#171717] hover:opacity-55 md:text-[11px] md:tracking-[0.16em]"
                         >
-                          EXPLORE SET &rarr;
+                          EXPLORE &rarr;
                         </button>
                       </div>
                     </div>
@@ -1968,16 +1977,79 @@ export default function App() {
   const [selectedDiscoverySetId, setSelectedDiscoverySetId] = useState<number | null>(null);
   const [collectionFilters, setCollectionFilters] = useState<Partial<Filters>>({});
   const [cart, setCart] = useState<CartItem[]>([]);
+  const pageRef = useRef<Page>("home");
+  const selectedProductRef = useRef<Product>(ALL_PRODUCTS[0]);
+  const selectedDiscoverySetIdRef = useRef<number | null>(null);
+  const collectionFiltersRef = useRef<Partial<Filters>>({});
+
+  const createHistoryState = (nextPage = pageRef.current): AppHistoryState => ({
+    joshuaScents: true,
+    page: nextPage,
+    productId: selectedProductRef.current.id,
+    discoverySetId: selectedDiscoverySetIdRef.current,
+    collectionFilters: collectionFiltersRef.current,
+  });
+
+  const applyHistoryState = (state: AppHistoryState, scroll = true) => {
+    pageRef.current = state.page;
+    setPage(state.page);
+
+    const restoredProduct = ALL_PRODUCTS.find((product) => product.id === state.productId);
+    if (restoredProduct) {
+      selectedProductRef.current = restoredProduct;
+      setSelectedProduct(restoredProduct);
+    }
+
+    selectedDiscoverySetIdRef.current = state.discoverySetId ?? null;
+    setSelectedDiscoverySetId(state.discoverySetId ?? null);
+
+    collectionFiltersRef.current = state.collectionFilters ?? {};
+    setCollectionFilters(state.collectionFilters ?? {});
+
+    if (scroll) window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    const initialState = createHistoryState("home");
+    window.history.replaceState({ ...initialState, guard: true }, "", window.location.href);
+    window.history.pushState(initialState, "", window.location.href);
+
+    const onPopState = (event: PopStateEvent) => {
+      const state = event.state as AppHistoryState | null;
+      if (state?.joshuaScents) {
+        applyHistoryState(state);
+        if (state.guard) {
+          window.history.pushState(createHistoryState(pageRef.current), "", window.location.href);
+        }
+        return;
+      }
+
+      window.history.pushState(createHistoryState(pageRef.current), "", window.location.href);
+    };
+
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
 
   const navigate = (p: Page, data?: unknown) => {
-    if (p === "product" && data) setSelectedProduct(data as Product);
-    if (p === "discovery" || p === "discoverySet") setSelectedDiscoverySetId(typeof data === "number" ? data : null);
+    if (p === "product" && data) {
+      selectedProductRef.current = data as Product;
+      setSelectedProduct(data as Product);
+    }
+    if (p === "discovery" || p === "discoverySet") {
+      selectedDiscoverySetIdRef.current = typeof data === "number" ? data : null;
+      setSelectedDiscoverySetId(typeof data === "number" ? data : null);
+    }
     if (p === "collections" && data && typeof data === "object") {
+      collectionFiltersRef.current = data as Partial<Filters>;
       setCollectionFilters(data as Partial<Filters>);
     } else if (p === "collections") {
+      collectionFiltersRef.current = {};
       setCollectionFilters({});
     }
+    pageRef.current = p;
     setPage(p);
+    window.history.pushState(createHistoryState(p), "", window.location.href);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
