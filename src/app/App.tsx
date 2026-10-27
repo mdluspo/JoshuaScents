@@ -1,6 +1,10 @@
 ﻿import { useEffect, useRef, useState } from "react";
 import { motion, useAnimationControls } from "motion/react";
 import { ShoppingCart, Search, User, Menu, X, ChevronDown, ChevronUp, Star, Check, ArrowLeft, Plus, Minus, Package, Truck, Shield, Gift, Play, Pause } from "lucide-react";
+import { AccountDialog } from "@/app/components/AccountDialog";
+import { AddressAutocomplete } from "@/app/components/AddressAutocomplete";
+import { createCheckout, findScentRecommendations, getDeliveryQuote } from "@/lib/api";
+import { trackStoreEvent } from "@/lib/analytics";
 
 // â”€â”€â”€ Real product images from imports â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 import imgBottle from "@/imports/HomePage-1/4e133df77e9b8b91ca178974f96996d69407baa3.png";
@@ -16,7 +20,7 @@ import imgWhyLuxuryBg from "@/imports/HomePage-1/why-discovery-luxury-bg.png";
 import imgCollProduct from "@/imports/Collections-1/2fead9763e6ed410e1c09e3afb4c82a010b439b5.png";
 
 // â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-type Page = "home" | "collections" | "bestsellers" | "discovery" | "discoverySet" | "decantguide" | "faq" | "product" | "cart" | "checkout" | "confirmation";
+type Page = "home" | "collections" | "bestsellers" | "discovery" | "discoverySet" | "scentfinder" | "decantguide" | "faq" | "product" | "cart" | "checkout" | "confirmation";
 
 type AppHistoryState = {
   joshuaScents: true;
@@ -102,27 +106,54 @@ function cleanNotes(notes: string) {
   return cleanText(notes);
 }
 
-function DarkBtn({ onClick, children, className = "", type = "button" }: { onClick?: () => void; children: React.ReactNode; className?: string; type?: "button" | "submit" }) {
+function DarkBtn({ onClick, children, className = "", type = "button", disabled = false }: { onClick?: () => void; children: React.ReactNode; className?: string; type?: "button" | "submit"; disabled?: boolean }) {
   return (
-    <button type={type} onClick={onClick}
-      className={`bg-[#1e1e1e] text-white font-['Cormorant_Garamond',serif] font-bold text-[15px] tracking-[0.12em] px-7 py-[11px] rounded-[5px] hover:bg-[#3d3d3d] transition-colors ${className}`}>
+    <button type={type} onClick={onClick} disabled={disabled}
+      className={`bg-[#1e1e1e] text-white font-['Cormorant_Garamond',serif] font-bold text-[15px] tracking-[0.12em] px-7 py-[11px] rounded-[5px] hover:bg-[#3d3d3d] transition-colors disabled:cursor-not-allowed disabled:opacity-55 ${className}`}>
       {children}
     </button>
   );
 }
 
 // â”€â”€â”€ HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-function Header({ page, navigate, cartCount }: {
+function Header({ page, navigate, cartCount, onAccount }: {
   page: Page;
   navigate: (p: Page, d?: unknown) => void;
   cartCount: number;
+  onAccount: () => void;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const normalizedSearch = searchQuery.trim().toLowerCase();
+  const searchResults = normalizedSearch.length < 2 ? [] : ALL_PRODUCTS.filter((product) =>
+    [product.name, product.brand, product.family, product.category, product.notes, product.description]
+      .some((value) => cleanText(value).toLowerCase().includes(normalizedSearch)),
+  ).slice(0, 6);
+
+  const toggleSearch = () => {
+    if (searchOpen) {
+      setSearchQuery("");
+      setSearchOpen(false);
+      return;
+    }
+    setSearchOpen(true);
+    window.setTimeout(() => searchInputRef.current?.focus(), 0);
+  };
+
+  const selectSearchResult = (product: Product) => {
+    setSearchOpen(false);
+    setSearchQuery("");
+    navigate("product", product);
+  };
 
   const navLinks: { label: string; page: Page; action?: () => void }[] = [
     { label: "Home", page: "home" },
     { label: "Collections", page: "collections" },
     { label: "Discovery Sets", page: "discovery" },
+    { label: "Find Your Scent", page: "scentfinder" },
     { label: "Best Sellers", page: "bestsellers" },
     { label: "Decant Guide", page: "decantguide" },
   ];
@@ -153,8 +184,29 @@ function Header({ page, navigate, cartCount }: {
 
         {/* Icons */}
         <div className="flex items-center gap-4 shrink-0">
-          <button className="hidden md:flex hover:opacity-50 transition-opacity"><Search size={20} strokeWidth={1.5} /></button>
-          <button className="hidden md:flex hover:opacity-50 transition-opacity"><User size={20} strokeWidth={1.5} /></button>
+          <div className="relative flex items-center gap-2">
+            <div className={`overflow-hidden transition-[width,opacity] duration-300 ${searchOpen ? "w-[150px] opacity-100 md:w-[250px]" : "w-0 opacity-0"}`}>
+              <input ref={searchInputRef} value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)}
+                onKeyDown={(event) => { if (event.key === "Escape") toggleSearch(); }}
+                placeholder="Search fragrances..."
+                className="h-9 w-full border-b border-black bg-transparent px-1 font-['IBM_Plex_Sans',sans-serif] text-[13px] outline-none placeholder:text-black/35" />
+            </div>
+            <button onClick={toggleSearch} aria-label={searchOpen ? "Close search" : "Search fragrances"} className="flex hover:opacity-50 transition-opacity">
+              {searchOpen ? <X size={20} strokeWidth={1.5} /> : <Search size={20} strokeWidth={1.5} />}
+            </button>
+            {searchOpen && normalizedSearch.length >= 2 && (
+              <div className="absolute right-0 top-[44px] z-[70] w-[min(88vw,360px)] overflow-hidden rounded-xl border border-black/10 bg-[#fbf8f1] p-2 shadow-2xl">
+                {searchResults.length === 0 ? <p className="px-3 py-6 text-center text-[12px] text-black/45">No matching fragrances.</p> : searchResults.map((product) => (
+                  <button key={product.id} onClick={() => selectSearchResult(product)} className="flex w-full items-center gap-3 rounded-lg p-2 text-left hover:bg-[#eee4d4]">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center bg-[#f0e6d7]"><img src={product.img} alt="" className="h-10 object-contain" /></div>
+                    <div className="min-w-0 flex-1"><p className="truncate font-['Cormorant_Garamond',serif] text-[17px] font-semibold">{product.name}</p><p className="truncate text-[10px] text-black/45">{product.family} · {cleanNotes(product.notes)}</p></div>
+                    <span className="text-[10px] font-semibold">PHP {product.price}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <button onClick={onAccount} aria-label="Open account" className="hidden md:flex hover:opacity-50 transition-opacity"><User size={20} strokeWidth={1.5} /></button>
           <button onClick={() => navigate("cart")} className="relative hover:opacity-50 transition-opacity">
             <ShoppingCart size={20} strokeWidth={1.5} />
             {cartCount > 0 && (
@@ -182,6 +234,64 @@ function Header({ page, navigate, cartCount }: {
         </div>
       )}
     </header>
+  );
+}
+
+function SearchDialog({ open, onClose, navigate }: { open: boolean; onClose: () => void; navigate: (p: Page, data?: unknown) => void }) {
+  const [query, setQuery] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!open) { setQuery(""); return; }
+    inputRef.current?.focus();
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === "Escape") onClose(); };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [open, onClose]);
+
+  if (!open) return null;
+  const normalized = query.trim().toLowerCase();
+  const results = normalized.length < 2 ? [] : ALL_PRODUCTS.filter((product) =>
+    [product.name, product.brand, product.family, product.category, product.notes, product.description]
+      .some((value) => cleanText(value).toLowerCase().includes(normalized)),
+  ).slice(0, 8);
+
+  const selectProduct = (product: Product) => {
+    onClose();
+    navigate("product", product);
+  };
+
+  return (
+    <div className="fixed inset-0 z-[90] bg-black/25" role="dialog" aria-modal="true" aria-label="Search fragrances" onMouseDown={onClose}>
+      <div className="h-full w-[92vw] max-w-[430px] overflow-hidden border-r border-black/10 bg-[#fbf8f1] shadow-2xl" onMouseDown={(event) => event.stopPropagation()}>
+        <div className="border-b border-black/10 px-5 pb-4 pt-6">
+          <div className="mb-4 flex items-center justify-between">
+            <div><p className="font-['IBM_Plex_Sans',sans-serif] text-[10px] font-semibold tracking-[0.2em] text-[#9a7d45]">CATALOG SEARCH</p><h2 className="font-['Cormorant_Garamond',serif] text-[30px] font-bold">Find a fragrance</h2></div>
+            <button onClick={onClose} aria-label="Close search" className="rounded-full p-2 hover:bg-black/5"><X size={20} /></button>
+          </div>
+          <div className="flex items-center gap-3 rounded-xl border border-black/15 bg-white px-4 py-3">
+            <Search size={19} strokeWidth={1.5} className="shrink-0 text-black/50" />
+            <input ref={inputRef} value={query} onChange={(event) => setQuery(event.target.value)}
+              placeholder="Name, note, family, or brand..."
+              className="w-full bg-transparent font-['IBM_Plex_Sans',sans-serif] text-[14px] outline-none placeholder:text-black/35" />
+          </div>
+        </div>
+        <div className="h-[calc(100%-141px)] overflow-y-auto p-3">
+          {normalized.length < 2 && <p className="px-3 py-8 text-center font-['IBM_Plex_Sans',sans-serif] text-[13px] text-black/45">Type at least two characters to search the collection.</p>}
+          {normalized.length >= 2 && results.length === 0 && <p className="px-3 py-8 text-center font-['IBM_Plex_Sans',sans-serif] text-[13px] text-black/45">No fragrances matched “{query.trim()}”.</p>}
+          {results.map((product) => (
+            <button key={product.id} onClick={() => selectProduct(product)} className="flex w-full items-center gap-4 rounded-xl p-3 text-left transition-colors hover:bg-[#eee4d4]">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-[#f0e6d7]"><img src={product.img} alt="" className="h-14 object-contain" /></div>
+              <div className="min-w-0 flex-1">
+                <p className="font-['Cormorant_Garamond',serif] text-[21px] font-semibold leading-tight">{product.name}</p>
+                <p className="mt-1 truncate font-['IBM_Plex_Sans',sans-serif] text-[11px] text-black/50">{product.family} · {cleanNotes(product.notes)}</p>
+              </div>
+              <p className="shrink-0 font-['IBM_Plex_Sans',sans-serif] text-[12px] font-semibold">PHP {product.price}</p>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -1619,10 +1729,62 @@ function CartPage({ items, navigate, updateQty, removeItem }: {
 }
 
 // â”€â”€â”€ CHECKOUT PAGE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-function CheckoutPage({ items, navigate }: { items: CartItem[]; navigate: (p: Page) => void }) {
+function CheckoutPage({ items, navigate, onOrderPlaced }: { items: CartItem[]; navigate: (p: Page) => void; onOrderPlaced: () => void }) {
   const [step, setStep] = useState<1 | 2 | 3>(1);
-  const [form, setForm] = useState({ name: "", email: "", phone: "", address: "", city: "", zip: "", payment: "gcash" });
+  const [form, setForm] = useState({ name: "", email: localStorage.getItem("joshua-scents-guest-email") || "", phone: "", address: "", city: "", zip: "", payment: "paymongo" });
+  const [coordinates, setCoordinates] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [delivery, setDelivery] = useState<{ quotationId?: string; amountCentavos: number }>({ amountCentavos: 0 });
+  const [checkoutError, setCheckoutError] = useState("");
+  const [placing, setPlacing] = useState(false);
   const subtotal = items.reduce((acc, i) => acc + i.price * i.qty, 0);
+  const shipping = delivery.amountCentavos / 100;
+  const total = subtotal + shipping;
+
+  const validateShipping = () => {
+    if (!form.name.trim() || !form.email.includes("@") || !form.phone.trim() || !form.address.trim() || !form.city.trim() || !form.zip.trim()) {
+      setCheckoutError("Complete every shipping field before continuing.");
+      return false;
+    }
+    setCheckoutError("");
+    return true;
+  };
+
+  const continueToPayment = async () => {
+    if (!validateShipping()) return;
+    if (import.meta.env.VITE_ENABLE_LALAMOVE === "true") {
+      if (!coordinates) { setCheckoutError("Select an address suggestion so delivery can be quoted accurately."); return; }
+      try {
+        setPlacing(true);
+        const quote = await getDeliveryQuote({ address: form.address, ...coordinates });
+        setDelivery({ quotationId: quote.quotationId, amountCentavos: quote.amountCentavos });
+      } catch (error) {
+        setCheckoutError(error instanceof Error ? error.message : "Delivery could not be quoted.");
+        return;
+      } finally { setPlacing(false); }
+    }
+    setStep(2);
+  };
+
+  const placeOrder = async () => {
+    setCheckoutError("");
+    setPlacing(true);
+    try {
+      const result = await createCheckout({
+        customer: { name: form.name, email: form.email, phone: form.phone, address: form.address, city: form.city, zip: form.zip, ...(coordinates ?? {}) },
+        paymentMethod: form.payment as "paymongo" | "cod",
+        deliveryQuoteId: delivery.quotationId,
+        shippingCentavos: delivery.amountCentavos,
+        items: items.map((item) => ({ productId: item.product.id, size: item.size, quantity: item.qty })),
+      });
+      sessionStorage.setItem("last-order-reference", result.reference);
+      trackStoreEvent(form.payment === "cod" ? "purchase" : "begin_checkout", total, form.email);
+      if (result.checkoutUrl) { window.location.assign(result.checkoutUrl); return; }
+      onOrderPlaced();
+      navigate("confirmation");
+    } catch (error) {
+      setCheckoutError(error instanceof Error ? error.message : "We could not place your order. Please try again.");
+    } finally { setPlacing(false); }
+  };
 
   const F = ({ label, name, type = "text", placeholder, half = false }: {
     label: string; name: keyof typeof form; type?: string; placeholder?: string; half?: boolean;
@@ -1672,10 +1834,16 @@ function CheckoutPage({ items, navigate }: { items: CartItem[]; navigate: (p: Pa
                   <F label="Email Address" name="email" type="email" placeholder="juan@email.com" half />
                   <F label="Phone Number" name="phone" placeholder="+63 9XX XXX XXXX" half />
                   <F label="City" name="city" placeholder="Manila" half />
-                  <F label="Street Address" name="address" placeholder="123 Rizal St., Barangay..." />
+                  <AddressAutocomplete value={form.address}
+                    onChange={(address) => { setCoordinates(null); setForm({ ...form, address }); }}
+                    onSelect={(address) => {
+                      setCoordinates({ latitude: address.latitude, longitude: address.longitude });
+                      setForm((current) => ({ ...current, address: address.address, city: address.city || current.city, zip: address.zip || current.zip }));
+                    }} />
                   <F label="ZIP Code" name="zip" placeholder="1000" half />
                 </div>
-                <DarkBtn onClick={() => setStep(2)} className="mt-7">CONTINUE TO PAYMENT</DarkBtn>
+                {checkoutError && <p role="alert" className="mt-4 text-sm text-red-700">{checkoutError}</p>}
+                <DarkBtn onClick={() => void continueToPayment()} className="mt-7" disabled={placing}>{placing ? "GETTING DELIVERY QUOTE..." : "CONTINUE TO PAYMENT"}</DarkBtn>
               </div>
             )}
 
@@ -1684,9 +1852,8 @@ function CheckoutPage({ items, navigate }: { items: CartItem[]; navigate: (p: Pa
                 <p className="font-['Cormorant_Garamond',serif] font-bold text-[28px] text-[#171717] mb-6">Payment Method</p>
                 <div className="space-y-3">
                   {[
-                    { value: "gcash", label: "GCash", desc: "Pay via GCash e-wallet" },
+                    { value: "paymongo", label: "Secure Online Payment", desc: "GCash, Maya, cards, and other enabled PayMongo methods" },
                     { value: "cod", label: "Cash on Delivery", desc: "Pay when your order arrives" },
-                    { value: "bank", label: "Bank Transfer", desc: "BDO • BPI • UnionBank" },
                   ].map((opt) => (
                     <label key={opt.value}
                       className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all ${form.payment === opt.value ? "border-[#171717] bg-[#f7f5f1]" : "border-[rgba(0,0,0,0.12)] hover:border-[rgba(0,0,0,0.28)]"}`}>
@@ -1730,15 +1897,16 @@ function CheckoutPage({ items, navigate }: { items: CartItem[]; navigate: (p: Pa
                     Ship to: <span className="text-[#171717]">{form.address || "-"}{form.city ? `, ${form.city}` : ""} {form.zip}</span>
                   </p>
                   <p className="font-['IBM_Plex_Sans',sans-serif] text-[13px] text-[rgba(23,23,23,0.55)]">
-                    Payment: <span className="text-[#171717] capitalize">{form.payment === "cod" ? "Cash on Delivery" : form.payment === "gcash" ? "GCash" : "Bank Transfer"}</span>
+                    Payment: <span className="text-[#171717] capitalize">{form.payment === "cod" ? "Cash on Delivery" : "Secure Online Payment"}</span>
                   </p>
                 </div>
                 <div className="flex items-center gap-5">
                   <button onClick={() => setStep(2)} className="flex items-center gap-1.5 font-['IBM_Plex_Sans',sans-serif] text-[13px] text-[rgba(23,23,23,0.55)] hover:text-[#171717] transition-colors">
                     <ArrowLeft size={13} /> Back
                   </button>
-                  <DarkBtn onClick={() => navigate("confirmation")}>PLACE ORDER</DarkBtn>
+                  <DarkBtn onClick={() => void placeOrder()} disabled={placing}>{placing ? "PLACING ORDER..." : form.payment === "cod" ? "PLACE COD ORDER" : "CONTINUE TO SECURE PAYMENT"}</DarkBtn>
                 </div>
+                {checkoutError && <p role="alert" className="mt-4 text-sm text-red-700">{checkoutError}</p>}
               </div>
             )}
           </div>
@@ -1756,11 +1924,11 @@ function CheckoutPage({ items, navigate }: { items: CartItem[]; navigate: (p: Pa
                 ))}
               </div>
               <div className="flex justify-between font-['IBM_Plex_Sans',sans-serif] text-[12px] text-[rgba(23,23,23,0.55)] mb-1">
-                <span>Shipping</span><span className="text-green-600">Free</span>
+                <span>Shipping</span><span className={shipping === 0 ? "text-green-600" : ""}>{shipping === 0 ? "Free" : `PHP ${shipping.toFixed(2)}`}</span>
               </div>
               <div className="border-t border-[rgba(0,0,0,0.07)] pt-3 mt-2">
                 <div className="flex justify-between font-['Cormorant_Garamond',serif] font-bold text-[20px] text-[#171717]">
-                  <span>Total</span><span>PHP {subtotal}</span>
+                  <span>Total</span><span>PHP {total.toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -1773,6 +1941,7 @@ function CheckoutPage({ items, navigate }: { items: CartItem[]; navigate: (p: Pa
 
 // â”€â”€â”€ CONFIRMATION PAGE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ConfirmationPage({ navigate }: { navigate: (p: Page) => void }) {
+  const reference = sessionStorage.getItem("last-order-reference") || new URLSearchParams(window.location.search).get("order");
   return (
     <div className="bg-[#f7f5f1] min-h-screen flex items-center justify-center px-6">
       <div className="text-center max-w-[500px] flex flex-col items-center py-20">
@@ -1784,6 +1953,7 @@ function ConfirmationPage({ navigate }: { navigate: (p: Page) => void }) {
         <p className="font-['Cormorant_Garamond',serif] italic text-[20px] text-[rgba(23,23,23,0.6)] mb-4">
           Thank you. Your fragrance journey begins now.
         </p>
+        {reference && <p className="mb-4 font-['IBM_Plex_Sans',sans-serif] text-[12px] tracking-[0.14em] text-[#8f7444]">REFERENCE {reference}</p>}
         <p className="font-['IBM_Plex_Sans',sans-serif] font-light text-[14px] text-[rgba(23,23,23,0.55)] leading-relaxed mb-10">
           {"We'll send you a confirmation email with tracking details once your decants are carefully packed and dispatched."}
         </p>
@@ -1803,6 +1973,71 @@ function ConfirmationPage({ navigate }: { navigate: (p: Page) => void }) {
 }
 
 // â”€â”€â”€ DECANT GUIDE PAGE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function ScentFinderPage({ navigate }: { navigate: (p: Page, data?: unknown) => void }) {
+  const [preference, setPreference] = useState("");
+  const [recommendations, setRecommendations] = useState<Array<{ productId: number; reason: string }>>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+
+  const localMatches = (text: string) => {
+    const input = text.toLowerCase();
+    const words = input.split(/[^a-z0-9]+/).filter((word) => word.length > 2);
+    const expanded = [...words];
+    if (/manila|summer|hot|humid|day|clean|office/.test(input)) expanded.push("fresh", "citrus", "everyday");
+    if (/night|date|evening|dark|party/.test(input)) expanded.push("warm", "spicy", "after", "woody");
+    if (/sweet|vanilla|cozy|dessert/.test(input)) expanded.push("vanilla", "amber", "warm");
+    if (/smoky|wood|oud|masculine/.test(input)) expanded.push("woody", "smoky", "oud");
+    return ALL_PRODUCTS.map((product) => {
+      const searchable = cleanText([product.name, product.brand, product.family, product.category, product.notes, product.description].join(" ")).toLowerCase();
+      const score = expanded.reduce((total, word) => total + (searchable.includes(word) ? 2 : 0), 0) + (product.bestSeller ? 1 : 0);
+      return { productId: product.id, score, reason: `${product.family} character with ${cleanNotes(product.notes).toLowerCase()} notes makes this a strong match for what you described.` };
+    }).sort((a, b) => b.score - a.score || a.productId - b.productId).slice(0, 3);
+  };
+
+  const findScents = async () => {
+    setError("");
+    setNotice("");
+    setLoading(true);
+    try {
+      const result = await findScentRecommendations(preference);
+      setRecommendations(result.recommendations);
+    } catch (caught) {
+      setRecommendations(localMatches(preference));
+      setNotice("Showing instant catalog matches. Connect OpenAI later for more nuanced recommendations.");
+    } finally { setLoading(false); }
+  };
+
+  return <div className="min-h-screen bg-[#f6efe3] px-6 py-16 text-[#171717] md:px-10">
+    <div className="mx-auto max-w-[980px]">
+      <p className="font-['IBM_Plex_Sans',sans-serif] text-[11px] font-semibold tracking-[0.22em] text-[#9a7d45]">CATALOG-CONSTRAINED AI ADVISER</p>
+      <h1 className="mt-3 font-['Cormorant_Garamond',serif] text-[58px] font-bold leading-none md:text-[82px]">FIND YOUR SCENT</h1>
+      <p className="mt-6 max-w-2xl font-['IBM_Plex_Sans',sans-serif] text-[15px] font-light leading-relaxed text-black/60">Describe the mood, occasion, notes, climate, or fragrances you already enjoy. The adviser can recommend only products that are actually in our catalog.</p>
+      <div className="mt-10 rounded-2xl border border-black/10 bg-[#fbf8f1] p-6 shadow-[0_18px_50px_rgba(42,34,25,0.08)] md:p-8">
+        <textarea value={preference} onChange={(event) => setPreference(event.target.value)} rows={5}
+          placeholder="Example: I want a clean everyday scent for warm Manila weather. I enjoy citrus and woods, but not very sweet vanilla."
+          className="w-full resize-none rounded-xl border border-black/15 bg-white p-4 font-['IBM_Plex_Sans',sans-serif] text-[14px] leading-relaxed outline-none focus:border-black" />
+        <DarkBtn onClick={() => void findScents()} disabled={loading || preference.trim().length < 10} className="mt-4">{loading ? "MATCHING SCENTS..." : "FIND MY MATCHES"}</DarkBtn>
+        {error && <p className="mt-4 text-sm text-red-700">{error}</p>}
+        {notice && <p className="mt-4 text-sm text-[#7f6739]">{notice}</p>}
+      </div>
+      {recommendations.length > 0 && <div className="mt-10 grid gap-5 md:grid-cols-3">
+        {recommendations.map((recommendation, index) => {
+          const product = ALL_PRODUCTS.find((item) => item.id === recommendation.productId);
+          if (!product) return null;
+          return <button key={product.id} onClick={() => navigate("product", product)} className="rounded-xl border border-[#d7c8ae] bg-[#fbf8f1] p-5 text-left transition-transform hover:-translate-y-1">
+            <p className="text-[10px] font-semibold tracking-[0.18em] text-[#9a7d45]">MATCH {index + 1}</p>
+            <img src={product.img} alt="" className="mx-auto my-5 h-36 object-contain" />
+            <h2 className="font-['Cormorant_Garamond',serif] text-[26px] font-semibold">{product.name}</h2>
+            <p className="mt-2 text-[13px] leading-relaxed text-black/60">{recommendation.reason}</p>
+            <p className="mt-5 text-[11px] font-semibold tracking-[0.14em]">VIEW SCENT →</p>
+          </button>;
+        })}
+      </div>}
+    </div>
+  </div>;
+}
+
 function DecantGuidePage() {
   const steps = [
     { n: "01", title: "Select", detail: "Choose 2ml, 5ml, or 10ml based on how long you want to live with the fragrance." },
@@ -1972,12 +2207,14 @@ function FAQPage() {
 
 // â”€â”€â”€ ROOT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export default function App() {
-  const [page, setPage] = useState<Page>("home");
+  const initialPage: Page = new URLSearchParams(window.location.search).get("payment") === "success" ? "confirmation" : "home";
+  const [page, setPage] = useState<Page>(initialPage);
   const [selectedProduct, setSelectedProduct] = useState<Product>(ALL_PRODUCTS[0]);
   const [selectedDiscoverySetId, setSelectedDiscoverySetId] = useState<number | null>(null);
   const [collectionFilters, setCollectionFilters] = useState<Partial<Filters>>({});
   const [cart, setCart] = useState<CartItem[]>([]);
-  const pageRef = useRef<Page>("home");
+  const [accountOpen, setAccountOpen] = useState(false);
+  const pageRef = useRef<Page>(initialPage);
   const selectedProductRef = useRef<Product>(ALL_PRODUCTS[0]);
   const selectedDiscoverySetIdRef = useRef<number | null>(null);
   const collectionFiltersRef = useRef<Partial<Filters>>({});
@@ -2054,6 +2291,7 @@ export default function App() {
   };
 
   const addToCart = (product: Product, size: string, price: number) => {
+    trackStoreEvent("add_to_cart", price);
     setCart((prev) => {
       const existing = prev.find((i) => i.product.id === product.id && i.size === size);
       if (existing) return prev.map((i) => i.product.id === product.id && i.size === size ? { ...i, qty: i.qty + 1 } : i);
@@ -2078,11 +2316,12 @@ export default function App() {
       case "bestsellers": return <BestSellersPage navigate={navigate} />;
       case "discovery":   return <DiscoveryPage navigate={navigate} selectedSetId={selectedDiscoverySetId} />;
       case "discoverySet": return <DiscoverySetPage navigate={navigate} setId={selectedDiscoverySetId} />;
+      case "scentfinder": return <ScentFinderPage navigate={navigate} />;
       case "decantguide": return <DecantGuidePage />;
       case "faq":         return <FAQPage />;
       case "product":     return <ProductPage product={selectedProduct} navigate={navigate} addToCart={addToCart} />;
       case "cart":        return <CartPage items={cart} navigate={navigate} updateQty={updateQty} removeItem={removeItem} />;
-      case "checkout":    return <CheckoutPage items={cart} navigate={navigate} />;
+      case "checkout":    return <CheckoutPage items={cart} navigate={navigate} onOrderPlaced={() => setCart([])} />;
       case "confirmation":return <ConfirmationPage navigate={navigate} />;
       default:            return <HomePage navigate={navigate} />;
     }
@@ -2093,8 +2332,9 @@ export default function App() {
       <CustomCursor />
       <GlobalTexture />
       {page !== "confirmation" && (
-        <Header page={page} navigate={navigate} cartCount={cartCount} />
+        <Header page={page} navigate={navigate} cartCount={cartCount} onAccount={() => setAccountOpen(true)} />
       )}
+      <AccountDialog open={accountOpen} onClose={() => setAccountOpen(false)} />
       <main className="flex-1">{renderPage()}</main>
       {page !== "checkout" && page !== "confirmation" && (
         <Footer navigate={navigate} />
