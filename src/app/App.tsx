@@ -4,9 +4,10 @@ import { ShoppingCart, Search, User, Menu, X, ChevronDown, ChevronUp, Star, Chec
 import { AccountCenterDialog } from "@/app/components/AccountCenterDialog";
 import { AddressAutocomplete } from "@/app/components/AddressAutocomplete";
 import { FavoriteButton } from "@/app/components/FavoriteButton";
-import { createCheckout, findScentRecommendations, getDeliveryQuote } from "@/lib/api";
+import { createCheckout, getDeliveryQuote } from "@/lib/api";
 import { trackStoreEvent } from "@/lib/analytics";
 import { getSupabase } from "@/lib/supabase";
+import { searchProducts } from "@/lib/productSearch";
 
 // â”€â”€â”€ Real product images from imports â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 import imgBottle from "@/imports/HomePage-1/4e133df77e9b8b91ca178974f96996d69407baa3.png";
@@ -110,16 +111,33 @@ function cleanNotes(notes: string) {
 }
 
 function matchesProductQuery(product: Product, query: string) {
-  const searchable = cleanText([
-    product.name,
-    product.brand,
-    product.family,
-    product.category,
-    product.notes,
-    product.description,
-  ].join(" ")).toLowerCase();
+  const searchable = cleanText([product.name, product.brand].join(" ")).toLowerCase();
   const terms = cleanText(query).toLowerCase().trim().split(/\s+/).filter(Boolean);
-  return terms.length > 0 && terms.every((term) => searchable.includes(term));
+  const words = searchable.split(/\s+/);
+  return terms.length > 0 && terms.every((term) => words.some((word) => word.startsWith(term)));
+}
+
+function useCatalogSearch(query: string, limit: number) {
+  const [results, setResults] = useState<Product[]>([]);
+  useEffect(() => {
+    const normalized = query.trim();
+    let cancelled = false;
+    if (!normalized) {
+      setResults([]);
+      return () => { cancelled = true; };
+    }
+    void searchProducts(normalized)
+      .then(({ products }) => {
+        if (cancelled) return;
+        const ids = new Set(products.map((product) => product.id));
+        setResults(ALL_PRODUCTS.filter((product) => ids.has(product.id)).slice(0, limit));
+      })
+      .catch(() => {
+        if (!cancelled) setResults(ALL_PRODUCTS.filter((product) => matchesProductQuery(product, normalized)).slice(0, limit));
+      });
+    return () => { cancelled = true; };
+  }, [query, limit]);
+  return results;
 }
 
 function DarkBtn({ onClick, children, className = "", type = "button", disabled = false }: { onClick?: () => void; children: React.ReactNode; className?: string; type?: "button" | "submit"; disabled?: boolean }) {
@@ -144,9 +162,7 @@ function Header({ page, navigate, cartCount, onAccount }: {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const normalizedSearch = searchQuery.trim().toLowerCase();
-  const searchResults = normalizedSearch.length < 2
-    ? []
-    : ALL_PRODUCTS.filter((product) => matchesProductQuery(product, normalizedSearch)).slice(0, 6);
+  const searchResults = useCatalogSearch(searchQuery, 6);
 
   const toggleSearch = () => {
     if (searchOpen) {
@@ -215,7 +231,7 @@ function Header({ page, navigate, cartCount, onAccount }: {
             <button onClick={toggleSearch} aria-label={searchOpen ? "Close search" : "Search fragrances"} className="flex hover:opacity-50 transition-opacity">
               {searchOpen ? <X size={20} strokeWidth={1.5} /> : <Search size={20} strokeWidth={1.5} />}
             </button>
-            {searchOpen && normalizedSearch.length >= 2 && (
+        {searchOpen && normalizedSearch && (
               <div className="absolute right-0 top-[44px] z-[70] w-[min(88vw,360px)] overflow-hidden rounded-xl border border-black/10 bg-[#fbf8f1] p-2 shadow-2xl">
                 {searchResults.length === 0 ? <p className="px-3 py-6 text-center text-[12px] text-black/45">No matching fragrances.</p> : searchResults.map((product) => (
                   <button key={product.id} onClick={() => selectSearchResult(product)} className="flex w-full items-center gap-3 rounded-lg p-2 text-left hover:bg-[#eee4d4]">
@@ -270,11 +286,9 @@ function SearchDialog({ open, onClose, navigate }: { open: boolean; onClose: () 
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [open, onClose]);
 
-  if (!open) return null;
   const normalized = query.trim().toLowerCase();
-  const results = normalized.length < 2
-    ? []
-    : ALL_PRODUCTS.filter((product) => matchesProductQuery(product, normalized)).slice(0, 8);
+  const results = useCatalogSearch(query, 8);
+  if (!open) return null;
 
   const selectProduct = (product: Product) => {
     onClose();
@@ -993,7 +1007,7 @@ function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
 // â”€â”€â”€ COLLECTIONS PAGE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function SearchResultsPage({ query, navigate }: { query: string; navigate: (p: Page, d?: unknown) => void }) {
   const normalized = query.trim().toLowerCase();
-  const matches = normalized ? ALL_PRODUCTS.filter((product) => matchesProductQuery(product, normalized)) : [];
+  const matches = useCatalogSearch(query, ALL_PRODUCTS.length);
 
   return (
     <div className="min-h-screen bg-[#fbf8f1] px-4 py-10 md:px-10 md:py-14">
@@ -2059,28 +2073,33 @@ function ScentFinderPage({ navigate }: { navigate: (p: Page, data?: unknown) => 
   const localMatches = (text: string) => {
     const input = cleanText(text).toLowerCase();
     const words = input.split(/[^a-z0-9]+/).filter((word) => word.length > 2);
+    const synonymGroups = [
+      ["fresh", "citrus", "clean", "light", "summer", "hot", "humid", "manila", "office", "day", "breeze", "breezing", "airy", "cool"],
+      ["woody", "wood", "forest", "cedar", "sandalwood", "oud", "earthy", "masculine"],
+      ["warm", "spicy", "sweet", "vanilla", "amber", "cozy", "dessert", "gourmand"],
+      ["dark", "night", "date", "evening", "party", "smoky", "smoke", "tobacco", "leather"],
+      ["floral", "flower", "rose", "jasmine", "iris", "romantic"],
+      ["fruity", "fruit", "berry", "apple", "grapefruit", "bergamot", "lemon", "orange"],
+    ];
     const expanded = [...words];
-    if (/manila|summer|hot|humid|day|clean|office/.test(input)) expanded.push("fresh", "citrus", "everyday");
-    if (/night|date|evening|dark|party/.test(input)) expanded.push("warm", "spicy", "after", "woody");
-    if (/sweet|vanilla|cozy|dessert/.test(input)) expanded.push("vanilla", "amber", "warm");
-    if (/smoky|wood|oud|masculine/.test(input)) expanded.push("woody", "smoky", "oud");
-    return ALL_PRODUCTS.map((product) => {
+    synonymGroups.forEach((group) => {
+      if (group.some((term) => input.includes(term))) expanded.push(...group);
+    });
+    const scored = ALL_PRODUCTS.map((product) => {
       const searchable = cleanText([product.name, product.brand, product.family, product.category, product.notes, product.description].join(" ")).toLowerCase();
-      const score = expanded.reduce((total, word) => total + (searchable.includes(word) ? 2 : 0), 0) + (product.bestSeller ? 1 : 0);
+      const score = expanded.reduce((total, word) => total + (searchable.includes(word) ? 2 : 0), 0);
       return { productId: product.id, score, reason: `${product.family} character with ${cleanNotes(product.notes).toLowerCase()} notes makes this a strong match for what you described.` };
-    }).sort((a, b) => b.score - a.score || a.productId - b.productId).slice(0, 3);
+    }).sort((a, b) => b.score - a.score || a.productId - b.productId);
+    const relevant = scored.filter((recommendation) => recommendation.score > 0);
+    return (relevant.length >= 3 ? relevant : scored.filter((recommendation) => ALL_PRODUCTS.find((product) => product.id === recommendation.productId)?.bestSeller)).slice(0, 3);
   };
 
-  const findScents = async () => {
+  const findScents = () => {
     setError("");
     setRecommendations([]);
     setLoading(true);
-    try {
-      const result = await findScentRecommendations(preference);
-      setRecommendations(result.recommendations);
-    } catch (caught) {
-      setRecommendations(localMatches(preference));
-    } finally { setLoading(false); }
+    setRecommendations(localMatches(preference));
+    setLoading(false);
   };
 
   return <div className="min-h-screen bg-[#f6efe3] px-6 py-16 text-[#171717] md:px-10">
@@ -2092,7 +2111,7 @@ function ScentFinderPage({ navigate }: { navigate: (p: Page, data?: unknown) => 
         <textarea value={preference} onChange={(event) => setPreference(event.target.value)} rows={5}
           placeholder="Example: I want a clean everyday scent for warm Manila weather. I enjoy citrus and woods, but not very sweet vanilla."
           className="w-full resize-none rounded-xl border border-black/15 bg-white p-4 font-['IBM_Plex_Sans',sans-serif] text-[14px] leading-relaxed outline-none focus:border-black" />
-        <DarkBtn onClick={() => void findScents()} disabled={loading || preference.trim().length < 10} className="mt-4">{loading ? "MATCHING SCENTS..." : "FIND MY MATCHES"}</DarkBtn>
+        <DarkBtn onClick={() => void findScents()} disabled={loading || !preference.trim()} className="mt-4">{loading ? "MATCHING SCENTS..." : "FIND MY MATCHES"}</DarkBtn>
         {error && <p className="mt-4 text-sm text-red-700">{error}</p>}
       </div>
       {recommendations.length > 0 && <div className="mt-10 grid gap-5 md:grid-cols-3">
