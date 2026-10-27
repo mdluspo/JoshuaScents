@@ -20,6 +20,14 @@ export async function updateOrder(providerId: string, values: Record<string, unk
   return data;
 }
 
+export async function getOptionalUser(authorization: string | undefined) {
+  const token = authorization?.replace(/^Bearer\s+/i, "");
+  if (!token) return null;
+  const { data, error } = await adminDb().auth.getUser(token);
+  if (error || !data.user) return null;
+  return data.user;
+}
+
 export async function requireAdmin(authorization: string | undefined) {
   const token = authorization?.replace(/^Bearer\s+/i, "");
   if (!token) throw new ApiError(401, "Sign in as an administrator first");

@@ -5,9 +5,13 @@ export class StoreApiError extends Error {
 }
 
 async function request<T>(path: string, body?: unknown): Promise<T> {
+  const token = (await getSupabase()?.auth.getSession())?.data.session?.access_token;
+  const headers: Record<string, string> = {};
+  if (body !== undefined) headers["Content-Type"] = "application/json";
+  if (token) headers.Authorization = `Bearer ${token}`;
   const response = await fetch(path, {
     method: body === undefined ? "GET" : "POST",
-    headers: body === undefined ? undefined : { "Content-Type": "application/json" },
+    headers,
     body: body === undefined ? undefined : JSON.stringify(body),
   });
   const data = await response.json().catch(() => ({}));

@@ -1,10 +1,12 @@
 ﻿import { useEffect, useRef, useState } from "react";
 import { motion, useAnimationControls } from "motion/react";
 import { ShoppingCart, Search, User, Menu, X, ChevronDown, ChevronUp, Star, Check, ArrowLeft, Plus, Minus, Package, Truck, Shield, Gift, Play, Pause } from "lucide-react";
-import { AccountDialog } from "@/app/components/AccountDialog";
+import { AccountCenterDialog } from "@/app/components/AccountCenterDialog";
 import { AddressAutocomplete } from "@/app/components/AddressAutocomplete";
+import { FavoriteButton } from "@/app/components/FavoriteButton";
 import { createCheckout, findScentRecommendations, getDeliveryQuote } from "@/lib/api";
 import { trackStoreEvent } from "@/lib/analytics";
+import { getSupabase } from "@/lib/supabase";
 
 // â”€â”€â”€ Real product images from imports â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 import imgBottle from "@/imports/HomePage-1/4e133df77e9b8b91ca178974f96996d69407baa3.png";
@@ -20,7 +22,7 @@ import imgWhyLuxuryBg from "@/imports/HomePage-1/why-discovery-luxury-bg.png";
 import imgCollProduct from "@/imports/Collections-1/2fead9763e6ed410e1c09e3afb4c82a010b439b5.png";
 
 // â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-type Page = "home" | "collections" | "bestsellers" | "discovery" | "discoverySet" | "scentfinder" | "decantguide" | "faq" | "product" | "cart" | "checkout" | "confirmation";
+type Page = "home" | "collections" | "search" | "bestsellers" | "discovery" | "discoverySet" | "scentfinder" | "decantguide" | "faq" | "product" | "cart" | "checkout" | "confirmation";
 
 type AppHistoryState = {
   joshuaScents: true;
@@ -28,6 +30,7 @@ type AppHistoryState = {
   productId?: number;
   discoverySetId?: number | null;
   collectionFilters?: Partial<Filters>;
+  searchQuery?: string;
   guard?: boolean;
 };
 
@@ -106,6 +109,19 @@ function cleanNotes(notes: string) {
   return cleanText(notes);
 }
 
+function matchesProductQuery(product: Product, query: string) {
+  const searchable = cleanText([
+    product.name,
+    product.brand,
+    product.family,
+    product.category,
+    product.notes,
+    product.description,
+  ].join(" ")).toLowerCase();
+  const terms = cleanText(query).toLowerCase().trim().split(/\s+/).filter(Boolean);
+  return terms.length > 0 && terms.every((term) => searchable.includes(term));
+}
+
 function DarkBtn({ onClick, children, className = "", type = "button", disabled = false }: { onClick?: () => void; children: React.ReactNode; className?: string; type?: "button" | "submit"; disabled?: boolean }) {
   return (
     <button type={type} onClick={onClick} disabled={disabled}
@@ -128,10 +144,9 @@ function Header({ page, navigate, cartCount, onAccount }: {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const normalizedSearch = searchQuery.trim().toLowerCase();
-  const searchResults = normalizedSearch.length < 2 ? [] : ALL_PRODUCTS.filter((product) =>
-    [product.name, product.brand, product.family, product.category, product.notes, product.description]
-      .some((value) => cleanText(value).toLowerCase().includes(normalizedSearch)),
-  ).slice(0, 6);
+  const searchResults = normalizedSearch.length < 2
+    ? []
+    : ALL_PRODUCTS.filter((product) => matchesProductQuery(product, normalizedSearch)).slice(0, 6);
 
   const toggleSearch = () => {
     if (searchOpen) {
@@ -187,7 +202,13 @@ function Header({ page, navigate, cartCount, onAccount }: {
           <div className="relative flex items-center gap-2">
             <div className={`overflow-hidden transition-[width,opacity] duration-300 ${searchOpen ? "w-[150px] opacity-100 md:w-[250px]" : "w-0 opacity-0"}`}>
               <input ref={searchInputRef} value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)}
-                onKeyDown={(event) => { if (event.key === "Escape") toggleSearch(); }}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") toggleSearch();
+                  if (event.key === "Enter" && searchQuery.trim()) {
+                    setSearchOpen(false);
+                    navigate("search", searchQuery.trim());
+                  }
+                }}
                 placeholder="Search fragrances..."
                 className="h-9 w-full border-b border-black bg-transparent px-1 font-['IBM_Plex_Sans',sans-serif] text-[13px] outline-none placeholder:text-black/35" />
             </div>
@@ -251,10 +272,9 @@ function SearchDialog({ open, onClose, navigate }: { open: boolean; onClose: () 
 
   if (!open) return null;
   const normalized = query.trim().toLowerCase();
-  const results = normalized.length < 2 ? [] : ALL_PRODUCTS.filter((product) =>
-    [product.name, product.brand, product.family, product.category, product.notes, product.description]
-      .some((value) => cleanText(value).toLowerCase().includes(normalized)),
-  ).slice(0, 8);
+  const results = normalized.length < 2
+    ? []
+    : ALL_PRODUCTS.filter((product) => matchesProductQuery(product, normalized)).slice(0, 8);
 
   const selectProduct = (product: Product) => {
     onClose();
@@ -971,6 +991,33 @@ function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
 }
 
 // â”€â”€â”€ COLLECTIONS PAGE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function SearchResultsPage({ query, navigate }: { query: string; navigate: (p: Page, d?: unknown) => void }) {
+  const normalized = query.trim().toLowerCase();
+  const matches = normalized ? ALL_PRODUCTS.filter((product) => matchesProductQuery(product, normalized)) : [];
+
+  return (
+    <div className="min-h-screen bg-[#fbf8f1] px-4 py-10 md:px-10 md:py-14">
+      <div className="mx-auto max-w-[1240px]">
+        <p className="font-['IBM_Plex_Sans',sans-serif] text-[11px] font-semibold tracking-[0.2em] text-[#9a7d45]">SEARCH RESULTS</p>
+        <h1 className="mt-2 font-['Cormorant_Garamond',serif] text-[46px] font-bold leading-none md:text-[68px]">
+          {matches.length} {matches.length === 1 ? "MATCH" : "MATCHES"}
+        </h1>
+        <p className="mt-4 text-sm text-black/55">Showing every fragrance matching “{query}”.</p>
+        {matches.length === 0 ? (
+          <div className="mt-10 rounded-xl border border-black/10 bg-white p-8 text-center">
+            <p className="font-['Cormorant_Garamond',serif] text-2xl">No fragrances matched your search.</p>
+            <button onClick={() => navigate("collections")} className="mt-4 border-b border-black text-sm">Browse all collections</button>
+          </div>
+        ) : (
+          <div className="mt-9 grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
+            {matches.map((product) => <CompactProductCard key={product.id} product={product} navigate={navigate} />)}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function CollectionsPage({ navigate, initialFilters }: {
   navigate: (p: Page, d?: unknown) => void;
   initialFilters?: Partial<Filters>;
@@ -1599,6 +1646,7 @@ function ProductPage({ product, navigate, addToCart }: {
                 className="flex-1 py-4 border border-[#171717] font-['Cormorant_Garamond',serif] font-bold text-[15px] tracking-[0.12em] rounded-[5px] hover:bg-[#171717] hover:text-white transition-all">
                 BUY NOW
               </button>
+              <FavoriteButton productId={product.id} />
             </div>
 
             {/* Trust bar */}
@@ -1739,6 +1787,35 @@ function CheckoutPage({ items, navigate, onOrderPlaced }: { items: CartItem[]; n
   const subtotal = items.reduce((acc, i) => acc + i.price * i.qty, 0);
   const shipping = delivery.amountCentavos / 100;
   const total = subtotal + shipping;
+
+  useEffect(() => {
+    const supabase = getSupabase();
+    if (!supabase) return;
+    let active = true;
+
+    const prefillAccountDetails = async () => {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const user = sessionData.session?.user;
+      if (!user || !active) return;
+      const [{ data: profile }, { data: address }] = await Promise.all([
+        supabase.from("profiles").select("full_name, phone").eq("id", user.id).maybeSingle(),
+        supabase.from("addresses").select("recipient_name, phone, address_line, city, postal_code").eq("user_id", user.id).eq("is_default", true).maybeSingle(),
+      ]);
+      if (!active) return;
+      setForm((current) => ({
+        ...current,
+        name: address?.recipient_name || profile?.full_name || current.name,
+        email: user.email || current.email,
+        phone: address?.phone || profile?.phone || current.phone,
+        address: address?.address_line || current.address,
+        city: address?.city || current.city,
+        zip: address?.postal_code || current.zip,
+      }));
+    };
+
+    void prefillAccountDetails();
+    return () => { active = false; };
+  }, []);
 
   const validateShipping = () => {
     if (!form.name.trim() || !form.email.includes("@") || !form.phone.trim() || !form.address.trim() || !form.city.trim() || !form.zip.trim()) {
@@ -1978,10 +2055,9 @@ function ScentFinderPage({ navigate }: { navigate: (p: Page, data?: unknown) => 
   const [recommendations, setRecommendations] = useState<Array<{ productId: number; reason: string }>>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [notice, setNotice] = useState("");
 
   const localMatches = (text: string) => {
-    const input = text.toLowerCase();
+    const input = cleanText(text).toLowerCase();
     const words = input.split(/[^a-z0-9]+/).filter((word) => word.length > 2);
     const expanded = [...words];
     if (/manila|summer|hot|humid|day|clean|office/.test(input)) expanded.push("fresh", "citrus", "everyday");
@@ -1997,14 +2073,13 @@ function ScentFinderPage({ navigate }: { navigate: (p: Page, data?: unknown) => 
 
   const findScents = async () => {
     setError("");
-    setNotice("");
+    setRecommendations([]);
     setLoading(true);
     try {
       const result = await findScentRecommendations(preference);
       setRecommendations(result.recommendations);
     } catch (caught) {
       setRecommendations(localMatches(preference));
-      setNotice("Showing instant catalog matches. Connect OpenAI later for more nuanced recommendations.");
     } finally { setLoading(false); }
   };
 
@@ -2019,7 +2094,6 @@ function ScentFinderPage({ navigate }: { navigate: (p: Page, data?: unknown) => 
           className="w-full resize-none rounded-xl border border-black/15 bg-white p-4 font-['IBM_Plex_Sans',sans-serif] text-[14px] leading-relaxed outline-none focus:border-black" />
         <DarkBtn onClick={() => void findScents()} disabled={loading || preference.trim().length < 10} className="mt-4">{loading ? "MATCHING SCENTS..." : "FIND MY MATCHES"}</DarkBtn>
         {error && <p className="mt-4 text-sm text-red-700">{error}</p>}
-        {notice && <p className="mt-4 text-sm text-[#7f6739]">{notice}</p>}
       </div>
       {recommendations.length > 0 && <div className="mt-10 grid gap-5 md:grid-cols-3">
         {recommendations.map((recommendation, index) => {
@@ -2212,12 +2286,20 @@ export default function App() {
   const [selectedProduct, setSelectedProduct] = useState<Product>(ALL_PRODUCTS[0]);
   const [selectedDiscoverySetId, setSelectedDiscoverySetId] = useState<number | null>(null);
   const [collectionFilters, setCollectionFilters] = useState<Partial<Filters>>({});
+  const [searchQuery, setSearchQuery] = useState("");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [accountOpen, setAccountOpen] = useState(false);
   const pageRef = useRef<Page>(initialPage);
   const selectedProductRef = useRef<Product>(ALL_PRODUCTS[0]);
   const selectedDiscoverySetIdRef = useRef<number | null>(null);
   const collectionFiltersRef = useRef<Partial<Filters>>({});
+  const searchQueryRef = useRef("");
+
+  useEffect(() => {
+    const openAccount = () => setAccountOpen(true);
+    window.addEventListener("joshua-scents:open-account", openAccount);
+    return () => window.removeEventListener("joshua-scents:open-account", openAccount);
+  }, []);
 
   const createHistoryState = (nextPage = pageRef.current): AppHistoryState => ({
     joshuaScents: true,
@@ -2225,6 +2307,7 @@ export default function App() {
     productId: selectedProductRef.current.id,
     discoverySetId: selectedDiscoverySetIdRef.current,
     collectionFilters: collectionFiltersRef.current,
+    searchQuery: searchQueryRef.current,
   });
 
   const applyHistoryState = (state: AppHistoryState, scroll = true) => {
@@ -2242,6 +2325,9 @@ export default function App() {
 
     collectionFiltersRef.current = state.collectionFilters ?? {};
     setCollectionFilters(state.collectionFilters ?? {});
+
+    searchQueryRef.current = state.searchQuery ?? "";
+    setSearchQuery(state.searchQuery ?? "");
 
     if (scroll) window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -2284,6 +2370,10 @@ export default function App() {
       collectionFiltersRef.current = {};
       setCollectionFilters({});
     }
+    if (p === "search" && typeof data === "string") {
+      searchQueryRef.current = data;
+      setSearchQuery(data);
+    }
     pageRef.current = p;
     setPage(p);
     window.history.pushState(createHistoryState(p), "", window.location.href);
@@ -2313,6 +2403,7 @@ export default function App() {
     switch (page) {
       case "home":        return <HomePage navigate={navigate} />;
       case "collections": return <CollectionsPage navigate={navigate} initialFilters={collectionFilters} />;
+      case "search":      return <SearchResultsPage query={searchQuery} navigate={navigate} />;
       case "bestsellers": return <BestSellersPage navigate={navigate} />;
       case "discovery":   return <DiscoveryPage navigate={navigate} selectedSetId={selectedDiscoverySetId} />;
       case "discoverySet": return <DiscoverySetPage navigate={navigate} setId={selectedDiscoverySetId} />;
@@ -2334,7 +2425,7 @@ export default function App() {
       {page !== "confirmation" && (
         <Header page={page} navigate={navigate} cartCount={cartCount} onAccount={() => setAccountOpen(true)} />
       )}
-      <AccountDialog open={accountOpen} onClose={() => setAccountOpen(false)} />
+      <AccountCenterDialog open={accountOpen} onClose={() => setAccountOpen(false)} />
       <main className="flex-1">{renderPage()}</main>
       {page !== "checkout" && page !== "confirmation" && (
         <Footer navigate={navigate} />

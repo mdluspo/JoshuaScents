@@ -6,7 +6,7 @@ import { sendOrderEmail } from "./_lib/email.js";
 import { ApiError, allowMethods, handleApiError, noStore, requiredEnv } from "./_lib/http.js";
 import { quoteDelivery } from "./_lib/lalamove.js";
 import { createPayMongoCheckout } from "./_lib/paymongo.js";
-import { adminDb, createOrder } from "./_lib/supabase.js";
+import { adminDb, createOrder, getOptionalUser } from "./_lib/supabase.js";
 
 const requestSchema = z.object({
   customer: z.object({
@@ -36,6 +36,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const parsed = requestSchema.safeParse(req.body);
     if (!parsed.success) throw new ApiError(400, "Please check your checkout details", parsed.error.flatten());
     const input = parsed.data;
+    const signedInUser = await getOptionalUser(req.headers.authorization);
     let priced;
     try { priced = priceCart(input.items); }
     catch (error) { throw new ApiError(400, error instanceof Error ? error.message : "Invalid cart"); }
@@ -67,6 +68,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         unit_price_centavos: item.unitPrice, quantity: item.quantity, line_total_centavos: item.lineTotal,
       })),
     });
+
+    if (signedInUser) {
+      const { error: ownerError } = await adminDb().from("orders").update({ user_id: signedInUser.id }).eq("id", orderId);
+      if (ownerError) throw new ApiError(500, "Order saved, but it could not be linked to your account", ownerError.message);
+    }
 
     if (input.paymentMethod === "cod") {
       const order = { reference, status: "processing", total_centavos: total, customer_name: input.customer.name, customer_email: input.customer.email };
