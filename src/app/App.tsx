@@ -3,6 +3,7 @@ import { motion, useAnimationControls } from "motion/react";
 import { ShoppingCart, Search, User, Menu, X, ChevronDown, ChevronUp, Star, Check, ArrowLeft, Plus, Minus, Package, Truck, Shield, Gift, Play, Pause } from "lucide-react";
 import { AccountCenterDialog } from "@/app/components/AccountCenterDialog";
 import { EditorialHome } from "@/app/components/EditorialHome";
+import { DiscoveryCollection, DiscoveryDetail } from "@/app/components/DiscoveryExperience";
 import { AddressAutocomplete } from "@/app/components/AddressAutocomplete";
 import { BagDrawer, BagPage, CheckoutInterface, ProductDetail, ShopProductCard, StoreActions } from "@/app/components/StorefrontInterfaces";
 import { createCheckout, getDeliveryQuote } from "@/lib/api";
@@ -628,9 +629,9 @@ function CinematicHomePage({ navigate }: { navigate: (p: Page, d?: unknown) => v
       </section>
       <section className="mx-auto max-w-[1440px] px-8 py-14 md:px-16 md:py-20 lg:px-24">
         <div className="mb-7 flex items-end justify-between"><h2 className="font-['Cormorant_Garamond',serif] text-[38px] leading-none md:text-[48px]">Explore collections</h2><span className="hidden font-['IBM_Plex_Sans',sans-serif] text-[11px] tracking-[0.18em] text-[#9a7d45] md:block">FIND YOUR MOOD →</span></div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">{collections.map((item) => <button key={item.label} onClick={() => navigate("collections", { category: item.category })} className="cinematic-collection group relative h-[220px] overflow-hidden rounded-[5px] text-left"><img src={item.image} alt="" className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-110" /><div className="absolute inset-0 bg-gradient-to-t from-[#2b211b]/80 via-[#2b211b]/15 to-transparent" /><div className="absolute bottom-5 left-5 text-[#f8f2e8]"><p className="font-['Cormorant_Garamond',serif] text-[25px] leading-none">{item.label}</p><p className="mt-2 text-[12px] text-[#f8f2e8]/75">{item.text}</p><span className="mt-4 inline-block text-[10px] tracking-[0.18em]">EXPLORE →</span></div></button>)}</div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">{collections.map((item) => <button key={item.label} onClick={() => navigate("collections", { category: item.category })} className="cinematic-collection group relative h-[220px] overflow-hidden rounded-[5px] text-left"><img src={item.image} alt="" className="absolute inset-0 h-full w-full object-cover transition duration-700" /><div className="absolute inset-0 bg-gradient-to-t from-[#2b211b]/80 via-[#2b211b]/15 to-transparent" /><div className="absolute bottom-5 left-5 text-[#f8f2e8]"><p className="font-['Cormorant_Garamond',serif] text-[25px] leading-none">{item.label}</p><p className="mt-2 text-[12px] text-[#f8f2e8]/75">{item.text}</p><span className="mt-4 inline-block text-[10px] tracking-[0.18em]">EXPLORE →</span></div></button>)}</div>
       </section>
-      <section className="border-y border-[#3a2418]/15 bg-[#eee2d2] px-8 py-14 md:px-16 lg:px-24"><div className="mx-auto max-w-[1440px]"><div className="mb-8 flex items-end justify-between"><div><p className="mb-2 text-[11px] font-semibold tracking-[0.25em] text-[#9a7d45]">THE EDIT</p><h2 className="font-['Cormorant_Garamond',serif] text-[42px] leading-none md:text-[54px]">Bestsellers</h2></div><button onClick={() => navigate("bestsellers")} className="text-[11px] tracking-[0.16em]">VIEW ALL →</button></div><div className="grid gap-3 md:grid-cols-2 lg:grid-cols-5">{bestSellers.map((product) => <button key={product.id} onClick={() => navigate("product", product)} className="group bg-[#f8f2e8] p-3 text-left transition duration-500 hover:-translate-y-2 hover:shadow-[0_20px_45px_rgba(42,34,25,0.13)]"><div className="flex h-[190px] items-center justify-center bg-[#eadcc8]"><img src={product.img} alt={product.name} className="h-[165px] object-contain transition duration-700 group-hover:scale-105" /></div><p className="mt-4 text-[10px] tracking-[0.16em] text-[#9a7d45]">{product.family.toUpperCase()}</p><h3 className="mt-1 font-['Cormorant_Garamond',serif] text-[23px] leading-none">{product.name}</h3><p className="mt-3 text-[12px] text-[#2b211b]/55">From PHP {product.price}</p></button>)}</div></div></section>
+      <section className="border-y border-[#3a2418]/15 bg-[#eee2d2] px-8 py-14 md:px-16 lg:px-24"><div className="mx-auto max-w-[1440px]"><div className="mb-8 flex items-end justify-between"><div><p className="mb-2 text-[11px] font-semibold tracking-[0.25em] text-[#9a7d45]">THE EDIT</p><h2 className="font-['Cormorant_Garamond',serif] text-[42px] leading-none md:text-[54px]">Bestsellers</h2></div><button onClick={() => navigate("bestsellers")} className="text-[11px] tracking-[0.16em]">VIEW ALL →</button></div><div className="grid gap-3 md:grid-cols-2 lg:grid-cols-5">{bestSellers.map((product) => <button key={product.id} onClick={() => navigate("product", product)} className="group bg-[#f8f2e8] p-3 text-left transition duration-500 hover:-translate-y-2 hover:shadow-[0_20px_45px_rgba(42,34,25,0.13)]"><div className="flex h-[190px] items-center justify-center bg-[#eadcc8]"><img src={product.img} alt={product.name} className="h-[165px] object-contain transition duration-700" /></div><p className="mt-4 text-[10px] tracking-[0.16em] text-[#9a7d45]">{product.family.toUpperCase()}</p><h3 className="mt-1 font-['Cormorant_Garamond',serif] text-[23px] leading-none">{product.name}</h3><p className="mt-3 text-[12px] text-[#2b211b]/55">From PHP {product.price}</p></button>)}</div></div></section>
       <section className="cinematic-about mx-auto grid max-w-[1440px] gap-10 border-y border-[#3a2418]/20 px-8 py-16 md:grid-cols-[0.75fr_1.25fr] md:items-center md:px-16 md:py-24 lg:px-24"><div><p className="text-[11px] font-semibold tracking-[0.3em] text-[#9a7d45]">ABOUT JOSHUA</p><p className="mt-5 font-['Cormorant_Garamond',serif] text-[74px] leading-none text-[#3a2418]/12">01</p></div><div className="max-w-[720px]"><h2 className="font-['Cormorant_Garamond',serif] text-[44px] leading-[0.95] md:text-[64px]">A fragrance can be personal before it becomes permanent.</h2><p className="mt-6 max-w-[590px] font-['IBM_Plex_Sans',sans-serif] text-[15px] leading-relaxed text-[#2b211b]/68">I created Decants by Joshua for the part of fragrance discovery that happens between curiosity and commitment. Small portions, authentic scents, and enough time on skin to find what feels like you.</p><button onClick={() => navigate("decantguide")} className="mt-7 border-b border-[#3a2418] pb-2 text-[11px] tracking-[0.18em]">THE JOSHUA SCENT METHOD →</button></div></section>
       <section className="mx-2 my-10 flex min-h-[250px] items-center justify-between overflow-hidden rounded-[5px] bg-[#e5d3bb] px-8 md:px-20"><div><p className="text-[11px] font-semibold tracking-[0.3em] text-[#9a7d45]">THE JOURNAL</p><h2 className="mt-4 max-w-[560px] font-['Cormorant_Garamond',serif] text-[42px] leading-[0.9] md:text-[58px]">A more personal<br />way to experience fragrance</h2><button onClick={() => navigate("decantguide")} className="mt-5 text-[11px] tracking-[0.18em]">READ THE GUIDE →</button></div><img src={imgProd1} alt="A Joshua decant" className="hidden h-[250px] w-[38%] object-contain md:block" /></section>
     </div>
@@ -940,7 +941,7 @@ function BestSellersPage({ navigate }: { navigate: (p: Page, d?: unknown) => voi
               <img
                 src={signature.img}
                 alt={signature.name}
-                className="h-[205px] object-contain drop-shadow-[0_32px_34px_rgba(24,19,13,0.24)] transition-transform duration-700 group-hover:scale-105 md:h-[340px]"
+                className="h-[205px] object-contain drop-shadow-[0_32px_34px_rgba(24,19,13,0.24)] transition-transform duration-700 md:h-[340px]"
               />
               <div className="w-full">
                 <div className="mb-4 h-px w-full bg-[#171717]/12" />
@@ -991,252 +992,11 @@ function BestSellersPage({ navigate }: { navigate: (p: Page, d?: unknown) => voi
 }
 
 function DiscoveryPage({ navigate, selectedSetId }: { navigate: (p: Page, d?: unknown) => void; selectedSetId?: number | null }) {
-  const [activeSetId, setActiveSetId] = useState<number>(selectedSetId ?? DISCOVERY_SETS[0].id);
-
-  useEffect(() => {
-    if (selectedSetId) setActiveSetId(selectedSetId);
-  }, [selectedSetId]);
-
-  return (
-    <div className="bg-[#f7f5f1] min-h-screen">
-      {/* Header section */}
-      <section className="border-b border-[#171717] px-6 pb-10 pt-14 text-center">
-        <div className="mx-auto mb-7 grid max-w-[760px] grid-cols-3 border-y border-[#171717]/16 py-3">
-          {["DISCOVERY", "CURATED", "GIFT READY"].map((item) => (
-            <p key={item} className="border-r border-[#171717]/12 font-['IBM_Plex_Sans',sans-serif] text-[10px] font-semibold tracking-[0.18em] text-[#9a7d45] last:border-r-0">
-              {item}
-            </p>
-          ))}
-        </div>
-        <h1 className="font-['Cormorant_Garamond',serif] font-bold text-[54px] md:text-[70px] text-[#171717] tracking-[0.04em] mb-3">DISCOVERY SETS</h1>
-        <p className="font-['IBM_Plex_Sans',sans-serif] font-light text-[18px] text-[rgba(23,23,23,0.65)] tracking-wide">
-          Curated fragrance journeys for every occasion.
-        </p>
-
-        {/* Feature columns */}
-        <div className="mx-auto mt-12 grid max-w-[1040px] gap-10 md:grid-cols-3">
-          {[
-            {
-              icon: (
-                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.1">
-                  <path d="M9 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2h-2M9 3a2 2 0 012-2h2a2 2 0 012 2M9 3h6" />
-                  <path d="M9 12l2 2 4-4" />
-                </svg>
-              ),
-              title: "Curated Selections",
-              desc: "Handpicked decants to explore and find your signature",
-            },
-            {
-              icon: (
-                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.1">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                </svg>
-              ),
-              title: "Premium Quality",
-              desc: "100% Premium quality decants",
-            },
-            {
-              icon: <Gift size={52} strokeWidth={1.1} />,
-              title: "Perfect to Gift",
-              desc: "Beautifully packaged and ready to impress",
-            },
-          ].map(({ icon, title, desc }, i) => (
-            <div key={i} className="mx-auto flex w-full max-w-[310px] flex-col items-center text-left">
-              <div className="flex w-full items-start gap-4">
-                <div className="text-[#171717] flex-shrink-0">{icon}</div>
-                <div>
-                  <p className="whitespace-nowrap font-['Cormorant_Garamond',serif] font-semibold text-[22px] text-[#171717] leading-tight">{title}</p>
-                  <p className="font-['IBM_Plex_Sans',sans-serif] font-light text-[13px] text-[rgba(23,23,23,0.65)] leading-relaxed mt-1">{desc}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Explore Our Sets */}
-      <section className="px-4 py-12 md:px-12 md:py-16">
-        <div className="max-w-[1180px] mx-auto">
-          <div className="mb-12 text-center">
-            <p className="font-['IBM_Plex_Sans',sans-serif] text-[12px] font-semibold tracking-[0.18em] text-[#9a7d45]">EXPLORE OUR SETS</p>
-            <h2 className="mt-2 font-['Cormorant_Garamond',serif] font-bold text-[42px] text-[#171717] tracking-[0.05em] md:text-[60px] leading-none">SCENT JOURNEYS</h2>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3 md:block md:space-y-10">
-            {DISCOVERY_SETS.map((set, i) => {
-              const setProducts = ALL_PRODUCTS.filter((p) => set.productIds.includes(p.id));
-              const heroProduct = setProducts[0];
-              const reverse = i % 2 === 1;
-              const isActive = activeSetId === set.id;
-              return (
-                <div
-                  key={set.id}
-                  data-set-id={set.id}
-                  className={`group relative grid items-stretch gap-0 overflow-hidden rounded-[8px] border bg-[#fbf8f1] transition-all duration-500 hover:-translate-y-1 md:grid-cols-[1.05fr_0.95fr] ${reverse ? "md:[&>*:first-child]:order-2" : ""} ${
-                    isActive
-                      ? "border-[#ae9766] shadow-[0_34px_86px_rgba(42,34,25,0.18)]"
-                      : "border-[#d9cdb9] shadow-[0_24px_70px_rgba(42,34,25,0.12)]"
-                  }`}
-                >
-                  <div className={`relative flex min-h-[130px] items-center justify-center overflow-hidden bg-[#efe3d1] p-3 md:min-h-[430px] md:p-8 ${reverse ? "md:order-2" : ""}`}>
-                      <img src={imgDiscoveryBg} alt="" className="absolute inset-0 h-full w-full object-cover opacity-26" />
-                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(255,255,255,0.82),rgba(239,227,209,0.5)_42%,rgba(152,118,67,0.24)_100%)]" />
-                      <div className="absolute left-[8%] top-[13%] h-px w-[82%] rotate-[-8deg] bg-[#b59a63]/30" />
-                      <div className="absolute bottom-[15%] left-[13%] h-[34px] w-[74%] rounded-full bg-[#4f4436]/16 blur-2xl md:h-[74px]" />
-                      <div className="absolute inset-x-6 bottom-5 h-px bg-[#b59a63]/18 md:inset-x-10 md:bottom-10" />
-                      <div className="relative h-[118px] w-full max-w-[170px] md:h-[330px] md:max-w-[410px]">
-                        {setProducts.slice(0, 5).map((p, idx) => (
-                          <button
-                            key={p.id}
-                            onClick={() => navigate("product", p)}
-                            className="absolute bottom-0 transition-all duration-700 hover:-translate-y-3"
-                            style={{
-                              left: `${idx * 18}%`,
-                              zIndex: 10 - idx,
-                              transform: `rotate(${(idx - 2) * 5}deg)`,
-                            }}
-                          >
-                            <img
-                              src={p.img}
-                              alt={p.name}
-                              className={`${idx === 0 ? "h-[108px] md:h-[270px]" : "h-[84px] md:h-[210px]"} object-contain drop-shadow-[0_24px_28px_rgba(35,28,20,0.22)]`}
-                            />
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  <div className="relative flex min-h-[210px] flex-col justify-between overflow-hidden p-3 md:min-h-[430px] md:p-9">
-                    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_90%_10%,rgba(174,151,102,0.14),transparent_30%)]" />
-                    <div className="pointer-events-none absolute right-3 top-3 font-['Cormorant_Garamond',serif] text-[52px] leading-none text-[#171717]/7 md:right-7 md:top-6 md:text-[92px]">0{i + 1}</div>
-                    <div className="relative">
-                      <div className="mb-3 h-[2px] w-10 bg-[#AE9766] md:mb-5 md:w-14" />
-                      <p className="line-clamp-2 font-['Cormorant_Garamond',serif] text-[22px] font-semibold leading-[0.95] tracking-[0.02em] text-[#171717] md:text-[38px] md:leading-none md:tracking-[0.03em]">{set.name}</p>
-                      <p className="mt-2 line-clamp-2 max-w-[420px] font-['IBM_Plex_Sans',sans-serif] text-[11px] font-light leading-snug text-[#171717]/62 md:mt-3 md:text-[14px] md:leading-relaxed">{set.subtitle}</p>
-                      <div className="mt-3 flex flex-wrap gap-1.5 md:mt-5 md:gap-2">
-                        {set.tags.map((t) => (
-                          <span key={t} className="border border-[#c9b27a]/45 px-2 py-1 font-['IBM_Plex_Sans',sans-serif] text-[8px] tracking-[0.1em] text-[#171717] md:px-3 md:text-[10px] md:tracking-[0.12em]">{t}</span>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="relative mt-4 md:mt-9">
-                      <div className="mb-6 hidden gap-3 md:grid">
-                        {setProducts.slice(0, 3).map((p, idx) => (
-                          <button key={p.id} onClick={() => navigate("product", p)} className="grid grid-cols-[36px_1fr_auto] items-center gap-3 border-b border-[#d9cdb9] pb-3 text-left transition-opacity hover:opacity-60">
-                            <span className="font-['Cormorant_Garamond',serif] text-[25px] text-[#AE9766]">0{idx + 1}</span>
-                            <span>
-                              <span className="block font-['Cormorant_Garamond',serif] text-[20px] leading-none text-[#171717]">{p.name}</span>
-                              <span className="mt-1 block font-['IBM_Plex_Sans',sans-serif] text-[11px] text-[#171717]/50">{cleanNotes(p.notes)}</span>
-                            </span>
-                            <span className="font-['IBM_Plex_Sans',sans-serif] text-[10px] font-semibold tracking-[0.14em]">VIEW</span>
-                          </button>
-                        ))}
-                      </div>
-                      <div className="flex items-end justify-between gap-3 md:gap-4">
-                        <div>
-                          <p className="font-['IBM_Plex_Sans',sans-serif] text-[10px] font-light text-[#171717]/55 md:text-[12px]">{set.count} Fragrances</p>
-                          <p className="font-['IBM_Plex_Sans',sans-serif] text-[14px] font-semibold text-[#171717] md:text-[20px]">PHP {set.price}</p>
-                        </div>
-                        <button
-                          onClick={() => navigate("discoverySet", set.id)}
-                          className="border-b border-[#171717] pb-px font-['IBM_Plex_Sans',sans-serif] text-[9px] font-semibold tracking-[0.12em] text-[#171717] hover:opacity-55 md:text-[11px] md:tracking-[0.16em]"
-                        >
-                          EXPLORE &rarr;
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-    </div>
-  );
+  return <DiscoveryCollection sets={DISCOVERY_SETS} products={ALL_PRODUCTS} images={{ silk: imgWhyLuxuryBg, texture: imgDiscoveryBg }} selectedSetId={selectedSetId} onSet={id => navigate("discoverySet", id)} onProduct={product => navigate("product", product)} onFinder={() => navigate("scentfinder")} />;
 }
 
-// â”€â”€â”€ PRODUCT DETAIL PAGE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function DiscoverySetPage({ setId, navigate }: { setId: number | null; navigate: (p: Page, d?: unknown) => void }) {
-  const set = DISCOVERY_SETS.find((item) => item.id === setId) ?? DISCOVERY_SETS[0];
-  const setProducts = ALL_PRODUCTS.filter((product) => set.productIds.includes(product.id));
-
-  return (
-    <div className="min-h-screen bg-[#f7f1e7] text-[#171717]">
-      <section className="relative overflow-hidden border-b border-[#171717] bg-[#171614] px-6 py-10 text-[#f8f2e8] md:px-12 md:py-14">
-        <img src={imgDiscoveryBg} alt="" className="absolute inset-0 h-full w-full object-cover opacity-10" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_28%_36%,rgba(174,151,102,0.24),transparent_34%),linear-gradient(90deg,rgba(23,22,20,0.96),rgba(23,22,20,0.84))]" />
-        <div className="relative mx-auto grid max-w-[1220px] gap-10 md:grid-cols-[0.92fr_1.08fr] md:items-center">
-          <div className="relative min-h-[460px] overflow-hidden rounded-[8px] border border-[#c9b27a]/34 bg-[#efe3d1]">
-            <img src={imgDiscoveryBg} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(255,255,255,0.84),rgba(239,227,209,0.5)_42%,rgba(152,118,67,0.24)_100%)]" />
-            <div className="absolute bottom-[14%] left-[12%] h-[76px] w-[76%] rounded-full bg-[#4f4436]/16 blur-2xl" />
-            <div className="absolute left-8 right-8 top-10 h-px bg-[#b59a63]/24" />
-            <div className="absolute bottom-10 left-8 right-8 h-px bg-[#b59a63]/18" />
-            <div className="relative flex h-full min-h-[460px] items-center justify-center">
-              <div className="relative h-[330px] w-full max-w-[430px]">
-                {setProducts.slice(0, 5).map((product, idx) => (
-                  <button
-                    key={product.id}
-                    onClick={() => navigate("product", product)}
-                    className="absolute bottom-0 transition-transform duration-500 hover:-translate-y-3"
-                    style={{ left: `${idx * 18}%`, zIndex: 10 - idx, transform: `rotate(${(idx - 2) * 5}deg)` }}
-                  >
-                    <img src={product.img} alt={product.name} className={`${idx === 0 ? "h-[270px]" : "h-[210px]"} object-contain drop-shadow-[0_24px_28px_rgba(35,28,20,0.22)]`} />
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <button onClick={() => navigate("discovery")} className="mb-8 flex items-center gap-1.5 font-['IBM_Plex_Sans',sans-serif] text-[13px] text-[#f8f2e8]/55 transition-colors hover:text-[#f8f2e8]">
-              <ArrowLeft size={13} /> Discovery Sets
-            </button>
-            <div className="mb-6 h-[2px] w-20 bg-[#AE9766]" />
-            <p className="font-['IBM_Plex_Sans',sans-serif] text-[11px] font-semibold tracking-[0.22em] text-[#c9b27a]">SET 0{set.id}</p>
-            <h1 className="mt-3 max-w-[680px] font-['Cormorant_Garamond',serif] text-[52px] font-bold leading-none tracking-[0.04em] md:text-[76px]">{set.name}</h1>
-            <p className="mt-5 max-w-[560px] font-['IBM_Plex_Sans',sans-serif] text-[16px] font-light leading-relaxed text-[#f8f2e8]/68">{set.subtitle}</p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {set.tags.map((tag) => (
-                <span key={tag} className="border border-[#c9b27a]/45 px-3 py-1 font-['IBM_Plex_Sans',sans-serif] text-[10px] tracking-[0.14em] text-[#f8f2e8]">{tag}</span>
-              ))}
-            </div>
-            <div className="mt-10 grid max-w-[560px] grid-cols-3 border-y border-[#c9b27a]/24 py-5">
-              <div>
-                <p className="font-['IBM_Plex_Sans',sans-serif] text-[10px] font-semibold tracking-[0.16em] text-[#c9b27a]">COUNT</p>
-                <p className="mt-1 font-['Cormorant_Garamond',serif] text-[26px]">{set.count}</p>
-              </div>
-              <div>
-                <p className="font-['IBM_Plex_Sans',sans-serif] text-[10px] font-semibold tracking-[0.16em] text-[#c9b27a]">PRICE</p>
-                <p className="mt-1 font-['Cormorant_Garamond',serif] text-[26px]">PHP {set.price}</p>
-              </div>
-              <div>
-                <p className="font-['IBM_Plex_Sans',sans-serif] text-[10px] font-semibold tracking-[0.16em] text-[#c9b27a]">STYLE</p>
-                <p className="mt-1 font-['Cormorant_Garamond',serif] text-[26px]">Curated</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="px-6 py-14 md:px-12">
-        <div className="mx-auto max-w-[1180px]">
-          <div className="mb-8 flex items-end justify-between gap-4 border-b border-[#171717]/14 pb-5">
-            <div>
-              <p className="font-['IBM_Plex_Sans',sans-serif] text-[11px] font-semibold tracking-[0.2em] text-[#9a7d45]">FRAGRANCE LINEUP</p>
-              <h2 className="mt-2 font-['Cormorant_Garamond',serif] text-[44px] font-bold leading-none tracking-[0.04em]">Inside This Set</h2>
-            </div>
-            <p className="hidden font-['IBM_Plex_Sans',sans-serif] text-[13px] text-[#171717]/55 md:block">Tap a fragrance to inspect notes, sizes, and pricing.</p>
-          </div>
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-            {setProducts.map((product) => (
-              <RelatedProductCard key={product.id} product={product} navigate={navigate} />
-            ))}
-          </div>
-        </div>
-      </section>
-    </div>
-  );
+  return <DiscoveryDetail key={setId} sets={DISCOVERY_SETS} products={ALL_PRODUCTS} images={{ silk: imgWhyLuxuryBg, texture: imgDiscoveryBg }} setId={setId} onSet={id => navigate("discoverySet", id)} onProduct={product => navigate("product", product)} onFinder={() => navigate("scentfinder")} onBack={() => navigate("discovery", setId)} />;
 }
 
 function ProductPage({ product, navigate, addToCart }: { product: Product; navigate: (p: Page, d?: unknown) => void; addToCart: (p: Product, size: string, price: number, quantity?: number) => void }) {
@@ -1528,7 +1288,7 @@ function DecantGuidePage() {
                   <div className="absolute inset-x-6 top-24 h-px bg-[#d8c8ac]" />
                   <div className="relative flex h-24 items-start justify-between">
                     <p className="font-['Cormorant_Garamond',serif] text-[68px] leading-none text-[#171717]/10">{step.n}</p>
-                    <span className="mt-2 h-3 w-3 rounded-full border border-[#AE9766] bg-[#fbf8f1] transition-transform duration-500 group-hover:scale-[1.8]" />
+                    <span className="mt-2 h-3 w-3 rounded-full border border-[#AE9766] bg-[#fbf8f1] transition-transform duration-500" />
                   </div>
                   <p className="mt-8 font-['Cormorant_Garamond',serif] text-[31px] font-semibold leading-none">{step.title}</p>
                   <p className="mt-4 font-['IBM_Plex_Sans',sans-serif] text-[13px] font-light leading-relaxed text-[#171717]/62">{step.detail}</p>

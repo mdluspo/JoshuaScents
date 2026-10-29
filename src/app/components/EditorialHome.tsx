@@ -50,7 +50,7 @@ export function EditorialHome({ products, sets, images, onCollections, onProduct
   }, [autoplay, active, sets.length]);
   const select = (index: number) => { setDirection(index >= active ? 1 : -1); setActive((index + sets.length) % sets.length); };
   const collections = [
-    { name: "Fresh perspectives", category: "FRESH", note: "Crisp, bright & effortlessly you.", image: images.fresh, tone: "fresh" },
+    { name: "Fresh", category: "FRESH", note: "Clean. Light. Everyday.", image: images.fresh, tone: "fresh" },
     { name: "Timber & smoke", category: "TIMBER & SMOKE", note: "Grounded in something deeper.", image: images.timber, tone: "timber" },
     { name: "Golden vanilla", category: "GOLDEN VANILLA", note: "A little warmth, a lasting impression.", image: images.vanilla, tone: "vanilla" },
     { name: "After hours", category: "AFTER HOURS", note: "For the moments that linger.", image: images.night, tone: "night" },
@@ -64,7 +64,6 @@ export function EditorialHome({ products, sets, images, onCollections, onProduct
           <h1 id="maison-hero-title">{["Your signature", "scent, decanted."].map((line, i) => <span className="maison-title-mask" key={line}><motion.span initial={reduced ? false : { y: "105%", rotate: 1.5 }} animate={{ y: "0%", rotate: 0 }} transition={{ duration: 1.1, delay: .18 + i * .13, ease }}>{line}</motion.span></span>)}</h1>
           <motion.div initial={reduced ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .9, delay: .5, ease }}><p className="maison-hero-description">Discover iconic and niche fragrances in perfectly portioned decants. Luxury scents, without the commitment.</p><div className="maison-hero-actions"><button className="maison-button" onClick={() => onCollections()}>Shop decants <ArrowRight size={18} strokeWidth={1.3} /></button><button className="maison-link" onClick={() => onPage("scentfinder")}>Find my scent <ArrowUpRight size={16} /></button></div></motion.div>
         </div>
-        <motion.div className="maison-hero-footnote" initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1, duration: 1 }}><span>SMALLER BOTTLES.</span><p>Bigger possibilities.</p><i /></motion.div>
       </motion.div>
       <a className="maison-scroll-cue" href="#maison-collections"><span>THE ART OF DISCOVERY</span><i /></a>
     </section>
@@ -73,7 +72,7 @@ export function EditorialHome({ products, sets, images, onCollections, onProduct
       <div className="maison-wrap">
         <SectionTitle eyebrow="01 / FOLLOW A FEELING" title={<span id="maison-collections-title">A scent for every side of you.</span>} action="Explore all" onAction={() => onCollections()} />
         <div className="maison-collection-grid">{collections.map((collection, index) => <Enter key={collection.category} delay={index * .07}><button className={`maison-collection maison-collection--${collection.tone}`} onClick={() => onCollections(collection.category)}>
-          <img className="maison-collection-texture" src={collection.image} alt="" loading="lazy" /><div className="maison-collection-shade" /><img className="maison-collection-bottle" src={images.bottle} alt="" loading="lazy" /><span className="maison-collection-index">0{index + 1}</span><div className="maison-collection-copy"><h3>{collection.name}</h3><p>{collection.note}</p><span className="maison-collection-arrow"><ArrowRight size={17} strokeWidth={1.2} /></span></div>
+          <img className="maison-collection-texture" src={collection.image} alt="" loading="lazy" /><div className="maison-collection-shade" /><span className="maison-collection-index">0{index + 1}</span><div className="maison-collection-copy"><h3>{collection.name}</h3><p>{collection.note}</p><span className="maison-collection-arrow"><ArrowRight size={17} strokeWidth={1.2} /></span></div>
         </button></Enter>)}</div>
       </div>
     </motion.section>
