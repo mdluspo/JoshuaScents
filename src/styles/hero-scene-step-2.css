@@ -1,0 +1,97 @@
+/* Step 2: turn the hero into a composed editorial scene. */
+.luxury-hero > div:nth-child(2) {
+  position: absolute;
+  inset: 0;
+  min-height: calc(100svh - 80px);
+  align-items: stretch !important;
+}
+
+.luxury-hero > div:nth-child(2) > div:first-child {
+  position: absolute;
+  top: clamp(2rem, 8vh, 6rem);
+  left: clamp(1.5rem, 9vw, 9rem);
+  z-index: 6;
+  width: min(48vw, 650px);
+  margin: 0;
+  padding-left: clamp(1.25rem, 2vw, 2.5rem);
+  border-left: 2px solid #ae9766;
+  text-align: left;
+}
+
+.luxury-hero > div:nth-child(2) > div:first-child h1 {
+  color: #171717 !important;
+  font-size: clamp(3rem, 5vw, 5.5rem) !important;
+  line-height: 0.88 !important;
+  letter-spacing: -0.01em !important;
+}
+
+.luxury-hero > div:nth-child(2) > div:first-child p:last-of-type {
+  max-width: 30rem;
+  color: rgba(23, 23, 23, 0.72) !important;
+}
+
+.luxury-hero > div:nth-child(2) > div:nth-child(2) {
+  position: absolute;
+  right: 2vw;
+  bottom: 1.5rem;
+  z-index: 5;
+  width: min(64vw, 920px);
+  height: 52% !important;
+  margin: 0 !important;
+}
+
+.luxury-hero > div:nth-child(2) > div:nth-child(2) img {
+  filter: drop-shadow(0 26px 20px rgba(42, 34, 25, 0.22));
+  animation: scene-bottle-float 6s ease-in-out infinite;
+}
+
+.luxury-hero > div:nth-child(2) > div:nth-child(2) img:nth-child(1),
+.luxury-hero > div:nth-child(2) > div:nth-child(2) img:nth-child(5) {
+  opacity: 0.5;
+}
+
+.luxury-hero > div:nth-child(2) > div:nth-child(2) img:nth-child(2),
+.luxury-hero > div:nth-child(2) > div:nth-child(2) img:nth-child(4) {
+  opacity: 0.78;
+}
+
+.luxury-hero > div:nth-child(2) > div:nth-child(2) img:nth-child(3) {
+  filter: drop-shadow(0 34px 26px rgba(42, 34, 25, 0.3));
+  animation-delay: -2.5s;
+}
+
+@keyframes scene-bottle-float {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-9px); }
+}
+
+@media (max-width: 1023px) {
+  .luxury-hero > div:nth-child(2) {
+    position: absolute;
+    inset: 0;
+    min-height: calc(100svh - 68px);
+  }
+
+  .luxury-hero > div:nth-child(2) > div:first-child {
+    position: absolute;
+    top: 2.5rem;
+    left: 1rem;
+    width: calc(100% - 2rem);
+    margin: 0;
+  }
+
+  .luxury-hero > div:nth-child(2) > div:first-child h1 {
+    font-size: clamp(2.8rem, 12vw, 5rem) !important;
+  }
+
+  .luxury-hero > div:nth-child(2) > div:nth-child(2) {
+    right: -15vw;
+    bottom: 1rem;
+    width: 115vw;
+    height: 42% !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .luxury-hero > div:nth-child(2) > div:nth-child(2) img { animation: none; }
+}

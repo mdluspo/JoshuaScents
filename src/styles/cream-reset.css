@@ -1,0 +1,47 @@
+[class*="luxury-page-shell"] {
+  background: #f7f5f1 !important;
+}
+
+[class*="luxury-hero"] {
+  background: #fbf8f1 !important;
+  color: #171717 !important;
+}
+
+[class*="luxury-hero"] [class*="bg-[#151311]/78"] {
+  background-color: rgba(251, 248, 241, 0.82) !important;
+}
+
+[class*="luxury-hero"] [class*="text-[#f7f1e7]"] {
+  color: #171717 !important;
+}
+
+[class*="luxury-hero"] [class*="text-[rgba(247,241,231,0.64)]"] {
+  color: rgba(23, 23, 23, 0.6) !important;
+}
+
+[class*="luxury-hero"] [class*="bg-[#c8ad76]"] {
+  background-color: #1e1e1e !important;
+  color: white !important;
+}
+
+[class*="luxury-bottle"] {
+  animation: none !important;
+  filter: none !important;
+}
+
+[class*="luxury-paper-section"] {
+  background-image: none !important;
+}
+
+[class*="luxury-image-card"],
+[class*="luxury-product-card"] {
+  border-color: #d9cdb9 !important;
+  box-shadow: 0 18px 42px rgba(42, 34, 25, 0.08) !important;
+  transition: transform 500ms ease, box-shadow 500ms ease !important;
+}
+
+[class*="luxury-image-card"]:hover,
+[class*="luxury-product-card"]:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 25px 55px rgba(42, 34, 25, 0.14) !important;
+}

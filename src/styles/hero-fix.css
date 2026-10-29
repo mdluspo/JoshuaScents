@@ -1,0 +1,68 @@
+/* Final hero-only composition: the artwork fills the section and the copy sits
+   within the image instead of leaving an empty lower band. */
+.cinematic-hero > div:nth-of-type(2) {
+  min-height: 700px !important;
+  align-items: center !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.cinematic-hero > div:nth-of-type(2) .cinematic-hero-copy {
+  transform: translateY(-0.5rem) !important;
+}
+
+.cinematic-hero > div:nth-of-type(3) {
+  display: none !important;
+}
+
+/* Let the hero artwork remain visible behind the featured panel while its
+   reveal animation is travelling upward. */
+.cinematic-hero + div > div > section:nth-child(2) {
+  background-color: transparent !important;
+}
+
+/* Continue the hero photograph through the panel's 88px starting offset. The
+   next section can then travel over the image without revealing a flat strip. */
+.cinematic-hero {
+  overflow: visible !important;
+  z-index: 0;
+}
+
+.cinematic-hero > img,
+.cinematic-hero > div:first-of-type {
+  height: calc(100% + 88px) !important;
+}
+
+/* Keep the scrollbar track transparent so it does not introduce a white rail
+   against the cream page. */
+html,
+body {
+  scrollbar-color: rgba(23, 23, 23, 0.2) transparent;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 8px;
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track,
+html::-webkit-scrollbar-track-piece,
+body::-webkit-scrollbar-track-piece {
+  background: transparent;
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+  background: rgba(23, 23, 23, 0.2);
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: content-box;
+}
+
+@media (max-width: 700px) {
+  .cinematic-hero > div:nth-of-type(2) {
+    min-height: 620px !important;
+  }
+}
+

@@ -2,8 +2,9 @@
 import { motion, useAnimationControls } from "motion/react";
 import { ShoppingCart, Search, User, Menu, X, ChevronDown, ChevronUp, Star, Check, ArrowLeft, Plus, Minus, Package, Truck, Shield, Gift, Play, Pause } from "lucide-react";
 import { AccountCenterDialog } from "@/app/components/AccountCenterDialog";
+import { EditorialHome } from "@/app/components/EditorialHome";
 import { AddressAutocomplete } from "@/app/components/AddressAutocomplete";
-import { FavoriteButton } from "@/app/components/FavoriteButton";
+import { BagDrawer, BagPage, CheckoutInterface, ProductDetail, ShopProductCard, StoreActions } from "@/app/components/StorefrontInterfaces";
 import { createCheckout, getDeliveryQuote } from "@/lib/api";
 import { trackStoreEvent } from "@/lib/analytics";
 import { getSupabase } from "@/lib/supabase";
@@ -194,7 +195,7 @@ function Header({ page, navigate, cartCount, onAccount }: {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-[#FBF8F3] border-b border-black">
+<header className="sticky top-0 z-50 bg-[#FBF8F3] border-b border-black">
       <div className="max-w-[1440px] mx-auto px-6 md:px-10 flex items-center justify-between h-[68px] md:h-[80px]">
         {/* Logo */}
         <button onClick={() => navigate("home")}
@@ -244,7 +245,7 @@ function Header({ page, navigate, cartCount, onAccount }: {
             )}
           </div>
           <button onClick={onAccount} aria-label="Open account" className="hidden md:flex hover:opacity-50 transition-opacity"><User size={20} strokeWidth={1.5} /></button>
-          <button onClick={() => navigate("cart")} className="relative hover:opacity-50 transition-opacity">
+          <button aria-label={`Open bag (${cartCount} items)`} onClick={() => navigate("cart")} className="relative hover:opacity-50 transition-opacity">
             <ShoppingCart size={20} strokeWidth={1.5} />
             {cartCount > 0 && (
               <span className="absolute -top-1.5 -right-1.5 bg-[#171717] text-white text-[9px] font-['IBM_Plex_Sans',sans-serif] font-medium rounded-full w-4 h-4 flex items-center justify-center">
@@ -260,7 +261,7 @@ function Header({ page, navigate, cartCount, onAccount }: {
 
       {/* Mobile nav */}
       {mobileOpen && (
-        <div className="lg:hidden bg-[#FBF8F3] border-t border-black px-6 py-5 flex flex-col gap-4">
+<div className="lg:hidden bg-[#FBF8F3] border-t border-black px-6 py-5 flex flex-col gap-4">
           {navLinks.map((item) => (
             <button key={item.label}
               onClick={() => { (item.action ?? (() => navigate(item.page)))(); setMobileOpen(false); }}
@@ -332,7 +333,7 @@ function SearchDialog({ open, onClose, navigate }: { open: boolean; onClose: () 
 // â”€â”€â”€ FOOTER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function Footer({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
   return (
-    <footer className="bg-[#171513] text-[#f5f1ea] px-8 md:px-16 pt-14 pb-8">
+<footer className="bg-[#171513] text-[#f5f1ea] px-8 md:px-16 pt-14 pb-8">
       <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
         <div>
           <p className="font-['Cormorant_Garamond',serif] font-semibold text-[22px] tracking-wide mb-1">DECANTS BY JOSHUA</p>
@@ -368,84 +369,13 @@ function Footer({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
 
 // â”€â”€â”€ PRODUCT CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ProductCard({ product, navigate, rank }: { product: Product; navigate: (p: Page, d?: unknown) => void; rank?: number }) {
-  return (
-    <button
-      onClick={() => navigate("product", product)}
-      className="group relative min-h-[178px] overflow-hidden rounded-[8px] border border-[#d9cdb9] bg-[#fbf8f1] p-3 text-left shadow-[0_18px_42px_rgba(42,34,25,0.08)] transition-shadow hover:shadow-[0_26px_58px_rgba(42,34,25,0.16)] md:min-h-[238px] md:p-5"
-    >
-      {rank ? (
-        <div className="pointer-events-none absolute right-3 top-3 z-0 w-[68px] text-right font-['Cormorant_Garamond',serif] text-[44px] leading-none text-[#171717]/7 md:right-5 md:top-5 md:w-[88px] md:text-[62px]">
-          {String(rank).padStart(2, "0")}
-        </div>
-      ) : null}
-      <div className="relative z-10 flex h-full gap-3 md:gap-5">
-        <div className="flex h-[150px] w-[116px] shrink-0 items-center justify-center bg-[#f0e6d7] md:h-[190px] md:w-[150px]">
-          <img src={product.img} alt={product.name} className="h-[128px] object-contain transition-transform duration-700 group-hover:scale-105 md:h-[162px]" />
-        </div>
-        <div className={`flex min-h-[150px] flex-1 flex-col justify-between md:min-h-[190px] ${rank ? "pr-6 md:pr-16" : ""}`}>
-          <div>
-            <p className="font-['IBM_Plex_Sans',sans-serif] text-[9px] font-semibold tracking-[0.16em] text-[#9a7d45] md:text-[10px]">{product.family.toUpperCase()}</p>
-            <p className="mt-1 font-['Cormorant_Garamond',serif] text-[23px] font-semibold leading-none text-[#171717] md:mt-2 md:text-[27px]">{product.name}</p>
-            <p className="mt-2 font-['IBM_Plex_Sans',sans-serif] text-[12px] font-light leading-snug text-[#171717]/60 md:mt-3 md:text-[13px] md:leading-relaxed">{cleanNotes(product.notes)}</p>
-          </div>
-          <div className="mt-3 flex items-center justify-between gap-3 md:mt-5 md:gap-4">
-            <span className="font-['IBM_Plex_Sans',sans-serif] text-[12px] font-semibold text-[#171717] md:text-[13px]">From PHP {product.price}</span>
-            <span className="font-['IBM_Plex_Sans',sans-serif] text-[9px] font-semibold tracking-[0.16em] text-[#171717] md:text-[10px]">VIEW &rarr;</span>
-          </div>
-        </div>
-      </div>
-    </button>
-  );
+  return <ShopProductCard product={product} rank={rank} horizontal onOpen={() => navigate("product", product)} />;
 }
-
 function CompactProductCard({ product, navigate, rank }: { product: Product; navigate: (p: Page, d?: unknown) => void; rank?: number }) {
-  return (
-    <button onClick={() => navigate("product", product)}
-      className="group relative min-h-[172px] overflow-hidden rounded-[8px] border border-[#d7c8ae] bg-[#fbf8f1] p-3 text-left shadow-[0_14px_34px_rgba(42,34,25,0.09)] transition-shadow hover:shadow-[0_24px_52px_rgba(42,34,25,0.16)] min-[560px]:min-h-[320px] min-[560px]:p-4 md:min-h-[360px]">
-      {rank ? (
-        <div className="pointer-events-none absolute right-4 top-4 text-right font-['Cormorant_Garamond',serif] text-[48px] leading-none text-[#171717]/7">
-          {String(rank).padStart(2, "0")}
-        </div>
-      ) : null}
-      <div className="relative mb-3 flex h-[118px] w-full items-center justify-center overflow-hidden bg-[#eee4d4] min-[390px]:h-[132px] min-[560px]:h-[170px] md:h-[190px]">
-        <img src={product.img} alt={product.name}
-          className="h-[102px] object-contain transition-transform duration-700 group-hover:scale-105 min-[390px]:h-[114px] min-[560px]:h-[150px] md:h-[168px]" />
-      </div>
-      <div className="relative">
-        <p className="font-['IBM_Plex_Sans',sans-serif] text-[9px] font-semibold tracking-[0.16em] text-[#9a7d45] md:text-[10px]">{product.family.toUpperCase()}</p>
-        <p className="mt-1 line-clamp-2 font-['Cormorant_Garamond',serif] font-semibold text-[21px] text-[#171717] leading-[0.95] md:mt-2 md:text-[24px]">{product.name}</p>
-        <p className="mt-2 line-clamp-2 font-['IBM_Plex_Sans',sans-serif] font-light text-[11px] leading-snug text-[#171717]/60 md:mt-3 md:text-[13px] md:leading-relaxed">{cleanNotes(product.notes)}</p>
-        <div className="mt-4 flex items-center justify-between gap-3 min-[560px]:mt-7">
-          <span className="font-['IBM_Plex_Sans',sans-serif] text-[11px] font-semibold text-[#171717] md:text-[13px]">PHP {product.price}</span>
-          <span className="font-['IBM_Plex_Sans',sans-serif] text-[9px] font-semibold tracking-[0.14em] text-[#171717] md:text-[10px]">VIEW &rarr;</span>
-        </div>
-      </div>
-    </button>
-  );
+  return <ShopProductCard product={product} rank={rank} onOpen={() => navigate("product", product)} />;
 }
-
 function RelatedProductCard({ product, navigate }: { product: Product; navigate: (p: Page, d?: unknown) => void }) {
-  return (
-    <button
-      onClick={() => navigate("product", product)}
-      className="group relative flex min-h-[288px] flex-col overflow-hidden rounded-[8px] border border-[#d7c8ae] bg-[#fbf8f1] p-3 text-left shadow-[0_14px_34px_rgba(42,34,25,0.08)] transition-shadow hover:shadow-[0_22px_48px_rgba(42,34,25,0.15)] md:min-h-[350px] md:p-4"
-    >
-      <div className="flex h-[132px] items-center justify-center overflow-hidden bg-[#eee4d4] md:h-[190px]">
-        <img src={product.img} alt={product.name} className="h-[112px] object-contain transition-transform duration-700 group-hover:scale-105 md:h-[158px]" />
-      </div>
-      <div className="flex flex-1 flex-col justify-between pt-3 md:pt-4">
-        <div>
-          <p className="font-['IBM_Plex_Sans',sans-serif] text-[9px] font-semibold tracking-[0.16em] text-[#9a7d45] md:text-[10px]">{product.family.toUpperCase()}</p>
-          <p className="mt-1 line-clamp-2 break-words font-['Cormorant_Garamond',serif] text-[21px] font-semibold leading-[0.95] text-[#171717] md:mt-2 md:text-[25px]">{product.name}</p>
-          <p className="mt-2 line-clamp-2 font-['IBM_Plex_Sans',sans-serif] text-[11px] font-light leading-snug text-[#171717]/60 md:mt-3 md:text-[13px] md:leading-relaxed">{cleanNotes(product.notes)}</p>
-        </div>
-        <div className="mt-4 flex items-end justify-between gap-3 md:mt-5">
-          <span className="font-['IBM_Plex_Sans',sans-serif] text-[11px] font-semibold leading-tight text-[#171717] md:text-[13px]">PHP {product.price}</span>
-          <span className="shrink-0 font-['IBM_Plex_Sans',sans-serif] text-[9px] font-semibold tracking-[0.14em] text-[#171717] md:text-[10px]">VIEW &rarr;</span>
-        </div>
-      </div>
-    </button>
-  );
+  return <ShopProductCard product={product} onOpen={() => navigate("product", product)} />;
 }
 
 function RevealSection({
@@ -665,346 +595,76 @@ function CustomCursor() {
 }
 
 // â”€â”€â”€ HOME PAGE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
-  const bestSellers = ALL_PRODUCTS.filter((p) => p.bestSeller).slice(0, 3);
-  const [activeDiscoveryIndex, setActiveDiscoveryIndex] = useState(0);
-  const [carouselDirection, setCarouselDirection] = useState(1);
-  const [isDiscoveryPaused, setIsDiscoveryPaused] = useState(false);
-  const activeDiscoverySet = DISCOVERY_SETS[activeDiscoveryIndex];
-  const activeDiscoveryProducts = ALL_PRODUCTS.filter((p) => activeDiscoverySet.productIds.includes(p.id));
-  const previousDiscoveryIndex = (activeDiscoveryIndex - 1 + DISCOVERY_SETS.length) % DISCOVERY_SETS.length;
-  const nextDiscoveryIndex = (activeDiscoveryIndex + 1) % DISCOVERY_SETS.length;
-  const goDiscovery = (direction: number) => {
-    setCarouselDirection(direction);
-    setActiveDiscoveryIndex((current) => (current + direction + DISCOVERY_SETS.length) % DISCOVERY_SETS.length);
-  };
-  const showDiscovery = (index: number) => {
-    if (index === activeDiscoveryIndex) return;
-    setCarouselDirection(index > activeDiscoveryIndex ? 1 : -1);
-    setActiveDiscoveryIndex(index);
-  };
-  const toggleDiscoveryPlayback = () => {
-    setIsDiscoveryPaused((paused) => {
-      if (paused) {
-        setCarouselDirection(1);
-        setActiveDiscoveryIndex((current) => (current + 1) % DISCOVERY_SETS.length);
-      }
-      return !paused;
-    });
-  };
-
-  useEffect(() => {
-    if (isDiscoveryPaused) return undefined;
-    const timer = window.setInterval(() => {
-      setCarouselDirection(1);
-      setActiveDiscoveryIndex((current) => (current + 1) % DISCOVERY_SETS.length);
-    }, 7600);
-    return () => window.clearInterval(timer);
-  }, [isDiscoveryPaused]);
-
+function CinematicHomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
   const collections = [
-    { label: "FRESH", subtitle: "Clean. Light. Everyday.", img: imgFresh, cat: "FRESH" },
-    { label: "TIMBER & SMOKE", subtitle: "Warm. Rich. Timeless.", img: imgTimber, cat: "TIMBER & SMOKE" },
-    { label: "GOLDEN VANILLA", subtitle: "Sweet. Smooth. Addictive.", img: imgVanilla, cat: "GOLDEN VANILLA" },
-    { label: "AFTER HOURS", subtitle: "Bold. Intense. Unforgettable.", img: imgAfterHours, cat: "AFTER HOURS" },
+    { label: "ICONIC CLASSICS", text: "Timeless fragrances, new perspectives.", image: imgFresh, category: "FRESH" },
+    { label: "NICHE DISCOVERIES", text: "Extraordinary scents for curious noses.", image: imgTimber, category: "TIMBER & SMOKE" },
+    { label: "SEASONAL EDIT", text: "Curated scents for every season.", image: imgVanilla, category: "GOLDEN VANILLA" },
+    { label: "TRAVEL ESSENTIALS", text: "Take your favourites anywhere.", image: imgAfterHours, category: "AFTER HOURS" },
   ];
-
-  const featureItems = [
-    { Icon: Shield, title: "Authentic Fragrances", desc: "Only genuine designer fragrances sourced from trusted suppliers." },
-    { Icon: Package, title: "Premium Packaging", desc: "Every decant is packed carefully so it arrives clean, safe, and giftable." },
-    { Icon: Truck, title: "Fast Shipping", desc: "Fast nationwide delivery with secure tracking from order to arrival." },
-    { Icon: Gift, title: "Curated Selection", desc: "Handpicked fragrances for every mood, season, and occasion." },
-  ];
-
+  const bestSellerArt = [imgProd1, imgProd2, imgBottle, imgProd1, imgProd2];
+  const bestSellers = ALL_PRODUCTS.filter((product) => product.bestSeller).slice(0, 5).map((product, index) => ({
+    ...product,
+    img: bestSellerArt[index],
+  }));
   return (
-    <div className="bg-[#39384f]">
-      <div className="w-full bg-[#f8f2e8]">
-        <div className="scroll-smooth">
-          <section className="relative flex min-h-[100svh] flex-col items-center justify-start overflow-hidden bg-[#fbf8f1] px-4 pb-16 pt-7 md:min-h-[114svh] md:px-20 md:pb-28 md:pt-9 xl:px-28">
-            <div className="absolute inset-0">
-              <img src={imgDiscoveryBg} alt="" className="h-full w-full object-cover" />
-              <div className="absolute inset-0 bg-[#fbf8f1]/82" />
-            </div>
-            <div className="relative z-10 flex w-full flex-1 flex-col items-center">
-              <div className="mx-auto max-w-[620px] text-center">
-                <h1 className="font-['Cormorant_Garamond',serif] text-[31px] font-bold leading-[1.05] tracking-[0.035em] text-[#171717] min-[390px]:text-[36px] md:text-[44px] md:tracking-[0.055em] lg:text-[52px]">
-                  FIND YOUR<br />SIGNATURE SCENT
-                </h1>
-                <p className="mx-auto mt-2 max-w-[420px] font-['IBM_Plex_Sans',sans-serif] text-[14px] font-light leading-relaxed text-[rgba(23,23,23,0.62)] md:text-[16px]">
-                  Discover authentic designer fragrances through premium decants.
-                </p>
-                <div className="mt-5 flex justify-center">
-                  <DarkBtn onClick={() => navigate("collections")} className="px-8 py-[10px] text-[14px]">SHOP COLLECTION</DarkBtn>
-                </div>
-              </div>
-              <div className="relative mt-8 h-[240px] w-full max-w-[1640px] overflow-visible min-[390px]:h-[270px] md:mt-8 md:h-[430px] xl:h-[500px]">
-                {[
-                  { left: "-3%", height: "h-[118px] min-[390px]:h-[132px] md:h-[178px] xl:h-[205px]", top: "top-[82px] min-[390px]:top-[92px] md:top-[88px] xl:top-[96px]" },
-                  { left: "23%", height: "h-[146px] min-[390px]:h-[166px] md:h-[218px] xl:h-[250px]", top: "top-[52px] min-[390px]:top-[58px] md:top-[52px] xl:top-[60px]" },
-                  { left: "50%", height: "h-[190px] min-[390px]:h-[216px] md:h-[278px] xl:h-[318px]", top: "top-[4px] min-[390px]:top-0 md:-top-4" },
-                  { left: "77%", height: "h-[146px] min-[390px]:h-[166px] md:h-[218px] xl:h-[250px]", top: "top-[52px] min-[390px]:top-[58px] md:top-[52px] xl:top-[60px]" },
-                  { left: "103%", height: "h-[118px] min-[390px]:h-[132px] md:h-[178px] xl:h-[205px]", top: "top-[82px] min-[390px]:top-[92px] md:top-[88px] xl:top-[96px]" },
-                ].map((bottle, i) => (
-                  <img
-                    key={i}
-                    src={imgBottle}
-                    alt={i === 2 ? "fragrance decant bottle" : ""}
-                    aria-hidden={i !== 2}
-                    className={`absolute ${bottle.top} ${bottle.height} object-contain drop-shadow-[0_28px_32px_rgba(39,31,21,0.14)]`}
-                    style={{
-                      left: bottle.left,
-                      transform: "translateX(-50%)",
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-          </section>
-
-          <RevealSection
-            color="#e9dece"
-            backdropColor="transparent"
-            backdropImage
-            id="home-collections"
-            overlap
-            overlapAmount={112}
-            revealOffset={88}
-            fadeContent={false}
-            triggerRootMargin="0px 0px -6% 0px"
-            className="flex min-h-[100svh] items-start overflow-hidden rounded-t-[34px] bg-[#e9dece] px-4 pb-24 pt-[58px] shadow-[0_-18px_40px_rgba(50,41,30,0.08)] md:min-h-[108svh] md:rounded-t-[64px] md:px-20 md:pb-36 md:pt-[92px] xl:px-28"
-          >
-              <div className="w-full">
-              <p className="text-center font-['IBM_Plex_Sans',sans-serif] text-[14px] font-light tracking-wide text-[rgba(23,23,23,0.58)]">
-                Curated scents for every mood and occasion.
-              </p>
-              <h2 className="mb-6 text-center font-['Cormorant_Garamond',serif] text-[31px] font-bold leading-none tracking-[0.035em] text-[#171717] min-[390px]:text-[34px] md:mb-8 md:text-[62px] md:tracking-[0.06em]">
-                FEATURED COLLECTIONS
-              </h2>
-              <div className="grid gap-4 min-[520px]:grid-cols-2 lg:grid-cols-4">
-                {collections.map((col) => (
-                  <button
-                    key={col.label}
-                    onClick={() => navigate("collections", { category: col.cat })}
-                    className="group relative aspect-[16/11] overflow-hidden rounded-[8px] text-left shadow-[0_20px_45px_rgba(28,23,17,0.18)] min-[520px]:aspect-[4/5]"
-                  >
-                    <img src={col.img} alt={col.label} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-                    <div className="absolute bottom-0 left-0 p-4 pb-5 md:p-5">
-                      <div className="mb-3 h-[2px] w-9 bg-[#e0dfd8]" />
-                      <p className="font-['Cormorant_Garamond',serif] text-[25px] font-bold leading-[0.98] tracking-[0.04em] text-[#f5efe5] md:text-[28px]">
-                        {col.label}
-                      </p>
-                      <p className="mt-2 font-['IBM_Plex_Sans',sans-serif] text-[12px] font-light italic text-[#f5efe5]/80">{col.subtitle}</p>
-                      <span className="mt-4 inline-block font-['IBM_Plex_Sans',sans-serif] text-[10px] font-semibold tracking-[0.16em] text-[#f5efe5]">
-                        SHOP NOW &rarr;
-                      </span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-              </div>
-          </RevealSection>
-
-          <RevealSection
-            color="#f7f1e7"
-            backdropColor="#e9dece"
-            className="flex min-h-[100svh] items-start overflow-hidden rounded-t-[34px] bg-[#f7f1e7] px-4 pb-24 pt-[58px] shadow-[0_-18px_40px_rgba(50,41,30,0.08)] md:min-h-[108svh] md:rounded-t-[64px] md:px-20 md:pb-36 md:pt-[92px] xl:px-28"
-          >
-            <div className="w-full">
-              <p className="text-center font-['IBM_Plex_Sans',sans-serif] text-[14px] font-light text-[rgba(23,23,23,0.58)]">
-                Our most-loved fragrances.
-              </p>
-              <h2 className="mb-6 text-center font-['Cormorant_Garamond',serif] text-[34px] font-bold leading-none tracking-[0.04em] text-[#171717] md:mb-10 md:text-[60px] md:tracking-[0.06em]">
-                BEST SELLERS
-              </h2>
-              <div className="mx-auto grid max-w-[1120px] items-center gap-5 min-[680px]:grid-cols-3 md:gap-8">
-                {bestSellers.map((p, i) => (
-                  <button
-                    key={p.id}
-                    onClick={() => navigate("product", p)}
-                    className={`group rounded-[16px] border border-white/70 bg-[#f3ede3] p-4 text-center transition-shadow hover:shadow-[0_22px_52px_rgba(35,28,20,0.18)] md:rounded-[22px] md:p-6 ${
-                      i === 1
-                        ? "shadow-[0_22px_56px_rgba(35,28,20,0.14)] min-[680px]:scale-105 lg:scale-110"
-                        : "shadow-[0_14px_34px_rgba(35,28,20,0.1)]"
-                    }`}
-                  >
-                    <div className={`mb-3 flex items-center justify-center overflow-hidden md:mb-4 ${i === 1 ? "h-[150px] md:h-[230px]" : "h-[135px] md:h-[190px]"}`}>
-                      <img src={p.img} alt={p.name} className={`${i === 1 ? "h-[138px] md:h-[215px]" : "h-[120px] md:h-[170px]"} object-contain transition-transform duration-700 group-hover:scale-105`} />
-                    </div>
-                    <p className="font-['Cormorant_Garamond',serif] text-[20px] font-semibold leading-tight text-[#171717]">{p.name}</p>
-                    <p className="font-['IBM_Plex_Sans',sans-serif] text-[12px] font-light text-[rgba(23,23,23,0.58)]">{cleanNotes(p.notes)}</p>
-                    <p className="mt-1 font-['IBM_Plex_Sans',sans-serif] text-[12px] font-semibold text-[#171717]">From PHP {p.price}</p>
-                    <span className="mt-3 inline-block font-['IBM_Plex_Sans',sans-serif] text-[10px] font-semibold tracking-[0.14em] text-[#171717]">
-                      EXPLORE &rarr;
-                    </span>
-                  </button>
-                ))}
-              </div>
-              <div className="mt-10 flex justify-center">
-                <button
-                  onClick={() => navigate("bestsellers")}
-                  className="font-['IBM_Plex_Sans',sans-serif] text-[12px] font-semibold tracking-[0.16em] text-[#171717] border-b border-[#171717] pb-px hover:opacity-55 transition-opacity"
-                >
-                  VIEW ALL BEST SELLERS &rarr;
-                </button>
-              </div>
-            </div>
-          </RevealSection>
-
-          <RevealSection
-            color="#e5dac9"
-            backdropColor="#f7f1e7"
-            backgroundImage={imgWhyLuxuryBg}
-            backgroundOverlayClassName="bg-[linear-gradient(90deg,rgba(229,218,201,0.94),rgba(229,218,201,0.9)_48%,rgba(229,218,201,0.86))]"
-            className="flex min-h-[100svh] items-center overflow-hidden rounded-t-[34px] bg-[#e5dac9] py-14 shadow-[0_-18px_40px_rgba(50,41,30,0.08)] md:min-h-[92svh] md:rounded-t-[64px] md:py-20"
-          >
-            <div className="pointer-events-none absolute inset-0 overflow-hidden">
-              <img src={imgBottle} alt="" className="absolute -bottom-10 left-[6%] h-[260px] rotate-[8deg] object-contain opacity-[0.045] blur-[0.2px] md:h-[400px]" />
-              <img src={imgBottle} alt="" className="absolute bottom-[7%] right-[7%] h-[220px] rotate-[-10deg] object-contain opacity-[0.05] blur-[0.2px] md:h-[340px]" />
-              <div className="absolute inset-x-[8%] top-[22%] h-px rotate-[-6deg] bg-[#b59a63]/18" />
-              <div className="absolute bottom-[16%] left-[16%] h-24 w-[68%] rounded-full bg-[#6e5c42]/10 blur-3xl" />
-            </div>
-            <div className="relative mx-auto flex min-h-[74svh] w-full max-w-[1120px] flex-col justify-center px-5 md:min-h-[68svh] md:px-20 xl:px-0">
-              <h2 className="text-center font-['Cormorant_Garamond',serif] text-[33px] font-bold leading-none tracking-[0.045em] text-[#171717] min-[390px]:text-[37px] md:text-[56px] md:tracking-[0.06em]">
-                WHY DECANTS BY JOSHUA
-              </h2>
-              <p className="mx-auto mt-3 max-w-[620px] text-center font-['IBM_Plex_Sans',sans-serif] text-[15px] font-light leading-relaxed text-[rgba(23,23,23,0.62)]">
-                Crafted to make fragrance discovery simple, authentic, and memorable.
-              </p>
-              <div className="mx-auto mt-10 grid w-full max-w-[1040px] gap-x-24 gap-y-8 min-[680px]:grid-cols-2 md:mt-14 md:gap-y-12">
-                {featureItems.map(({ Icon, title, desc }) => (
-                  <div
-                    key={title}
-                    className="flex items-start gap-3 md:gap-4"
-                  >
-                    <Icon size={25} strokeWidth={1.4} className="mt-1 shrink-0 text-[#171717] md:size-[30px]" />
-                    <div>
-                      <p className="font-['Cormorant_Garamond',serif] text-[23px] font-bold leading-tight text-[#171717] md:text-[28px]">{title}</p>
-                      <p className="mt-1 max-w-[340px] font-['IBM_Plex_Sans',sans-serif] text-[13px] font-light leading-relaxed text-[rgba(23,23,23,0.6)]">{desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <p className="mt-16 text-center font-['IBM_Plex_Sans',sans-serif] text-[14px] font-light text-[rgba(23,23,23,0.58)]">
-                We believe discovering fragrance should be as memorable as wearing it.
-              </p>
-            </div>
-          </RevealSection>
-
-          <RevealSection
-            color="#e5dac9"
-            backdropColor="#e5dac9"
-            triggerRootMargin="0px 0px 32% 0px"
-            className="flex min-h-[100svh] items-stretch overflow-visible bg-transparent md:min-h-[112svh]"
-          >
-            <div className="relative flex min-h-[100svh] w-full flex-col overflow-hidden rounded-t-[34px] bg-[#fbf8f1] shadow-[0_24px_70px_rgba(42,34,25,0.12)] md:min-h-[112svh] md:rounded-t-[64px]">
-              <img src={imgDiscoveryBg} alt="" className="absolute inset-0 h-full w-full object-cover" />
-              <div className="absolute inset-0 bg-[#fbf8f1]/68" />
-              <div className="relative grid flex-1 items-center gap-7 px-5 pb-10 pt-14 md:grid-cols-[0.85fr_1fr_1fr] md:gap-8 md:px-20 md:pb-12 md:pt-16 lg:px-24">
-                <div className="self-start text-center md:self-center md:text-left">
-                  <h2 className="font-['Cormorant_Garamond',serif] text-[35px] font-bold leading-none tracking-[0.05em] text-[#171717] md:text-[58px] md:tracking-[0.06em]">
-                    DISCOVERY SETS
-                  </h2>
-                  <div className="mx-auto my-5 h-[2px] w-24 bg-[#b6a06c] md:mx-0 md:my-7 md:w-28" />
-                  <p className="mx-auto max-w-[360px] font-['Cormorant_Garamond',serif] text-[16px] italic leading-relaxed text-[rgba(23,23,23,0.6)] md:mx-0 md:text-[17px]">
-                    Curated fragrance journeys for every occasion.
-                  </p>
-                  <button
-                    onClick={() => window.scrollBy({ top: window.innerHeight * 0.85, behavior: "smooth" })}
-                    className="mt-40 hidden text-left font-['Cormorant_Garamond',serif] text-[17px] tracking-wide text-[#171717] md:block"
-                  >
-                    SCROLL TO EXPLORE
-                    <span className="mt-3 block h-10 w-px bg-[#171717] translate-x-12" />
-                    <span className="ml-[43px] block h-4 w-4 rounded-full border border-[#171717]" />
-                  </button>
-                </div>
-                <motion.img
-                  key={`discovery-bottle-${activeDiscoverySet.id}`}
-                  src={activeDiscoveryProducts[0]?.img ?? imgBottle}
-                  alt={`${activeDiscoverySet.name} decant`}
-                  initial={{ opacity: 0, x: carouselDirection * 34, rotate: -9 }}
-                  animate={{ opacity: 1, x: 0, rotate: -9 }}
-                  transition={{ duration: 0.32, ease: [0.19, 1, 0.22, 1] }}
-                  className="mx-auto h-[260px] rotate-[-9deg] object-contain drop-shadow-[0_30px_42px_rgba(30,24,18,0.22)] min-[390px]:h-[310px] md:h-[660px] xl:h-[760px]"
-                />
-                <motion.div
-                  key={`discovery-copy-${activeDiscoverySet.id}`}
-                  initial={{ opacity: 0, x: carouselDirection * 24 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, ease: [0.19, 1, 0.22, 1], delay: 0.03 }}
-                  className="relative text-center md:text-left lg:pr-20"
-                >
-                  <div className="mb-4 flex items-center gap-4 md:mb-5 md:gap-5">
-                    <div className="h-px flex-1 bg-[#cbbd9f] md:w-24 md:flex-none" />
-                    <span className="font-['Cormorant_Garamond',serif] text-[42px] font-semibold leading-none text-[#171717] md:text-[52px]">{String(activeDiscoveryIndex + 1).padStart(2, "0")}</span>
-                    <div className="h-px flex-1 bg-[#cbbd9f]" />
-                  </div>
-                  <h3 className="font-['Cormorant_Garamond',serif] text-[31px] font-semibold leading-[0.98] tracking-[0.035em] text-[#171717] min-[390px]:text-[35px] md:text-[54px] md:tracking-[0.04em]">
-                    {activeDiscoverySet.name.toUpperCase()}
-                  </h3>
-                  <p className="mx-auto mt-4 max-w-[380px] font-['IBM_Plex_Sans',sans-serif] text-[14px] font-light leading-relaxed text-[rgba(23,23,23,0.64)] md:mx-0 md:mt-5 md:text-[16px]">
-                    {activeDiscoverySet.subtitle}
-                  </p>
-                  <button
-                    onClick={() => navigate("discoverySet", activeDiscoverySet.id)}
-                    className="mt-7 font-['Cormorant_Garamond',serif] text-[20px] text-[#171717] tracking-wide border-b border-[#171717] pb-px hover:opacity-55 transition-opacity md:mt-12 md:text-[22px]"
-                  >
-                    EXPLORE SET
-                  </button>
-                  <div className="absolute right-0 top-1/2 hidden -translate-y-1/2 flex-col items-center gap-6 font-['Cormorant_Garamond',serif] text-[18px] lg:flex">
-                    {DISCOVERY_SETS.map((set, idx) => (
-                      <button
-                        key={set.id}
-                        onClick={() => showDiscovery(idx)}
-                        className={`relative leading-none transition-colors ${idx === activeDiscoveryIndex ? "text-[#171717]" : "text-[rgba(23,23,23,0.42)] hover:text-[#171717]"}`}
-                        aria-label={`Show ${set.name}`}
-                      >
-                        {idx === activeDiscoveryIndex && <span className="absolute -left-5 top-1/2 h-9 w-px -translate-y-1/2 bg-[#b59a63]/55" />}
-                        {String(idx + 1).padStart(2, "0")}
-                      </button>
-                    ))}
-                  </div>
-                </motion.div>
-              </div>
-              <div className="relative grid grid-cols-[auto_1fr_auto] items-center gap-3 bg-[#ded3bf] px-4 py-5 md:grid-cols-[auto_1fr_auto_1fr_auto] md:gap-5 md:px-14 md:py-8">
-                <button onClick={() => goDiscovery(-1)} className="mx-auto flex h-11 w-11 items-center justify-center rounded-full border border-[#a79368] text-[#171717] md:h-14 md:w-14" aria-label="Previous discovery set">
-                  <ArrowLeft size={24} strokeWidth={1.4} />
-                </button>
-                <button onClick={() => navigate("discoverySet", DISCOVERY_SETS[previousDiscoveryIndex].id)} className="hidden text-center transition-opacity hover:opacity-60 md:block">
-                  <p className="font-['Cormorant_Garamond',serif] text-[34px] text-[#171717]">{String(previousDiscoveryIndex + 1).padStart(2, "0")}</p>
-                  <p className="font-['Cormorant_Garamond',serif] text-[22px] leading-tight text-[#171717]">{DISCOVERY_SETS[previousDiscoveryIndex].name.toUpperCase()}</p>
-                  <p className="font-['Cormorant_Garamond',serif] text-[13px] text-[rgba(23,23,23,0.62)]">{DISCOVERY_SETS[previousDiscoveryIndex].count} Fragrances</p>
-                </button>
-                <button
-                  onClick={toggleDiscoveryPlayback}
-                  className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-[#a79368] text-[#171717] transition-colors hover:bg-[#d4c8b2] md:h-24 md:w-24"
-                  aria-label={isDiscoveryPaused ? "Resume discovery carousel" : "Pause discovery carousel"}
-                >
-                  {isDiscoveryPaused ? <Play size={24} strokeWidth={1.6} fill="currentColor" /> : <Pause size={26} strokeWidth={1.8} fill="currentColor" />}
-                </button>
-                <button onClick={() => navigate("discoverySet", DISCOVERY_SETS[nextDiscoveryIndex].id)} className="hidden text-center transition-opacity hover:opacity-60 md:block">
-                  <p className="font-['Cormorant_Garamond',serif] text-[34px] text-[#171717]">{String(nextDiscoveryIndex + 1).padStart(2, "0")}</p>
-                  <p className="font-['Cormorant_Garamond',serif] text-[22px] leading-tight text-[#171717]">{DISCOVERY_SETS[nextDiscoveryIndex].name.toUpperCase()}</p>
-                  <p className="font-['Cormorant_Garamond',serif] text-[13px] text-[rgba(23,23,23,0.62)]">{DISCOVERY_SETS[nextDiscoveryIndex].count} Fragrances</p>
-                </button>
-                <button onClick={() => goDiscovery(1)} className="mx-auto flex h-11 w-11 items-center justify-center rounded-full border border-[#a79368] text-[#171717] md:h-14 md:w-14" aria-label="Next discovery set">
-                  <ArrowLeft size={24} strokeWidth={1.4} className="rotate-180" />
-                </button>
-                <div className="col-span-full mt-2 flex justify-center gap-2">
-                  {DISCOVERY_SETS.map((set, dot) => (
-                    <button key={set.id} onClick={() => showDiscovery(dot)} className={`h-2 w-2 rounded-full ${dot === activeDiscoveryIndex ? "bg-[#b8aa7d]" : "border border-[#b8aa7d]"}`} aria-label={`Show ${set.name}`} />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </RevealSection>
+    <div className="cinematic-home bg-[#f8f2e8] text-[#2b211b]">
+      <section className="cinematic-hero relative min-h-[calc(100svh-80px)] overflow-hidden">
+        <img src={imgWhyLuxuryBg} alt="Decant bottles resting on silk" className="absolute inset-0 h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#f8f2e8]/95 via-[#f8f2e8]/60 to-[#f8f2e8]/10" />
+        <div className="relative mx-auto flex min-h-[calc(100svh-80px)] max-w-[1440px] items-end px-8 pb-12 md:px-16 md:pb-16 lg:px-24">
+          <div className="max-w-[550px] cinematic-hero-copy">
+            <p className="mb-5 font-['IBM_Plex_Sans',sans-serif] text-[11px] font-semibold tracking-[0.35em] text-[#9a7d45]">FRAGRANCE, MORE FREELY</p>
+            <h1 className="font-['Cormorant_Garamond',serif] text-[62px] font-medium leading-[0.86] tracking-[-0.02em] md:text-[92px]">Your signature<br />scent, decanted.</h1>
+            <p className="mt-6 max-w-[430px] font-['IBM_Plex_Sans',sans-serif] text-[15px] leading-relaxed text-[#2b211b]/70">Discover iconic and niche fragrances in perfectly portioned decants. Luxury scents, without the commitment.</p>
+            <DarkBtn onClick={() => navigate("collections")} className="mt-7 bg-[#3a2418] px-7 text-[#f8f2e8] hover:bg-[#5a3927]">SHOP DECANTS <span className="ml-3">→</span></DarkBtn>
+          </div>
         </div>
-      </div>
+        <div className="relative mx-auto grid max-w-[1440px] grid-cols-1 gap-4 border-t border-[#3a2418]/20 px-8 py-5 font-['IBM_Plex_Sans',sans-serif] text-[11px] text-[#2b211b]/75 sm:grid-cols-3 md:px-24">
+          <span>✦ AUTHENTIC FRAGRANCES<br /><em className="pl-4">from trusted sources</em></span>
+          <span>✦ PREMIUM DECANTS<br /><em className="pl-4">&amp; packaging</em></span>
+          <span>✦ SHIPPING WITH CARE<br /><em className="pl-4">across the Philippines</em></span>
+        </div>
+      </section>
+      <section className="mx-auto max-w-[1440px] px-8 py-14 md:px-16 md:py-20 lg:px-24">
+        <div className="mb-7 flex items-end justify-between"><h2 className="font-['Cormorant_Garamond',serif] text-[38px] leading-none md:text-[48px]">Explore collections</h2><span className="hidden font-['IBM_Plex_Sans',sans-serif] text-[11px] tracking-[0.18em] text-[#9a7d45] md:block">FIND YOUR MOOD →</span></div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">{collections.map((item) => <button key={item.label} onClick={() => navigate("collections", { category: item.category })} className="cinematic-collection group relative h-[220px] overflow-hidden rounded-[5px] text-left"><img src={item.image} alt="" className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-110" /><div className="absolute inset-0 bg-gradient-to-t from-[#2b211b]/80 via-[#2b211b]/15 to-transparent" /><div className="absolute bottom-5 left-5 text-[#f8f2e8]"><p className="font-['Cormorant_Garamond',serif] text-[25px] leading-none">{item.label}</p><p className="mt-2 text-[12px] text-[#f8f2e8]/75">{item.text}</p><span className="mt-4 inline-block text-[10px] tracking-[0.18em]">EXPLORE →</span></div></button>)}</div>
+      </section>
+      <section className="border-y border-[#3a2418]/15 bg-[#eee2d2] px-8 py-14 md:px-16 lg:px-24"><div className="mx-auto max-w-[1440px]"><div className="mb-8 flex items-end justify-between"><div><p className="mb-2 text-[11px] font-semibold tracking-[0.25em] text-[#9a7d45]">THE EDIT</p><h2 className="font-['Cormorant_Garamond',serif] text-[42px] leading-none md:text-[54px]">Bestsellers</h2></div><button onClick={() => navigate("bestsellers")} className="text-[11px] tracking-[0.16em]">VIEW ALL →</button></div><div className="grid gap-3 md:grid-cols-2 lg:grid-cols-5">{bestSellers.map((product) => <button key={product.id} onClick={() => navigate("product", product)} className="group bg-[#f8f2e8] p-3 text-left transition duration-500 hover:-translate-y-2 hover:shadow-[0_20px_45px_rgba(42,34,25,0.13)]"><div className="flex h-[190px] items-center justify-center bg-[#eadcc8]"><img src={product.img} alt={product.name} className="h-[165px] object-contain transition duration-700 group-hover:scale-105" /></div><p className="mt-4 text-[10px] tracking-[0.16em] text-[#9a7d45]">{product.family.toUpperCase()}</p><h3 className="mt-1 font-['Cormorant_Garamond',serif] text-[23px] leading-none">{product.name}</h3><p className="mt-3 text-[12px] text-[#2b211b]/55">From PHP {product.price}</p></button>)}</div></div></section>
+      <section className="cinematic-about mx-auto grid max-w-[1440px] gap-10 border-y border-[#3a2418]/20 px-8 py-16 md:grid-cols-[0.75fr_1.25fr] md:items-center md:px-16 md:py-24 lg:px-24"><div><p className="text-[11px] font-semibold tracking-[0.3em] text-[#9a7d45]">ABOUT JOSHUA</p><p className="mt-5 font-['Cormorant_Garamond',serif] text-[74px] leading-none text-[#3a2418]/12">01</p></div><div className="max-w-[720px]"><h2 className="font-['Cormorant_Garamond',serif] text-[44px] leading-[0.95] md:text-[64px]">A fragrance can be personal before it becomes permanent.</h2><p className="mt-6 max-w-[590px] font-['IBM_Plex_Sans',sans-serif] text-[15px] leading-relaxed text-[#2b211b]/68">I created Decants by Joshua for the part of fragrance discovery that happens between curiosity and commitment. Small portions, authentic scents, and enough time on skin to find what feels like you.</p><button onClick={() => navigate("decantguide")} className="mt-7 border-b border-[#3a2418] pb-2 text-[11px] tracking-[0.18em]">THE JOSHUA SCENT METHOD →</button></div></section>
+      <section className="mx-2 my-10 flex min-h-[250px] items-center justify-between overflow-hidden rounded-[5px] bg-[#e5d3bb] px-8 md:px-20"><div><p className="text-[11px] font-semibold tracking-[0.3em] text-[#9a7d45]">THE JOURNAL</p><h2 className="mt-4 max-w-[560px] font-['Cormorant_Garamond',serif] text-[42px] leading-[0.9] md:text-[58px]">A more personal<br />way to experience fragrance</h2><button onClick={() => navigate("decantguide")} className="mt-5 text-[11px] tracking-[0.18em]">READ THE GUIDE →</button></div><img src={imgProd1} alt="A Joshua decant" className="hidden h-[250px] w-[38%] object-contain md:block" /></section>
     </div>
   );
 }
 
-// â”€â”€â”€ COLLECTIONS PAGE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function CinematicHeroOnly({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
+  return (
+    <section className="cinematic-hero relative min-h-[calc(100svh-80px)] overflow-hidden">
+      <img src={imgWhyLuxuryBg} alt="Decant bottles resting on silk" className="absolute inset-0 h-full w-full object-cover" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#f8f2e8]/95 via-[#f8f2e8]/60 to-[#f8f2e8]/10" />
+      <div className="relative mx-auto flex min-h-[calc(100svh-80px)] max-w-[1440px] items-end px-8 pb-12 md:px-16 md:pb-16 lg:px-24">
+        <div className="max-w-[550px] cinematic-hero-copy">
+          <p className="mb-5 font-['IBM_Plex_Sans',sans-serif] text-[11px] font-semibold tracking-[0.35em] text-[#9a7d45]">FRAGRANCE, MORE FREELY</p>
+          <h1 className="font-['Cormorant_Garamond',serif] text-[62px] font-medium leading-[0.86] tracking-[-0.02em] md:text-[92px]">Your signature<br />scent, decanted.</h1>
+          <p className="mt-6 max-w-[430px] font-['IBM_Plex_Sans',sans-serif] text-[15px] leading-relaxed text-[#2b211b]/70">Discover iconic and niche fragrances in perfectly portioned decants. Luxury scents, without the commitment.</p>
+          <DarkBtn onClick={() => navigate("collections")} className="mt-7 bg-[#3a2418] px-7 text-[#f8f2e8] hover:bg-[#5a3927]">SHOP DECANTS <span className="ml-3">→</span></DarkBtn>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function HomePage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
+  return <EditorialHome
+    products={ALL_PRODUCTS}
+    sets={DISCOVERY_SETS}
+    images={{ hero: imgWhyLuxuryBg, fresh: imgFresh, timber: imgTimber, vanilla: imgVanilla, night: imgAfterHours, discovery: imgDiscoveryBg, bottle: imgCollProduct }}
+    onCollections={category => navigate("collections", category ? { categories: [category] } : undefined)}
+    onProduct={product => navigate("product", product)}
+    onSet={id => navigate("discoverySet", id)}
+    onPage={page => navigate(page)}
+  />;
+}
 function SearchResultsPage({ query, navigate }: { query: string; navigate: (p: Page, d?: unknown) => void }) {
   const normalized = query.trim().toLowerCase();
   const matches = useCatalogSearch(query, ALL_PRODUCTS.length);
@@ -1579,218 +1239,15 @@ function DiscoverySetPage({ setId, navigate }: { setId: number | null; navigate:
   );
 }
 
-function ProductPage({ product, navigate, addToCart }: {
-  product: Product;
-  navigate: (p: Page, d?: unknown) => void;
-  addToCart: (p: Product, size: string, price: number) => void;
-}) {
-  const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
-  const [qty, setQty] = useState(1);
-  const [added, setAdded] = useState(false);
-
-  const handleAdd = () => {
-    addToCart(product, selectedSize.label, selectedSize.price);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
-  };
-
-  const relatedProducts = ALL_PRODUCTS.filter((p) => p.id !== product.id && p.family === product.family).slice(0, 4);
-
-  return (
-    <div className="bg-[#f7f5f1] min-h-screen">
-      <div className="max-w-[1200px] mx-auto px-6 py-10">
-        {/* Breadcrumb */}
-        <button onClick={() => navigate("collections")}
-          className="flex items-center gap-1.5 font-['IBM_Plex_Sans',sans-serif] text-[13px] text-[rgba(23,23,23,0.5)] hover:text-[#171717] transition-colors mb-10">
-          <ArrowLeft size={13} /> Collections
-        </button>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
-          {/* Left â€” image */}
-          <div>
-            <div className="bg-[#f0ece4] rounded-[28px] aspect-square flex items-center justify-center shadow-[0px_8px_40px_rgba(0,0,0,0.07)]">
-              <img src={product.img} alt={product.name} className="h-[65%] object-contain" />
-            </div>
-          </div>
-
-          {/* Right â€” info */}
-          <div className="flex flex-col justify-center">
-            <GoldBar />
-            <p className="font-['IBM_Plex_Sans',sans-serif] font-light text-[11px] tracking-[0.2em] text-[rgba(23,23,23,0.45)] uppercase mt-4 mb-1">{product.brand}</p>
-            <h1 className="font-['Cormorant_Garamond',serif] font-bold text-[44px] md:text-[52px] text-[#171717] leading-[1.05] mb-2">{product.name}</h1>
-            <p className="font-['IBM_Plex_Sans',sans-serif] font-light text-[14px] text-[rgba(23,23,23,0.55)] mb-4">{cleanNotes(product.notes)}</p>
-
-            {/* Stars */}
-            <div className="flex items-center gap-1 mb-5">
-              {[...Array(5)].map((_, i) => <Star key={i} size={13} fill="#AE9766" stroke="none" />)}
-              <span className="font-['IBM_Plex_Sans',sans-serif] text-[12px] text-[rgba(23,23,23,0.4)] ml-2">(89 reviews)</span>
-            </div>
-
-            <p className="font-['IBM_Plex_Sans',sans-serif] font-light text-[14px] text-[rgba(23,23,23,0.72)] leading-[1.8] mb-7">{cleanText(product.description)}</p>
-
-            {/* Size selector */}
-            <p className="font-['Cormorant_Garamond',serif] font-semibold text-[17px] text-[#171717] mb-3">Select Size</p>
-            <div className="flex gap-3 mb-4">
-              {product.sizes.map((size) => (
-                <button key={size.label} onClick={() => setSelectedSize(size)}
-                  className={`flex-1 py-3 rounded-lg border transition-all ${selectedSize.label === size.label ? "bg-[#171717] text-white border-[#171717]" : "bg-white text-[#171717] border-[rgba(0,0,0,0.15)] hover:border-[#171717]"}`}>
-                  <p className="font-['IBM_Plex_Sans',sans-serif] text-[13px] font-medium">{size.label}</p>
-                  <p className={`text-[11px] mt-0.5 ${selectedSize.label === size.label ? "text-white/70" : "text-[rgba(23,23,23,0.5)]"}`}>PHP {size.price}</p>
-                </button>
-              ))}
-            </div>
-
-            {/* Qty */}
-            <div className="flex items-center gap-4 mb-6">
-              <p className="font-['Cormorant_Garamond',serif] font-semibold text-[17px] text-[#171717]">Qty</p>
-              <div className="flex items-center border border-[rgba(0,0,0,0.18)] rounded-lg overflow-hidden">
-                <button onClick={() => setQty(Math.max(1, qty - 1))} className="px-3 py-2 hover:bg-[#f0ece4] transition-colors"><Minus size={13} /></button>
-                <span className="px-4 font-['IBM_Plex_Sans',sans-serif] text-[14px] font-medium">{qty}</span>
-                <button onClick={() => setQty(qty + 1)} className="px-3 py-2 hover:bg-[#f0ece4] transition-colors"><Plus size={13} /></button>
-              </div>
-              <p className="font-['IBM_Plex_Sans',sans-serif] font-semibold text-[22px] text-[#171717] ml-auto">PHP {selectedSize.price * qty}</p>
-            </div>
-
-            {/* CTA buttons */}
-            <div className="flex gap-3 mb-8">
-              <DarkBtn onClick={handleAdd} className="flex-1 py-4 flex items-center justify-center gap-2 text-center">
-                {added ? <><Check size={15} /> ADDED TO CART</> : "ADD TO CART"}
-              </DarkBtn>
-              <button onClick={() => { addToCart(product, selectedSize.label, selectedSize.price); navigate("checkout"); }}
-                className="flex-1 py-4 border border-[#171717] font-['Cormorant_Garamond',serif] font-bold text-[15px] tracking-[0.12em] rounded-[5px] hover:bg-[#171717] hover:text-white transition-all">
-                BUY NOW
-              </button>
-              <FavoriteButton productId={product.id} />
-            </div>
-
-            {/* Trust bar */}
-            <div className="border-t border-[rgba(0,0,0,0.08)] pt-5 grid grid-cols-3 gap-3">
-              {[{ Icon: Shield, label: "Authentic" }, { Icon: Package, label: "Secure Pack" }, { Icon: Truck, label: "Fast Delivery" }].map(({ Icon, label }, i) => (
-                <div key={i} className="flex items-center gap-2 text-[rgba(23,23,23,0.5)]">
-                  <Icon size={15} strokeWidth={1.5} />
-                  <span className="font-['IBM_Plex_Sans',sans-serif] font-light text-[12px]">{label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Related */}
-        {relatedProducts.length > 0 && (
-          <div className="mt-20">
-            <h2 className="font-['Cormorant_Garamond',serif] font-bold text-[34px] text-[#171717] tracking-wide mb-8">You Might Also Like</h2>
-            <div className="-mx-6 flex snap-x gap-3 overflow-x-auto px-6 pb-3 md:mx-0 md:grid md:grid-cols-2 md:overflow-visible md:px-0 md:pb-0 lg:grid-cols-4">
-              {relatedProducts.map((p) => (
-                <div key={p.id} className="w-[190px] shrink-0 snap-start md:w-auto">
-                  <RelatedProductCard product={p} navigate={navigate} />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+function ProductPage({ product, navigate, addToCart }: { product: Product; navigate: (p: Page, d?: unknown) => void; addToCart: (p: Product, size: string, price: number, quantity?: number) => void }) {
+  const related = [...ALL_PRODUCTS.filter(p => p.id !== product.id && p.family === product.family), ...ALL_PRODUCTS.filter(p => p.id !== product.id && p.family !== product.family)].slice(0, 4);
+  return <ProductDetail key={product.id} product={product} related={related} onOpen={p => navigate("product", p)} onBack={() => navigate("collections")} addToBag={addToCart} openBag={() => navigate("cart")} />;
 }
 
-// â”€â”€â”€ CART PAGE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-function CartPage({ items, navigate, updateQty, removeItem }: {
-  items: CartItem[];
-  navigate: (p: Page) => void;
-  updateQty: (id: number, size: string, qty: number) => void;
-  removeItem: (id: number, size: string) => void;
-}) {
-  const subtotal = items.reduce((acc, i) => acc + i.price * i.qty, 0);
-
-  return (
-    <div className="bg-[#f7f5f1] min-h-screen">
-      <div className="max-w-[1100px] mx-auto px-6 py-12">
-        <div className="flex items-start gap-4 mb-10">
-          <div>
-            <GoldBar />
-            <h1 className="font-['Cormorant_Garamond',serif] font-bold text-[52px] text-[#171717] tracking-[0.04em] mt-4">YOUR CART</h1>
-          </div>
-        </div>
-
-        {items.length === 0 ? (
-          <div className="text-center py-28 flex flex-col items-center">
-            <ShoppingCart size={56} strokeWidth={1} className="text-[rgba(23,23,23,0.2)] mb-6" />
-            <p className="font-['Cormorant_Garamond',serif] text-[30px] text-[rgba(23,23,23,0.4)] mb-8">Your cart is empty.</p>
-            <DarkBtn onClick={() => navigate("collections")}>START SHOPPING</DarkBtn>
-          </div>
-        ) : (
-          <div className="flex flex-col md:flex-row gap-8">
-            {/* Items */}
-            <div className="flex-1 space-y-3">
-              {items.map((item) => (
-                <div key={`${item.product.id}-${item.size}`}
-                  className="bg-white rounded-2xl p-5 flex items-center gap-4 shadow-[0px_2px_12px_rgba(0,0,0,0.05)]">
-                  <div className="bg-[#f5f2ed] rounded-xl w-[76px] h-[76px] flex items-center justify-center flex-shrink-0">
-                    <img src={item.product.img} alt={item.product.name} className="h-16 object-contain" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-['IBM_Plex_Sans',sans-serif] text-[10px] tracking-[0.14em] text-[rgba(23,23,23,0.4)] uppercase">{item.product.brand}</p>
-                    <p className="font-['Cormorant_Garamond',serif] font-semibold text-[19px] text-[#171717] truncate">{item.product.name}</p>
-                    <p className="font-['IBM_Plex_Sans',sans-serif] text-[12px] text-[rgba(23,23,23,0.45)]">{item.size} • PHP {item.price} each</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button onClick={() => updateQty(item.product.id, item.size, item.qty - 1)}
-                      className="w-7 h-7 border border-[rgba(0,0,0,0.18)] rounded-full flex items-center justify-center hover:bg-[#171717] hover:text-white transition-colors">
-                      <Minus size={11} />
-                    </button>
-                    <span className="font-['IBM_Plex_Sans',sans-serif] w-5 text-center text-[14px]">{item.qty}</span>
-                    <button onClick={() => updateQty(item.product.id, item.size, item.qty + 1)}
-                      className="w-7 h-7 border border-[rgba(0,0,0,0.18)] rounded-full flex items-center justify-center hover:bg-[#171717] hover:text-white transition-colors">
-                      <Plus size={11} />
-                    </button>
-                  </div>
-                  <div className="text-right ml-2 flex-shrink-0">
-                    <p className="font-['IBM_Plex_Sans',sans-serif] font-semibold text-[16px] text-[#171717]">PHP {item.price * item.qty}</p>
-                    <button onClick={() => removeItem(item.product.id, item.size)}
-                      className="font-['IBM_Plex_Sans',sans-serif] text-[10px] text-[rgba(23,23,23,0.35)] hover:text-red-500 transition-colors mt-1">
-                      Remove
-                    </button>
-                  </div>
-                </div>
-              ))}
-
-              <button onClick={() => navigate("collections")}
-                className="font-['IBM_Plex_Sans',sans-serif] font-light text-[13px] text-[rgba(23,23,23,0.5)] hover:text-[#171717] transition-colors flex items-center gap-1.5 mt-2">
-                <ArrowLeft size={13} /> Continue Shopping
-              </button>
-            </div>
-
-            {/* Summary */}
-            <div className="md:w-[320px] flex-shrink-0">
-              <div className="bg-white rounded-2xl p-7 shadow-[0px_2px_12px_rgba(0,0,0,0.05)] sticky top-24">
-                <p className="font-['Cormorant_Garamond',serif] font-bold text-[24px] text-[#171717] mb-6">Order Summary</p>
-                <div className="space-y-3 border-b border-[rgba(0,0,0,0.07)] pb-4 mb-4">
-                  {items.map((item) => (
-                    <div key={`${item.product.id}-${item.size}`} className="flex justify-between font-['IBM_Plex_Sans',sans-serif] text-[13px] text-[rgba(23,23,23,0.65)]">
-                      <span className="truncate pr-2 max-w-[160px]">{item.product.name} ({item.size}) x{item.qty}</span>
-                      <span className="flex-shrink-0">PHP {item.price * item.qty}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="flex justify-between font-['IBM_Plex_Sans',sans-serif] text-[13px] text-[rgba(23,23,23,0.65)] mb-2">
-                  <span>Shipping</span><span className="text-green-600 font-medium">Free</span>
-                </div>
-                <div className="border-t border-[rgba(0,0,0,0.07)] pt-4 mt-2 mb-6">
-                  <div className="flex justify-between font-['Cormorant_Garamond',serif] font-bold text-[22px] text-[#171717]">
-                    <span>Total</span><span>PHP {subtotal}</span>
-                  </div>
-                </div>
-                <DarkBtn onClick={() => navigate("checkout")} className="w-full py-4 block text-center">PROCEED TO CHECKOUT</DarkBtn>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+function CartPage({ items, navigate, updateQty, removeItem }: { items: CartItem[]; navigate: (p: Page) => void; updateQty: (id: number, size: string, qty: number) => void; removeItem: (id: number, size: string) => void }) {
+  return <BagPage items={items} updateQty={updateQty} removeItem={removeItem} onShop={() => navigate("collections")} onCheckout={() => navigate("checkout")} />;
 }
 
-// â”€â”€â”€ CHECKOUT PAGE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function CheckoutPage({ items, navigate, onOrderPlaced }: { items: CartItem[]; navigate: (p: Page) => void; onOrderPlaced: () => void }) {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [form, setForm] = useState({ name: "", email: localStorage.getItem("joshua-scents-guest-email") || "", phone: "", address: "", city: "", zip: "", payment: "paymongo" });
@@ -1877,160 +1334,21 @@ function CheckoutPage({ items, navigate, onOrderPlaced }: { items: CartItem[]; n
     } finally { setPlacing(false); }
   };
 
-  const F = ({ label, name, type = "text", placeholder, half = false }: {
-    label: string; name: keyof typeof form; type?: string; placeholder?: string; half?: boolean;
-  }) => (
-    <div className={half ? "" : "md:col-span-2"}>
-      <label className="font-['IBM_Plex_Sans',sans-serif] text-[10px] tracking-[0.16em] text-[rgba(23,23,23,0.5)] uppercase block mb-1.5">{label}</label>
-      <input type={type} value={form[name]} placeholder={placeholder}
-        onChange={(e) => setForm({ ...form, [name]: e.target.value })}
-        className="w-full border border-[rgba(0,0,0,0.14)] rounded-lg px-4 py-3 font-['IBM_Plex_Sans',sans-serif] text-[14px] bg-white focus:outline-none focus:border-[#171717] transition-colors" />
-    </div>
-  );
-
-  const StepDot = ({ n }: { n: number }) => (
-    <div className="flex items-center gap-2">
-      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-['IBM_Plex_Sans',sans-serif] font-medium transition-all ${step > n ? "bg-[#AE9766] text-white" : step === n ? "bg-[#171717] text-white" : "bg-[rgba(0,0,0,0.1)] text-[rgba(23,23,23,0.4)]"}`}>
-        {step > n ? <Check size={10} /> : n}
-      </div>
-      <span className={`font-['IBM_Plex_Sans',sans-serif] text-[12px] tracking-wide ${step === n ? "text-[#171717] font-medium" : "text-[rgba(23,23,23,0.35)]"}`}>
-        {["Shipping", "Payment", "Review"][n - 1]}
-      </span>
-    </div>
-  );
-
-  return (
-    <div className="bg-[#f7f5f1] min-h-screen">
-      <div className="max-w-[1100px] mx-auto px-6 py-12">
-        <GoldBar />
-        <h1 className="font-['Cormorant_Garamond',serif] font-bold text-[52px] text-[#171717] tracking-[0.04em] mt-4 mb-6">CHECKOUT</h1>
-
-        {/* Step indicator */}
-        <div className="flex items-center gap-3 mb-10">
-          <StepDot n={1} />
-          <div className="w-8 h-px bg-[rgba(0,0,0,0.15)]" />
-          <StepDot n={2} />
-          <div className="w-8 h-px bg-[rgba(0,0,0,0.15)]" />
-          <StepDot n={3} />
-        </div>
-
-        <div className="flex flex-col md:flex-row gap-8">
-          {/* Form area */}
-          <div className="flex-1">
-            {step === 1 && (
-              <div className="bg-white rounded-2xl p-7 shadow-[0px_2px_12px_rgba(0,0,0,0.05)]">
-                <p className="font-['Cormorant_Garamond',serif] font-bold text-[28px] text-[#171717] mb-6">Shipping Information</p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <F label="Full Name" name="name" placeholder="Juan dela Cruz" half />
-                  <F label="Email Address" name="email" type="email" placeholder="juan@email.com" half />
-                  <F label="Phone Number" name="phone" placeholder="+63 9XX XXX XXXX" half />
-                  <F label="City" name="city" placeholder="Manila" half />
-                  <AddressAutocomplete value={form.address}
-                    onChange={(address) => { setCoordinates(null); setForm({ ...form, address }); }}
-                    onSelect={(address) => {
-                      setCoordinates({ latitude: address.latitude, longitude: address.longitude });
-                      setForm((current) => ({ ...current, address: address.address, city: address.city || current.city, zip: address.zip || current.zip }));
-                    }} />
-                  <F label="ZIP Code" name="zip" placeholder="1000" half />
-                </div>
-                {checkoutError && <p role="alert" className="mt-4 text-sm text-red-700">{checkoutError}</p>}
-                <DarkBtn onClick={() => void continueToPayment()} className="mt-7" disabled={placing}>{placing ? "GETTING DELIVERY QUOTE..." : "CONTINUE TO PAYMENT"}</DarkBtn>
-              </div>
-            )}
-
-            {step === 2 && (
-              <div className="bg-white rounded-2xl p-7 shadow-[0px_2px_12px_rgba(0,0,0,0.05)]">
-                <p className="font-['Cormorant_Garamond',serif] font-bold text-[28px] text-[#171717] mb-6">Payment Method</p>
-                <div className="space-y-3">
-                  {[
-                    { value: "paymongo", label: "Secure Online Payment", desc: "GCash, Maya, cards, and other enabled PayMongo methods" },
-                    { value: "cod", label: "Cash on Delivery", desc: "Pay when your order arrives" },
-                  ].map((opt) => (
-                    <label key={opt.value}
-                      className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all ${form.payment === opt.value ? "border-[#171717] bg-[#f7f5f1]" : "border-[rgba(0,0,0,0.12)] hover:border-[rgba(0,0,0,0.28)]"}`}>
-                      <input type="radio" name="payment" value={opt.value} checked={form.payment === opt.value}
-                        onChange={(e) => setForm({ ...form, payment: e.target.value })} className="accent-[#171717]" />
-                      <div>
-                        <p className="font-['IBM_Plex_Sans',sans-serif] font-medium text-[15px] text-[#171717]">{opt.label}</p>
-                        <p className="font-['IBM_Plex_Sans',sans-serif] font-light text-[12px] text-[rgba(23,23,23,0.45)]">{opt.desc}</p>
-                      </div>
-                    </label>
-                  ))}
-                </div>
-                <div className="flex items-center gap-5 mt-7">
-                  <button onClick={() => setStep(1)} className="flex items-center gap-1.5 font-['IBM_Plex_Sans',sans-serif] text-[13px] text-[rgba(23,23,23,0.55)] hover:text-[#171717] transition-colors">
-                    <ArrowLeft size={13} /> Back
-                  </button>
-                  <DarkBtn onClick={() => setStep(3)}>REVIEW ORDER</DarkBtn>
-                </div>
-              </div>
-            )}
-
-            {step === 3 && (
-              <div className="bg-white rounded-2xl p-7 shadow-[0px_2px_12px_rgba(0,0,0,0.05)]">
-                <p className="font-['Cormorant_Garamond',serif] font-bold text-[28px] text-[#171717] mb-6">Review Your Order</p>
-                <div className="space-y-3 mb-5">
-                  {items.map((item) => (
-                    <div key={`${item.product.id}-${item.size}`} className="flex items-center gap-4 py-3 border-b border-[rgba(0,0,0,0.06)]">
-                      <div className="bg-[#f5f2ed] rounded-xl w-14 h-14 flex items-center justify-center flex-shrink-0">
-                        <img src={item.product.img} alt={item.product.name} className="h-12 object-contain" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-['Cormorant_Garamond',serif] font-semibold text-[17px] text-[#171717]">{item.product.name}</p>
-                        <p className="font-['IBM_Plex_Sans',sans-serif] text-[12px] text-[rgba(23,23,23,0.45)]">{item.size} x {item.qty}</p>
-                      </div>
-                      <p className="font-['IBM_Plex_Sans',sans-serif] font-medium text-[15px]">PHP {item.price * item.qty}</p>
-                    </div>
-                  ))}
-                </div>
-                <div className="bg-[#f7f5f1] rounded-xl p-4 mb-6 space-y-1.5">
-                  <p className="font-['IBM_Plex_Sans',sans-serif] text-[13px] text-[rgba(23,23,23,0.55)]">
-                    Ship to: <span className="text-[#171717]">{form.address || "-"}{form.city ? `, ${form.city}` : ""} {form.zip}</span>
-                  </p>
-                  <p className="font-['IBM_Plex_Sans',sans-serif] text-[13px] text-[rgba(23,23,23,0.55)]">
-                    Payment: <span className="text-[#171717] capitalize">{form.payment === "cod" ? "Cash on Delivery" : "Secure Online Payment"}</span>
-                  </p>
-                </div>
-                <div className="flex items-center gap-5">
-                  <button onClick={() => setStep(2)} className="flex items-center gap-1.5 font-['IBM_Plex_Sans',sans-serif] text-[13px] text-[rgba(23,23,23,0.55)] hover:text-[#171717] transition-colors">
-                    <ArrowLeft size={13} /> Back
-                  </button>
-                  <DarkBtn onClick={() => void placeOrder()} disabled={placing}>{placing ? "PLACING ORDER..." : form.payment === "cod" ? "PLACE COD ORDER" : "CONTINUE TO SECURE PAYMENT"}</DarkBtn>
-                </div>
-                {checkoutError && <p role="alert" className="mt-4 text-sm text-red-700">{checkoutError}</p>}
-              </div>
-            )}
-          </div>
-
-          {/* Order summary */}
-          <div className="md:w-[300px] flex-shrink-0">
-            <div className="bg-white rounded-2xl p-6 shadow-[0px_2px_12px_rgba(0,0,0,0.05)] sticky top-24">
-              <p className="font-['Cormorant_Garamond',serif] font-bold text-[22px] text-[#171717] mb-5">Order Summary</p>
-              <div className="space-y-2 border-b border-[rgba(0,0,0,0.07)] pb-4 mb-3">
-                {items.map((item) => (
-                  <div key={`${item.product.id}-${item.size}`} className="flex justify-between font-['IBM_Plex_Sans',sans-serif] text-[12px] text-[rgba(23,23,23,0.65)]">
-                    <span className="truncate pr-2 max-w-[160px]">{item.product.name} ({item.size}) x{item.qty}</span>
-                    <span>PHP {item.price * item.qty}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="flex justify-between font-['IBM_Plex_Sans',sans-serif] text-[12px] text-[rgba(23,23,23,0.55)] mb-1">
-                <span>Shipping</span><span className={shipping === 0 ? "text-green-600" : ""}>{shipping === 0 ? "Free" : `PHP ${shipping.toFixed(2)}`}</span>
-              </div>
-              <div className="border-t border-[rgba(0,0,0,0.07)] pt-3 mt-2">
-                <div className="flex justify-between font-['Cormorant_Garamond',serif] font-bold text-[20px] text-[#171717]">
-                  <span>Total</span><span>PHP {total.toFixed(2)}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  const changeField = (name: keyof typeof form, value: string) => {
+    if (name === "address") setCoordinates(null);
+    setForm(current => ({ ...current, [name]: value }));
+    setStep(1);
+  };
+  return <CheckoutInterface items={items} form={form} onField={(name, value) => {
+    if (name === "payment") { setForm(current => ({ ...current, payment: value })); setStep(2); }
+    else changeField(name, value);
+  }} onAddress={address => {
+    setCoordinates({ latitude: address.latitude, longitude: address.longitude });
+    setForm(current => ({ ...current, address: address.address, city: address.city || current.city, zip: address.zip || current.zip }));
+    setStep(1);
+  }} step={step} onStep={setStep} onContinue={() => void continueToPayment()} onPlace={() => void placeOrder()} onBack={() => navigate("cart")} onShop={() => navigate("collections")} placing={placing} error={checkoutError} shipping={shipping} quoteRequired={import.meta.env.VITE_ENABLE_LALAMOVE === "true"} />;
 }
 
-// â”€â”€â”€ CONFIRMATION PAGE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ConfirmationPage({ navigate }: { navigate: (p: Page) => void }) {
   const reference = sessionStorage.getItem("last-order-reference") || new URLSearchParams(window.location.search).get("order");
   return (
@@ -2308,6 +1626,7 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [accountOpen, setAccountOpen] = useState(false);
+  const [bagOpen, setBagOpen] = useState(false);
   const pageRef = useRef<Page>(initialPage);
   const selectedProductRef = useRef<Product>(ALL_PRODUCTS[0]);
   const selectedDiscoverySetIdRef = useRef<number | null>(null);
@@ -2399,12 +1718,12 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const addToCart = (product: Product, size: string, price: number) => {
-    trackStoreEvent("add_to_cart", price);
+  const addToCart = (product: Product, size: string, price: number, quantity = 1) => {
+    trackStoreEvent("add_to_cart", price * quantity);
     setCart((prev) => {
       const existing = prev.find((i) => i.product.id === product.id && i.size === size);
-      if (existing) return prev.map((i) => i.product.id === product.id && i.size === size ? { ...i, qty: i.qty + 1 } : i);
-      return [...prev, { product, size, price, qty: 1 }];
+      if (existing) return prev.map((i) => i.product.id === product.id && i.size === size ? { ...i, qty: i.qty + quantity } : i);
+      return [...prev, { product, size, price, qty: quantity }];
     });
   };
 
@@ -2442,10 +1761,13 @@ export default function App() {
       <CustomCursor />
       <GlobalTexture />
       {page !== "confirmation" && (
-        <Header page={page} navigate={navigate} cartCount={cartCount} onAccount={() => setAccountOpen(true)} />
+        <Header page={page} navigate={(p, data) => p === "cart" ? setBagOpen(true) : navigate(p, data)} cartCount={cartCount} onAccount={() => setAccountOpen(true)} />
       )}
       <AccountCenterDialog open={accountOpen} onClose={() => setAccountOpen(false)} />
-      <main className="flex-1">{renderPage()}</main>
+      <StoreActions.Provider value={{ add: addToCart, openBag: () => setBagOpen(true) }}>
+        <main className="flex-1">{renderPage()}</main>
+      </StoreActions.Provider>
+      <BagDrawer open={bagOpen} onClose={() => setBagOpen(false)} items={cart} updateQty={updateQty} removeItem={removeItem} onShop={() => { setBagOpen(false); navigate("collections"); }} onCheckout={() => { setBagOpen(false); navigate("checkout"); }} />
       {page !== "checkout" && page !== "confirmation" && (
         <Footer navigate={navigate} />
       )}

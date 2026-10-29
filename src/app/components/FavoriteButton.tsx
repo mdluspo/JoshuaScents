@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Heart } from "lucide-react";
 import { getSupabase } from "@/lib/supabase";
 
-export function FavoriteButton({ productId }: { productId: number }) {
+export function FavoriteButton({ productId, className, showLabel = false }: { productId: number; className?: string; showLabel?: boolean }) {
   const supabase = getSupabase();
   const [userId, setUserId] = useState<string | null>(null);
   const [favorite, setFavorite] = useState(false);
@@ -57,10 +57,12 @@ export function FavoriteButton({ productId }: { productId: number }) {
       onClick={() => void toggle()}
       disabled={busy}
       aria-label={favorite ? "Remove from favorites" : "Add to favorites"}
+      aria-pressed={favorite}
       title={userId ? (favorite ? "Remove from favorites" : "Add to favorites") : "Sign in to save favorites"}
-      className={`flex w-14 shrink-0 items-center justify-center rounded-[5px] border border-[#171717] transition-colors disabled:opacity-50 ${favorite ? "bg-[#171717] text-white" : "bg-transparent text-[#171717] hover:bg-[#171717] hover:text-white"}`}
+      className={className ?? `flex w-14 shrink-0 items-center justify-center rounded-[5px] border border-[#171717] transition-colors disabled:opacity-50 ${favorite ? "bg-[#171717] text-white" : "bg-transparent text-[#171717] hover:bg-[#171717] hover:text-white"}`}
     >
       <Heart size={19} fill={favorite ? "currentColor" : "none"} />
+      {showLabel && <span>{favorite ? "Saved to wishlist" : "Save to wishlist"}</span>}
     </button>
   );
 }

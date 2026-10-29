@@ -1,0 +1,511 @@
+.cinematic-home { overflow: hidden; }
+.cinematic-hero { animation: cinematic-in 900ms cubic-bezier(0.19, 1, 0.22, 1) both; }
+.cinematic-hero-copy { animation: copy-rise 900ms 120ms cubic-bezier(0.19, 1, 0.22, 1) both; }
+.cinematic-hero img { animation: hero-photo 1.4s ease both; }
+.cinematic-collection { box-shadow: 0 12px 30px rgba(51, 35, 22, 0.12); }
+.cinematic-collection { animation: card-flow-up 800ms cubic-bezier(0.19, 1, 0.22, 1) both; }
+.cinematic-collection:nth-child(2) { animation-delay: 100ms; }
+.cinematic-collection:nth-child(3) { animation-delay: 180ms; }
+.cinematic-collection:nth-child(4) { animation-delay: 260ms; }
+.cinematic-home section:nth-of-type(3) > div > div:last-child > button { animation: card-flow-up 800ms cubic-bezier(0.19, 1, 0.22, 1) both; }
+.cinematic-home section:nth-of-type(3) > div > div:last-child > button:nth-child(2) { animation-delay: 100ms; }
+.cinematic-home section:nth-of-type(3) > div > div:last-child > button:nth-child(3) { animation-delay: 180ms; }
+.cinematic-home section:nth-of-type(3) > div > div:last-child > button:nth-child(4) { animation-delay: 260ms; }
+.cinematic-home section:nth-of-type(3) > div > div:last-child > button:nth-child(5) { animation-delay: 340ms; }
+.cinematic-collection::after { position: absolute; inset: 0; content: ""; pointer-events: none; background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.28) 48%, transparent 66%); transform: translateX(-120%); transition: transform 900ms ease; }
+.cinematic-collection:hover::after { transform: translateX(120%); }
+.cinematic-home button { transition: transform 450ms cubic-bezier(0.19, 1, 0.22, 1), box-shadow 450ms ease; }
+.cinematic-home button:hover { transform: translateY(-3px); }
+.cinematic-home section:nth-of-type(3) > div > div:last-child > button:nth-child(1) .flex { background: #e8dac6; }
+.cinematic-home section:nth-of-type(3) > div > div:last-child > button:nth-child(2) .flex { background: #dfd1bf; }
+.cinematic-home section:nth-of-type(3) > div > div:last-child > button:nth-child(3) .flex { background: #ead9bf; }
+.cinematic-home section:nth-of-type(3) > div > div:last-child > button:nth-child(4) .flex { background: #d9c9b4; }
+.cinematic-home section:nth-of-type(3) > div > div:last-child > button:nth-child(5) .flex { background: #eee2d2; }
+.cinematic-home section:nth-of-type(3) > div > div:last-child > button:nth-child(odd) img { transform: scale(.94); }
+.cinematic-home section:nth-of-type(3) > div > div:last-child > button {
+  border: 1px solid rgba(95, 65, 39, 0.08);
+  box-shadow: 0 8px 22px rgba(51, 35, 22, 0.06);
+}
+.cinematic-home section:nth-of-type(3) > div > div:last-child > button:hover {
+  box-shadow: 0 20px 38px rgba(51, 35, 22, 0.14);
+}
+
+/* The bestseller grid is intentionally quiet, but each card should still
+   read as a considered object instead of a flat list item. */
+.cinematic-home section:nth-of-type(3) .grid > button {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(95, 65, 39, 0.1);
+  box-shadow: 0 10px 24px rgba(51, 35, 22, 0.07);
+  transform: translateY(0);
+}
+
+.cinematic-home section:nth-of-type(3) .grid > button::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.35), transparent 42%);
+  opacity: 0;
+  transition: opacity 500ms ease;
+}
+
+.cinematic-home section:nth-of-type(3) .grid > button:hover {
+  box-shadow: 0 22px 42px rgba(51, 35, 22, 0.15);
+  transform: translateY(-8px);
+}
+
+.cinematic-home section:nth-of-type(3) .grid > button:hover::before {
+  opacity: 1;
+}
+
+.cinematic-home section:nth-of-type(3) .grid > button img {
+  transition: transform 700ms cubic-bezier(0.19, 1, 0.22, 1), filter 500ms ease;
+}
+
+.cinematic-home section:nth-of-type(3) .grid > button:hover img {
+  filter: saturate(1.08) contrast(1.02);
+  transform: scale(1.045);
+}
+
+/* Lift the hero message into the image composition instead of leaving it
+   parked on the baseline. */
+.cinematic-hero > div:nth-of-type(3) {
+  align-items: center;
+  padding-bottom: clamp(7rem, 15vh, 11rem);
+}
+
+.cinematic-hero-copy {
+  transform: translateY(-2.5rem);
+}
+
+/* Give each fragrance its own visual temperature. The bottle stays clear;
+   the surrounding light changes so the row feels curated, not duplicated. */
+.cinematic-home section:nth-of-type(3) .grid > button {
+  background: #fff !important;
+  padding: 0 !important;
+  box-shadow: none;
+}
+
+.cinematic-home section:nth-of-type(3) .grid > button > div:first-child {
+  border: 1px solid rgba(95, 65, 39, 0.08);
+  box-shadow: 0 12px 24px rgba(51, 35, 22, 0.08);
+  transition: box-shadow 450ms ease, transform 700ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.cinematic-home section:nth-of-type(3) .grid > button:nth-child(1) > div:first-child { background: linear-gradient(145deg, #efe4d2, #dfcdb2) !important; }
+.cinematic-home section:nth-of-type(3) .grid > button:nth-child(2) > div:first-child { background: linear-gradient(145deg, #e7d7c1, #cbb89d) !important; }
+.cinematic-home section:nth-of-type(3) .grid > button:nth-child(3) > div:first-child { background: linear-gradient(145deg, #f0dfc0, #d9c096) !important; }
+.cinematic-home section:nth-of-type(3) .grid > button:nth-child(4) > div:first-child { background: linear-gradient(145deg, #d8c5aa, #b9a489) !important; }
+.cinematic-home section:nth-of-type(3) .grid > button:nth-child(5) > div:first-child { background: linear-gradient(145deg, #eadbc9, #d2bca1) !important; }
+
+.cinematic-home section:nth-of-type(3) .grid > button:hover > div:first-child {
+  box-shadow: 0 20px 34px rgba(51, 35, 22, 0.15);
+  transform: translateY(-5px);
+}
+
+/* Product image fields stay crisp white; warmth belongs to the surrounding
+   page and keeps the glass bottles easy to read. */
+.cinematic-home section:nth-of-type(3) .grid > button > div:first-child {
+  background: #fff !important;
+}
+
+/* The bestseller section is the third direct section on the homepage. */
+.cinematic-home > section:nth-child(3) .grid > button,
+.cinematic-home > section:nth-child(3) .grid > button > div:first-child {
+  background: #fff !important;
+  background-image: none !important;
+}
+
+.cinematic-home > section:nth-child(3) .grid > button:nth-child(n) > div:first-child {
+  background: #fff !important;
+  background-image: none !important;
+}
+
+/* White belongs to the bottle field only. Let the product information return
+   to the cream canvas so the cards feel like an editorial shelf, not five
+   hard rectangles. */
+.cinematic-home > section:nth-child(3) .grid > button {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0;
+}
+
+.cinematic-home > section:nth-child(3) .grid > button > div:first-child {
+  border: 1px solid rgba(95, 65, 39, 0.1);
+  box-shadow: 0 12px 26px rgba(51, 35, 22, 0.08);
+}
+
+.cinematic-home > section:nth-child(3) .grid > button > p,
+.cinematic-home > section:nth-child(3) .grid > button > h3 {
+  padding-left: 2px;
+}
+
+.cinematic-home > section:nth-child(3) .grid > button > p:last-child {
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(95, 65, 39, 0.16);
+}
+
+/* Contain the edit as one composed object instead of stretching it across
+   the full viewport. */
+.cinematic-home > section:nth-child(3) > div {
+  max-width: 1180px;
+}
+
+.cinematic-home > section:nth-child(3) .grid {
+  counter-reset: bestseller;
+}
+
+.cinematic-home > section:nth-child(3) .grid > button {
+  position: relative;
+  min-width: 0;
+}
+
+.cinematic-home > section:nth-child(3) .grid > button::before {
+  position: absolute;
+  top: 9px;
+  left: 11px;
+  z-index: 2;
+  counter-increment: bestseller;
+  content: "0" counter(bestseller);
+  color: rgba(95, 65, 39, 0.45);
+  font: 9px/1 'IBM Plex Sans', sans-serif;
+  letter-spacing: 0.16em;
+}
+
+.cinematic-home > section:nth-child(3) .grid > button:nth-child(n) > div:first-child {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cinematic-home > section:nth-child(3) .grid > button:nth-child(1) img { height: 150px; transform: translateY(6px) rotate(-2deg); }
+.cinematic-home > section:nth-child(3) .grid > button:nth-child(2) img { height: 166px; transform: translateY(-3px) rotate(1deg); }
+.cinematic-home > section:nth-child(3) .grid > button:nth-child(3) img { height: 142px; transform: translateY(9px) rotate(-1deg); }
+.cinematic-home > section:nth-child(3) .grid > button:nth-child(4) img { height: 178px; transform: translateY(-7px) rotate(2deg); }
+.cinematic-home > section:nth-child(3) .grid > button:nth-child(5) img { height: 157px; transform: translateY(4px) rotate(-2deg); }
+
+.cinematic-about {
+  position: relative;
+  isolation: isolate;
+}
+
+.cinematic-about::before {
+  position: absolute;
+  top: 2rem;
+  right: 7%;
+  width: 38%;
+  height: 70%;
+  content: "";
+  border: 1px solid rgba(95, 65, 39, 0.13);
+  border-radius: 50%;
+  transform: rotate(-12deg);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.cinematic-about h2 {
+  max-width: 720px;
+}
+
+/* Match the reference rhythm: a confident headline, restrained supporting
+   copy, and a closing journal image with a clear visual role. */
+.cinematic-hero h1 {
+  max-width: 650px;
+  font-size: clamp(3.5rem, 6vw, 6.2rem);
+  line-height: 0.9;
+}
+
+.cinematic-home section:last-child img {
+  display: block;
+  position: relative;
+  z-index: 1;
+  opacity: 0.92;
+  mix-blend-mode: multiply;
+  filter: sepia(0.12) saturate(0.76);
+}
+
+.cinematic-home section:last-child > div {
+  max-width: 640px;
+}
+
+@media (max-width: 700px) {
+  .cinematic-home section:last-child img { display: none; }
+}
+
+/* Reference-led homepage composition */
+.cinematic-home {
+  background: #f8f2e8;
+}
+
+.cinematic-hero {
+  min-height: 560px !important;
+  height: min(560px, calc(100svh - 80px));
+}
+
+.cinematic-hero > div:nth-of-type(3) {
+  min-height: 470px !important;
+  padding-top: clamp(5rem, 10vh, 7rem);
+  padding-bottom: 0;
+  align-items: flex-start;
+}
+
+.cinematic-hero-copy {
+  max-width: 560px;
+  transform: none;
+}
+
+.cinematic-hero h1 {
+  max-width: 520px;
+  font-size: clamp(3.3rem, 5vw, 5.4rem);
+  letter-spacing: -0.035em;
+}
+
+/* Correct the hero's actual child order: the copy is the second div and the
+   assurance strip is the third. */
+.cinematic-hero > div:nth-of-type(2) {
+  min-height: 470px !important;
+  padding-top: clamp(3rem, 6vh, 5rem) !important;
+  padding-bottom: 0 !important;
+  align-items: flex-start !important;
+}
+
+.cinematic-hero > div:nth-of-type(2) .cinematic-hero-copy {
+  transform: translateY(-2.5rem);
+}
+
+.cinematic-hero > div:nth-of-type(3) {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  border-radius: 0 !important;
+  background: rgba(248, 242, 232, 0.88);
+  min-height: 0 !important;
+  height: auto !important;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+/* Give the hero room to breathe and let the next section begin cleanly
+   beneath it instead of pulling upward into the image. */
+.cinematic-hero {
+  min-height: 700px !important;
+  height: 700px !important;
+}
+
+.cinematic-hero > div:nth-of-type(2) {
+  min-height: 590px !important;
+}
+
+.legacy-home-hero + section {
+  min-height: auto !important;
+  margin-top: 0 !important;
+}
+
+@media (max-width: 700px) {
+  .cinematic-hero {
+    min-height: 620px !important;
+    height: 620px !important;
+  }
+
+  .cinematic-hero > div:nth-of-type(2) {
+    min-height: 500px !important;
+  }
+}
+
+.cinematic-home > section:nth-child(2) {
+  max-width: none;
+  padding: 14px clamp(2rem, 3.6vw, 4rem) 20px !important;
+  background: #fbf8f2;
+}
+
+.cinematic-home > section:nth-child(2) > div {
+  max-width: 1360px;
+  margin: 0 auto;
+}
+
+.cinematic-home > section:nth-child(2) .grid {
+  gap: 12px;
+}
+
+.cinematic-home > section:nth-child(2) .cinematic-collection {
+  height: 150px;
+  border-radius: 4px;
+  box-shadow: 0 8px 18px rgba(77, 54, 32, 0.08);
+}
+
+.cinematic-home > section:nth-child(2) .cinematic-collection img {
+  filter: brightness(1.22) saturate(0.72) sepia(0.12);
+}
+
+.cinematic-home > section:nth-child(3) {
+  padding: 28px clamp(2rem, 3.6vw, 4rem) 36px !important;
+  background: #f4ecdf !important;
+  border-top: 0;
+  border-bottom: 0;
+}
+
+.cinematic-home > section:nth-child(3) > div {
+  max-width: 1360px;
+}
+
+.cinematic-home > section:nth-child(3) .mb-8 {
+  margin-bottom: 13px;
+}
+
+.cinematic-home > section:nth-child(3) .grid {
+  gap: 16px;
+}
+
+.cinematic-home > section:nth-child(3) .grid > button > div:first-child {
+  height: 112px;
+  border-color: rgba(95, 65, 39, 0.08);
+  box-shadow: none;
+}
+
+.cinematic-home > section:nth-child(3) .grid > button img {
+  width: 100%;
+  object-fit: contain;
+}
+
+.cinematic-home > section:nth-child(3) .grid > button > p:first-of-type {
+  margin-top: 10px;
+  font-size: 9px;
+}
+
+.cinematic-home > section:nth-child(3) .grid > button > h3 {
+  font-size: 19px;
+}
+
+.cinematic-home > section:nth-child(3) .grid > button > p:last-child {
+  margin-top: 8px;
+  padding-bottom: 0;
+  border-bottom: 0;
+  font-size: 11px;
+}
+
+.cinematic-home > section:nth-child(5) {
+  margin: 18px auto 32px;
+  max-width: 1360px;
+  min-height: 170px;
+  border-radius: 4px;
+  padding: 24px clamp(2rem, 7vw, 6rem);
+  background: linear-gradient(110deg, #e7d2b6 0%, #e1c6a5 58%, #d4b796 100%);
+}
+
+.cinematic-home > section:nth-child(5) img {
+  display: block;
+  width: 32%;
+  height: 170px;
+  opacity: 0.86;
+}
+
+@media (max-width: 900px) {
+  .cinematic-home > section:nth-child(3) .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 620px) {
+  .cinematic-home > section:nth-child(2) .cinematic-collection { height: 170px; }
+  .cinematic-home > section:nth-child(3) .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cinematic-home > section:nth-child(5) img { display: none; }
+}
+
+/* Keep the same calm, tactile movement on the internal screens. */
+main > div:not(.cinematic-home) {
+  animation: page-soft-enter 650ms cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+
+main > div:not(.cinematic-home) button {
+  transition: transform 350ms cubic-bezier(0.19, 1, 0.22, 1), box-shadow 350ms ease, opacity 250ms ease;
+}
+
+main > div:not(.cinematic-home) button:hover {
+  transform: translateY(-2px);
+}
+
+/* The refreshed hero replaces only the legacy home hero; all following home
+   sections remain the original working experience. */
+.legacy-home-hero {
+  display: none !important;
+}
+
+@keyframes page-soft-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main > div:not(.cinematic-home) { animation: none; }
+}
+
+/* The journal is an editorial pause, not a card nested inside another card. */
+.cinematic-home section:last-child {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.55fr);
+  align-items: center;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: clamp(4rem, 8vw, 7rem) clamp(2rem, 7vw, 7rem) !important;
+  background: transparent !important;
+  border-top: 1px solid rgba(95, 65, 39, 0.18);
+  border-bottom: 1px solid rgba(95, 65, 39, 0.18);
+}
+
+.cinematic-home section:last-child > div {
+  position: relative;
+  z-index: 1;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+.cinematic-home section:last-child::before {
+  position: absolute;
+  top: 1.5rem;
+  right: 7%;
+  content: "01 / THE JOURNAL";
+  color: rgba(95, 65, 39, 0.62);
+  font: 10px/1.2 'IBM Plex Sans', sans-serif;
+  letter-spacing: 0.24em;
+}
+
+.cinematic-home section:last-child::after {
+  right: 5%;
+  bottom: 8%;
+  width: 36%;
+  height: 70%;
+  border: 1px solid rgba(95, 65, 39, 0.18);
+  transform: rotate(-18deg);
+}
+
+@media (max-width: 700px) {
+  .cinematic-hero-copy { transform: none; }
+  .cinematic-home section:last-child { grid-template-columns: 1fr; }
+  .cinematic-home section:last-child::before { right: 2rem; }
+}
+.cinematic-home section:last-child {
+  position: relative;
+  background-image: radial-gradient(circle at 78% 50%, rgba(255,255,255,.34), transparent 28%), linear-gradient(110deg, #e5d3bb, #dac2a3);
+}
+.cinematic-home section:last-child::after {
+  position: absolute;
+  right: 5%;
+  bottom: -20%;
+  width: 42%;
+  height: 130%;
+  content: "";
+  border-radius: 50%;
+  border: 1px solid rgba(95,65,39,.18);
+  transform: rotate(-18deg);
+  pointer-events: none;
+}
+.cinematic-home section:last-child img { display: none; }
+@keyframes cinematic-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes hero-photo { from { transform: scale(1.06); filter: saturate(.7); } to { transform: scale(1); filter: saturate(1); } }
+@keyframes copy-rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes card-flow-up { from { opacity: 0; transform: translateY(42px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .cinematic-hero, .cinematic-hero-copy, .cinematic-hero img, .cinematic-collection, .cinematic-home section:nth-of-type(3) button { animation: none; } .cinematic-collection::after { transition: none; } }

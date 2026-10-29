@@ -1,0 +1,38 @@
+/* Step 1: add depth to the existing hero without changing its composition or palette. */
+.luxury-hero {
+  isolation: isolate;
+  background: #fbf8f1 !important;
+}
+
+.luxury-hero::before,
+.luxury-hero::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+}
+
+.luxury-hero::before {
+  z-index: 1;
+  background:
+    radial-gradient(circle at 72% 58%, rgba(174, 151, 102, 0.18), transparent 24%),
+    radial-gradient(circle at 12% 30%, rgba(255, 255, 255, 0.7), transparent 28%);
+}
+
+.luxury-hero::after {
+  z-index: 2;
+  background: linear-gradient(180deg, rgba(251, 248, 241, 0.08), rgba(251, 248, 241, 0.5));
+}
+
+.luxury-hero > * {
+  position: relative;
+  z-index: 3;
+}
+
+.luxury-hero img[alt="fragrance decant bottle"] {
+  filter: drop-shadow(0 30px 22px rgba(42, 34, 25, 0.2));
+}
+
+.luxury-hero img[aria-hidden="true"] {
+  filter: drop-shadow(0 20px 18px rgba(42, 34, 25, 0.12));
+}
