@@ -1,0 +1,75 @@
+.fragrance-experience { --fx-ink:#3b2b20; --fx-muted:#7c6754; --fx-gold:#a78351; --fx-line:#b99c733d; background:radial-gradient(ellipse at 90% 0,#eee0cb66,transparent 50%),#fcf8f1; color:var(--fx-ink); min-height:70vh; padding-bottom:65px; }
+.fx-wrap { max-width:1280px; padding:0 38px; margin:auto; }
+.fragrance-experience h1,.fragrance-experience h2,.fragrance-experience h3 { font-family:'Cormorant Garamond',Georgia,serif; font-weight:400; letter-spacing:-.035em; color:#3b2b20; }
+.fragrance-experience h1 { font-size:clamp(52px,6vw,82px); line-height:.97; }
+.fragrance-experience h1 em { font-weight:400; color:#93714c; }
+.fragrance-experience h2 { font-size:clamp(30px,3.1vw,43px); line-height:1.1; }
+.fragrance-experience h3 { font-size:27px; line-height:1.1; }
+.fx-kicker { font:9px/1.6 'IBM Plex Sans',sans-serif; letter-spacing:.2em; color:#957144; }
+.fragrance-experience button { cursor:pointer; }
+.fragrance-experience button:hover { transform:none; }
+.fragrance-experience button:disabled { opacity:.45; cursor:not-allowed; }
+.fragrance-experience :is(button,a,input,select,textarea):focus-visible { outline:2px solid #a88555; outline-offset:4px; }
+.fx-primary { display:inline-flex; align-items:center; justify-content:center; gap:28px; border:1px solid #4b3221; padding:13px 23px; background:linear-gradient(115deg,#533a28,#392619); color:#fff8ec; border-radius:5px; font:18px/1.2 'Cormorant Garamond',Georgia,serif; box-shadow:inset 0 1px #ffffff14,0 5px 15px #43271912; transition:box-shadow .6s,background .6s; text-decoration:none; }
+.fx-primary:hover { box-shadow:0 9px 22px #43271925; background:#5a3d28; }
+.fx-text-link { display:inline-flex; align-items:center; gap:16px; color:#6b4b2e; font:17px/1.4 'Cormorant Garamond',Georgia,serif; text-decoration:underline; text-underline-offset:5px; }
+.fx-lead { font:14px/1.9 'IBM Plex Sans',sans-serif; color:var(--fx-muted); max-width:405px; }
+.fx-footnote { color:#89735e; font:10px/1.8 'IBM Plex Sans',sans-serif; margin-top:22px; }
+.fx-chips { display:flex; gap:8px; flex-wrap:wrap; }
+.fx-chips button { display:inline-flex; align-items:center; justify-content:center; gap:9px; padding:8px 15px; border:1px solid #b99c735c; border-radius:30px; background:#fffdf744; font:12px/1.4 'IBM Plex Sans',sans-serif; color:#725a40; text-transform:capitalize; transition:background .35s,border-color .35s,color .35s; }
+.fx-chips button:hover { background:#f0e4d1; border-color:#ae8755; }
+.fx-chips button[aria-pressed=true] { background:#503824; color:#fff8ec; border-color:#503824; }
+.fx-chips button small { opacity:.65; font-size:10px; }
+.fx-toolbar { display:flex; justify-content:space-between; align-items:center; gap:20px; border-block:1px solid var(--fx-line); padding:16px 0; margin:23px 0; }
+.fx-toolbar p,.fx-toolbar label { font:11px/1.6 'IBM Plex Sans',sans-serif; color:#7a654f; }
+.fx-toolbar > div,.fx-toolbar label { display:flex; align-items:center; gap:12px; }
+.fx-toolbar > div { gap:22px; }
+.fx-toolbar select { background:#fffaf0; color:#503b29; border:1px solid #b99c7355; border-radius:5px; padding:8px 26px 8px 10px; max-width:190px; }
+.fx-product-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:17px; }
+.fragrance-experience .atelier-card { border-color:#b99c7352; box-shadow:0 4px 9px #57361806,0 12px 24px #57361809; transition:translate .7s cubic-bezier(.4,0,.2,1),box-shadow .7s,border-color .5s; }
+.fragrance-experience .atelier-card:hover { translate:0 -3px; box-shadow:0 12px 28px #57361818; }
+.fragrance-experience .atelier-card-image { aspect-ratio:1.27; background:radial-gradient(ellipse at 45% 35%,#fffcf5,#eee0c9); }
+.fragrance-experience .atelier-card-image img { max-height:145px; transform:none; }
+.fragrance-experience .atelier-card-name { font-size:25px; }
+.fragrance-experience .atelier-card-caption { font-size:10px; }
+.fragrance-experience .atelier-card-info { gap:10px; }
+.fragrance-experience .atelier-sizes button { padding:5px 8px; }
+.fragrance-experience .atelier-card-purchase strong { font-size:22px; }
+.fx-empty { text-align:center; max-width:580px; margin:45px auto; padding:28px; }
+.fx-empty > svg { margin:0 auto 20px; color:#a78351; }
+.fx-empty h2 { font-size:35px; margin-bottom:14px; }
+.fx-empty > p { font:13px/1.9 'IBM Plex Sans',sans-serif; color:#88705a; }
+.fx-empty .fx-chips { justify-content:center; margin:25px 0; }
+.fx-empty .fx-text-link { margin-top:20px; }
+.fx-search-form { display:flex; align-items:center; gap:12px; border:1px solid #baa07d77; border-radius:6px; padding:11px 14px; background:#fffdf9bb; }
+.fx-search-form > svg { color:#9a7b57; flex-shrink:0; }
+.fx-search-form input { width:100%; min-width:0; outline:none; background:none; font:13px/1.7 'IBM Plex Sans',sans-serif; color:#493423; }
+.fx-search-form input::placeholder { color:#a38c73; }
+.fx-search-form > button { display:grid; place-items:center; flex-shrink:0; padding:5px; color:#775333; }
+.fx-search-page { padding-top:50px; }
+.fx-search-page h1 { margin:18px 0 30px; font-size:clamp(45px,5vw,66px); }
+.fx-search-page > .fx-search-form { max-width:650px; }
+.fx-section-heading { display:flex; justify-content:space-between; align-items:end; gap:25px; margin-bottom:27px; }
+.fx-section-heading h2 { margin-top:10px; }
+.fx-section-heading > span { font:11px 'IBM Plex Sans',sans-serif; color:#94785a; white-space:nowrap; }
+.fx-signature-hero { display:grid; grid-template-columns:1fr 1fr; gap:35px; padding-top:45px; padding-bottom:45px; align-items:center; }
+.fx-signature-copy { padding:20px 0; }
+.fx-signature-copy h1 { margin:22px 0; }
+.fx-signature-copy .fx-primary { margin-top:25px; }
+.fx-hero-caption { display:block; color:#a88b67; letter-spacing:.15em; font:8px/1.8 'IBM Plex Sans',sans-serif; margin-top:32px; }
+.fx-signature-still { position:relative; height:420px; background:#ebdcc5; overflow:hidden; border-radius:7px; border:1px solid #d3b99177; box-shadow:0 15px 40px #55351c14; }
+.fx-still-bg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.fx-still-bg { opacity:1; }
+.fx-edit-section { padding-top:35px; scroll-margin-top:100px; }
+.fx-family-filter { margin-bottom:20px; }
+.fx-personal-note { display:flex; align-items:center; gap:30px; margin-top:55px; padding:30px 34px; background:linear-gradient(120deg,#eee0c9,#fcf8ee); border:1px solid var(--fx-line); border-radius:10px; }
+.fx-personal-note > svg { color:#a88756; flex-shrink:0; }
+.fx-personal-note h2 { font-size:31px; margin:9px 0; }
+.fx-personal-note p:not(.fx-kicker) { font:11px/1.8 'IBM Plex Sans',sans-serif; color:#8d7255; }
+.fx-personal-note > button { margin-left:auto; white-space:nowrap; }
+@keyframes fx-enter { from { opacity:0; transform:translateY(9px); } to { opacity:1; transform:none; } }
+.fx-signature-copy,.fx-search-page > h1 { animation:fx-enter .75s cubic-bezier(.2,.7,.3,1) both; }
+@media(max-width:1050px) { .fx-wrap { padding-inline:26px; } .fx-product-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } .fx-signature-still { height:380px; } .fx-personal-note { flex-wrap:wrap; } }
+@media(max-width:720px) { .fx-wrap { padding-inline:18px; } .fragrance-experience { padding-bottom:35px; } .fragrance-experience h1 { font-size:58px; } .fx-signature-hero { grid-template-columns:1fr; gap:20px; padding-top:20px; padding-bottom:20px; } .fx-signature-copy .fx-lead { font-size:12px; max-width:370px; } .fx-signature-still { height:300px; border-top-right-radius:7px; } .fx-hero-caption { margin-top:20px; } .fx-product-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; } .fragrance-experience .atelier-card-name { font-size:23px; } .fragrance-experience .atelier-card-image img { max-height:125px; } .fragrance-experience .atelier-card-purchase strong { font-size:20px; } .fx-toolbar { flex-wrap:wrap; gap:13px; } .fx-toolbar > div { width:100%; justify-content:space-between; gap:10px; } .fx-toolbar label { gap:6px; font-size:10px; } .fx-toolbar select { max-width:150px; padding:7px; font-size:10px; } .fx-section-heading { align-items:start; flex-direction:column; gap:15px; } .fx-section-heading h2 { font-size:33px; } .fx-chips button { padding:7px 12px; font-size:11px; } .fx-personal-note { margin-top:30px; padding:23px; gap:18px; } .fx-personal-note > button { margin-left:0; } .fx-personal-note h2 { font-size:29px; } .fx-search-page { padding-top:30px; } .fx-search-page h1 { font-size:48px; } .fx-search-form input { font-size:12px; } }
+@media(max-width:359px) { .fx-product-grid { grid-template-columns:1fr; } .fx-toolbar > div { flex-wrap:wrap; } }
+@media(prefers-reduced-motion:reduce) { .fx-signature-copy,.fx-search-page > h1 { animation:none; } .fragrance-experience * { scroll-behavior:auto; transition:none !important; } .fragrance-experience .atelier-card:hover { translate:none; } }

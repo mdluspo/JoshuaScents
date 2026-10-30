@@ -83,7 +83,7 @@ create policy "users delete their addresses" on public.addresses
 
 -- Delivered only if the transaction commits, so PostgREST sees the new tables.
 notify pgrst, 'reload schema';
-commit;
+commit; 
 
 -- Metadata checks only: no customer data is returned.
 select c.relname as table_name, c.relrowsecurity as rls_enabled,

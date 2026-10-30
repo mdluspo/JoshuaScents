@@ -1,4 +1,5 @@
 import type { StoreProduct } from "../app/components/StorefrontInterfaces";
+import { rankFragrances } from "./fragrance-search.js";
 
 export const SORT_OPTIONS = [
   ["featured", "Featured"], ["bestsellers", "Bestsellers first"],
@@ -13,7 +14,6 @@ export interface CatalogState {
 export type FacetKey = "categories" | "families" | "brands";
 export const EMPTY_CATALOG: CatalogState = { categories: [], families: [], brands: [], bestSellers: false, query: "", sort: "featured", size: "", minPrice: "", maxPrice: "" };
 export const catalogText = (value: string) => value.replaceAll("â€¢", " · ").replaceAll("â€”", "—").replaceAll("HermÃ¨s", "Hermès");
-const searchText = (value: string) => catalogText(value).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 export const categoryLabel = (value: string) => value.toLowerCase().replace(/(^|\s)\S/g, letter => letter.toUpperCase());
 export function normalizeCatalog(input: Partial<CatalogState> = {}): CatalogState {
   const list = (value: unknown) => Array.isArray(value) ? [...new Set(value.filter((v): v is string => typeof v === "string" && !!v.trim()))].slice(0, 30) : [];
@@ -30,9 +30,7 @@ export function catalogPrice(product: StoreProduct, size = "") {
   return size ? product.sizes.find(option => option.label === size)?.price ?? Infinity : Math.min(...product.sizes.map(option => option.price));
 }
 export function matchesCatalog(product: StoreProduct, state: CatalogState, exclude?: FacetKey | "bestSellers") {
-  const haystack = searchText([product.name, product.brand, product.family, product.category, product.notes].join(" "));
-  const words = haystack.split(" ");
-  if (!searchText(state.query).split(" ").filter(Boolean).every(term => words.some(word => word.startsWith(term)))) return false;
+  if (state.query.trim() && !rankFragrances([product], state.query).length) return false;
   for (const [key, value] of [["categories", product.category], ["families", product.family], ["brands", product.brand]] as const) {
     if (key !== exclude && state[key].length && !state[key].includes(value)) return false;
   }

@@ -1,11 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { EMPTY_CATALOG, catalogFacets, catalogFromSearch, catalogPrice, catalogUrl, normalizeCatalog, priceError, selectCatalog } from '../src/lib/catalog.ts';
+import { loadApi } from './helpers/api-harness.mjs';
+const { module: catalog } = loadApi('src/lib/catalog.ts');
+// The harness isolates module globals in a VM. Bring returned values back to
+// this realm so strict assertions compare data rather than VM prototypes.
+const { EMPTY_CATALOG, catalogFacets, catalogFromSearch, catalogPrice, catalogUrl, normalizeCatalog, priceError, selectCatalog } = Object.fromEntries(Object.entries(catalog).map(([key, value]) => [key, typeof value === 'function' ? (...args) => structuredClone(value(...args)) : structuredClone(value)]));
 
 const product = (id, name, family, category, brand, price, bestSeller, largePrice = price * 3) => ({ id, name, family, category, brand, price, bestSeller, notes: family === 'Woody' ? 'Woody · Citrus' : 'Fresh · Floral', sizes: [{ label: '2ml', price }, { label: '10ml', price: largePrice }], img: '', description: '' });
 const products = [product(1, 'Amber', 'Woody', 'EVENING', 'House A', 200, false, 900), product(2, 'Zest', 'Fresh', 'DAY', 'House B', 500, true, 700), product(3, 'Iris', 'Fresh', 'EVENING', 'House A', 300, true, 1100), product(4, 'Terre d’Hermès', 'Woody', 'DAY', 'House C', 400, false, 800)];
 const state = overrides => ({ ...EMPTY_CATALOG, ...overrides });
-const ids = filters => selectCatalog(products, state(filters)).map(p => p.id);
+const ids = filters => Array.from(selectCatalog(products, state(filters)), p => p.id);
 
 test('multiple options are OR within a group; groups combine with AND', () => {
   assert.deepEqual(ids({ categories: ['DAY', 'EVENING'], families: ['Fresh'], brands: ['House A'] }), [3]);

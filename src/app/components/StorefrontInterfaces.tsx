@@ -144,7 +144,7 @@ export function BagDrawer({ open, onClose, ...props }: BagProps & { open: boolea
     dialog.showModal();
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = previous; if (dialog.open) dialog.close(); active?.focus(); };
+    return () => { document.body.style.overflow = previous; if (dialog.open) dialog.close(); if (active?.isConnected) active.focus({ preventScroll: true }); };
   }, [open]);
   return <dialog ref={ref} className="atelier-bag-dialog" aria-labelledby="atelier-bag-title" onCancel={onClose} onClick={event => { if (event.target === event.currentTarget) onClose(); }}><div className="atelier-bag-sheet"><div className="atelier-bag-heading"><h2 id="atelier-bag-title">Your bag <small>{props.items.reduce((sum, item) => sum + item.qty, 0)}</small></h2><button aria-label="Close bag" onClick={onClose}><X size={21} strokeWidth={1} /></button></div><BagContents {...props} /></div></dialog>;
 }

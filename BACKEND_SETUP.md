@@ -43,6 +43,14 @@ Run `npm test`, `npm run typecheck`, and `npm run build`. API regression tests u
 
 ## What is implemented
 
+### Storefront search and scent matching
+
+The header, search results, collection search and search API share the ranked matcher in `src/lib/fragrance-search.ts`. Product names, catalogue brands, families, notes and descriptions come from `src/lib/fragrance-catalog.ts`; the API derives centavo prices from those same variants. Search works immediately in the frontend-only preview rather than depending on a missing local API. Exact/prefix matches outrank conservative spelling matches; accents and punctuation are normalized. Editorial category names are matched as complete phrases so a collection called “Golden Vanilla” does not incorrectly give every member a vanilla note.
+
+Find Your Scent uses a transparent local catalogue matcher, not the optional OpenAI endpoint. It applies selected or written exclusions, named notes, starting-price budgets and occasion/climate preferences. It can return fewer than three suggestions or none; it does not invent an accuracy percentage or fill poor matches with arbitrary bestsellers. These are catalogue-based suggestions, not verified predictions of taste, skin chemistry or performance. The separate AI API remains optional and is not called by this interface.
+
+Search queries and the redesigned Best Sellers, Scent Finder and Decant Guide routes have explicit `view` URLs. Search query and product identifiers survive refresh. Best Sellers is a curated prototype flag, not a computed live-sales ranking. The guide calculator explicitly labels its 10-sprays-per-ml planning assumption.
+
 | Capability | Provider | Entry point |
 | --- | --- | --- |
 | Database, authentication, orders, catalog, RLS | Supabase | `supabase/migrations/20261027000000_store_schema.sql` |

@@ -1,0 +1,42 @@
+.header-search { position:relative; display:flex; align-items:center; }
+.header-search-toggle { display:grid; place-items:center; flex-shrink:0; color:#4e3928; width:22px; height:32px; }
+/* Keep the field in the header's flex flow: its width moves the navigation. */
+.header-search-field { display:flex; flex:0 0 auto; align-items:center; width:0; min-width:0; height:36px; margin-right:0; overflow:hidden; border:0; border-bottom:1px solid #a687625c; border-radius:0; box-shadow:none; background:transparent; opacity:0; visibility:hidden; transition:width .8s cubic-bezier(.4,0,.2,1),margin-right .8s cubic-bezier(.4,0,.2,1),opacity .2s ease,visibility 0s .8s; }
+.header-search.is-open .header-search-field { width:clamp(80px,calc(100vw - 1120px),250px); margin-right:10px; opacity:1; visibility:visible; transition-delay:0s; }
+.header-search-field input { appearance:none; background:none; border:0; border-radius:0; box-shadow:none; outline:none; min-width:0; width:100%; padding:7px 4px; color:#694b32; font:12px/1.5 'IBM Plex Sans',sans-serif; }
+.header-search-field input::placeholder { color:#a58c70; }
+.header-search-field > button { display:grid; place-items:center; flex-shrink:0; width:24px; height:28px; color:#a18462; }
+.header-search button { cursor:pointer; }
+.header-search button:focus-visible { outline:2px solid #b18b58; outline-offset:3px; }
+/* The focused input uses the underline, not a clipped rectangular outline. */
+.header-search-field:focus-within { border-bottom-color:#9a774b; }
+.header-search-field input:focus-visible { outline:none; box-shadow:none; }
+.header-search-results { position:absolute; right:0; top:calc(100% + 22px); width:335px; max-height:min(510px,calc(100svh - 105px)); overflow:auto; border:1px solid #c2a78066; background:#fffaf2; border-radius:6px; padding:10px; box-shadow:0 12px 36px #422b171a; z-index:70; }
+.header-search-count { font:8px/1.6 'IBM Plex Sans',sans-serif; letter-spacing:.1em; text-transform:uppercase; color:#9b7b54; padding:5px 7px 10px; }
+.header-search-results ul { list-style:none; padding:0; margin:0; }
+.header-search-results li > button { display:flex; align-items:center; gap:12px; width:100%; padding:9px 7px; text-align:left; border-radius:4px; }
+.header-search-results li[aria-selected=true] > button,.header-search-results li > button:hover { background:#eee1ce; }
+.header-search-results img { width:36px; height:43px; object-fit:contain; background:#eee3d0; border-radius:3px; }
+.header-search-results li > button > span { flex:1; min-width:0; }
+.header-search-results strong { display:block; color:#60432b; font:19px/1.1 'Cormorant Garamond',Georgia,serif; }
+.header-search-results small { display:block; color:#a1886b; font:8px/1.6 'IBM Plex Sans',sans-serif; margin-top:4px; }
+.header-search-results em { font:10px 'IBM Plex Sans',sans-serif; color:#92704b; white-space:nowrap; }
+.header-search-all { display:flex; align-items:center; justify-content:space-between; width:100%; border-top:1px solid #b59a7333; padding:12px 7px 3px; margin-top:7px; color:#92704b; font:15px 'Cormorant Garamond',Georgia,serif; }
+@media(min-width:1024px) and (max-width:1199px) {
+  .store-header .store-wordmark { font-size:18px; }
+  .store-header nav[aria-label="Main navigation"] { gap:12px; }
+  .store-header nav[aria-label="Main navigation"] button { font-size:15px; }
+  .store-header > div > div { gap:10px; }
+}
+@media(max-width:1023px) { .header-search.is-open .header-search-field { width:clamp(120px,calc(100vw - 490px),250px); } }
+@media(max-width:720px) {
+  .store-header .store-wordmark { width:190px; max-width:calc(100vw - 160px); overflow:hidden; text-align:left; transition:width .8s cubic-bezier(.4,0,.2,1),opacity .3s ease; }
+  .store-header[data-search-open=true] .store-wordmark { width:0; opacity:0; pointer-events:none; }
+  .header-search.is-open .header-search-field { width:min(250px,calc(100vw - 180px)); }
+  .header-search-results { position:fixed; top:68px; right:12px; left:12px; width:auto; max-height:calc(100svh - 90px); }
+}
+/* This user-triggered width change also needs a visible, gentle reduced-motion state. */
+@media(prefers-reduced-motion:reduce) {
+  .header-search-field { transition:width .35s ease,margin-right .35s ease,opacity .15s ease,visibility 0s .35s; }
+  .store-header .store-wordmark { transition:width .35s ease,opacity .15s ease; }
+}
