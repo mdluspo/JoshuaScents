@@ -2,6 +2,45 @@
 
 The storefront uses Vite/React in the browser and Vercel Functions under `/api` for privileged work. Supabase is the persistent database and identity provider. External provider secrets must exist only in Vercel environment variables.
 
+## Prototype security defaults
+
+This is a prototype, not a live shop. Leave `STORE_CHECKOUT_ENABLED`, `STORE_PAYMENTS_ENABLED`, and `VITE_ENABLE_CHECKOUT` unset or `false`. The API refuses order/payment creation by default, even if provider keys exist; the browser shows a checkout preview without collecting payment details. The dormant provider code is not a production-payment readiness claim.
+
+- Set `APP_ORIGIN` to the exact deployed HTTPS origin. The current Vercel deployment origin is also accepted; local loopback origins are allowed only outside Vercel. Cross-site browser API calls are rejected. This supplements authentication; it is not authentication itself.
+- APIs accept bounded JSON objects, validate fields and IDs, reject unexpected properties, and return generic errors with request IDs. Provider calls time out. Search text and SQL-looking strings stay data: database queries use fixed tables/columns and bound Supabase filters/RPC arguments, never interpolated SQL.
+- React renders customer/provider strings as text. Customer markup is rejected where plain text is expected, email HTML is escaped, and tracking links must be HTTPS. Deployment CSP disallows inline scripts, plugins and framing. Inline styles remain permitted for the existing animation/design system.
+- Instance-local rate limits reduce accidental/low-volume abuse. They are **not distributed protection** across Vercel instances. Configure a Vercel Firewall/gateway rate limit and provider budgets before opening a public prototype to untrusted traffic.
+- Address suggestions and analytics are opt-in: `VITE_ENABLE_ADDRESS_SUGGESTIONS=true`, or both `VITE_ENABLE_ANALYTICS=true` and `STORE_ANALYTICS_ENABLED=true`. Analytics must also have an appropriate consent/privacy implementation before public use. Browser analytics no longer forwards customer email, URL queries, or auth fragments.
+- Security headers in `vercel.json` take effect on Vercel, not the plain Vite dev server. If custom Supabase/Sentry/asset domains are used, explicitly add only those domains to the CSP allowlist.
+
+### Separate admin access
+
+Open `/admin` directly; there is no admin link or admin-role selector in the customer navigation. Knowing that URL grants no permission. The portal verifies the signed-in identity and database role through `/api/admin/session`; every order list/update and upload-signing request checks authorization again on the server. Customer accounts receive `403`. Financial statuses cannot be assigned through the fulfillment interface.
+
+Create an administrator using trusted Supabase dashboard operations: create/invite the intended user, ensure they can sign in, then change **only that verified user's** `profiles.role` to `admin` using the SQL editor/dashboard as a trusted operator. Never expose the service-role key, build a public role picker, or create an admin from user-editable auth metadata. Configure allowed Auth redirect URLs, auth email limits/CAPTCHA and, before production, MFA with server-side assurance enforcement.
+
+Apply the new forward security migration after the two original migrations. It is intentionally not applied to a live database by this code change. Verify customer ownership policies, restricted profile columns, service-only integration events and privileged functions before relying on the portal. A local build cannot verify live grants or deployed policies.
+
+Migration: `supabase/migrations/20261030000000_security_hardening.sql`. It restricts direct browser grants, adds a role-change protection trigger, and limits privileged functions. The new text/URL checks are `NOT VALID` for existing rows: new writes are checked immediately, but legacy rows must be reviewed and cleaned before validating those constraints. Run `supabase/tests/security_permissions.sql` in a disposable test project after applying all migrations to check the resulting grants. These SQL checks require a database and are separate from the offline JS tests.
+
+### Wishlist behaviour
+
+Guests can save up to 100 fragrances without signing in. Saves are versioned product IDs in browser storage, never credentials or profile data. Hearts, the header count, and the wishlist page share state and react to cross-tab storage changes. If storage is blocked, the UI explicitly says the save is session-only.
+
+On sign-in, guest saves merge into the signed-in user's `favorites` rows using an owner-scoped, duplicate-safe insert. Database ownership policies remain the security boundary. Sign-out clears account state from the interface instead of copying private account favourites into guest storage. Failed writes roll back and show feedback; failed merges keep guest data for retry. The `/admin` workspace is independent and has no public account-role selector.
+
+#### Fixing account wishlist error PGRST205
+
+`PGRST205` means the requested table is not found by the Data API. For this wishlist the requested table is `public.favorites`. Check that the SQL editor belongs to the same project as `VITE_SUPABASE_URL`; a table in a different project does not fix the app. A missing account migration or stale schema cache can cause this error.
+
+For an existing store with the base schema already installed, run [the targeted account repair](supabase/repairs/restore_account_features.sql) in that project's Supabase SQL editor as its owner. It creates missing `favorites` and `addresses` tables, preserves rows, replaces policies on only those two tables with owner-only policies, restricts API grants, and notifies PostgREST to reload its schema cache. Review any custom policies first. It does not reset the database, change user roles, claim old orders by email, or enable payments. It is rerunnable; if an existing table has an incompatible schema, the transaction fails instead of dropping data.
+
+Then apply [the security-hardening migration](supabase/migrations/20261030000000_security_hardening.sql) **once**, if not already applied and its base-schema prerequisites exist. The targeted repair does not replace that broader security work. Do not rerun the original store-creation script on an existing database.
+
+After a successful SQL result, return to the store and choose **Retry sync**. Test a signed-in save, refresh, removal, sign-out, and a second account to verify isolation. If `PGRST205` persists while the table exists in the correct project, check API schema exposure/cache configuration. Running frontend tests does not apply SQL or verify live RLS. Supabase documents the code in [Data API error codes](https://supabase.com/docs/guides/api/rest/postgrest-error-codes); PostgREST documents [schema cache reloading](https://docs.postgrest.org/en/v14/references/schema_cache.html).
+
+Run `npm test`, `npm run typecheck`, and `npm run build`. API regression tests use isolated environment fixtures and mocked services; they never contact live providers or use `.env.local`.
+
 ## What is implemented
 
 | Capability | Provider | Entry point |
@@ -16,7 +55,7 @@ The storefront uses Vite/React in the browser and Vercel Functions under `/api` 
 | Runtime error reporting | Sentry | `src/lib/sentry.ts` |
 | Conversion events | Google Analytics Measurement Protocol and Meta Conversions API | `api/analytics.ts` |
 
-Use `GET /api/health` after deployment to see which integrations are configured. It returns booleans only and never returns secrets.
+Public `GET /api/health` reports only basic health and prototype/store mode. Integration configuration booleans require a verified administrator Bearer token; secrets are never returned.
 
 ## Local setup
 
@@ -31,10 +70,10 @@ Never commit `.env.local`. Variables prefixed with `VITE_` are deliberately publ
 ## 1. Supabase
 
 1. Create a Supabase project.
-2. Open the SQL editor and run `supabase/migrations/20261027000000_store_schema.sql`, or link the Supabase CLI and run the migration.
+2. For a new empty project, apply the three files under `supabase/migrations/` in timestamp order: store schema, account features, then security hardening. For an existing store, review applied migrations first; never reset it merely to add missing account tables. Use the targeted repair above for the `PGRST205` account-table case.
 3. Add the project URL and anonymous key to `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
 4. Add the project URL and service-role key to `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` on Vercel only.
-5. Sign in once through the account dialog. To make that account an administrator, update its `profiles.role` to `admin` in the Supabase dashboard.
+5. Create/invite a designated administrator through trusted dashboard operations and assign their role there. Use `/admin` for administration; the normal account dialog remains customer-facing.
 6. Configure the production site URL and allowed redirect URLs in Supabase Auth.
 
 The service-role key bypasses Row Level Security and therefore exists only in server functions. Browser access uses the anonymous key plus RLS policies. Customers can read their own profiles and orders; the public can read only the active catalog.
@@ -47,7 +86,7 @@ The service-role key bypasses Row Level Security and therefore exists only in se
 4. Put the webhook signing secret in `PAYMONGO_WEBHOOK_SECRET`.
 5. Set `VITE_SITE_URL` to the canonical deployment origin so PayMongo can return the customer to the confirmation page.
 
-The server rebuilds every line item from its own catalog and ignores browser prices. A PayMongo redirect is not treated as proof of payment: the signed webhook changes the order to `paid` and triggers the receipt email. Webhook event IDs are stored to make processing idempotent.
+Payment integration is disabled by default. Before enabling it in a future production phase, reconcile shipping/amount/currency, enforce database stock, add transactional webhook idempotency and reliable notification retries, and verify statuses using signed provider events rather than redirects. The retained legacy provider code alone does not implement all of these guarantees.
 
 ## 3. Resend
 

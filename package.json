@@ -9,7 +9,10 @@
   "scripts": {
     "build": "node ./node_modules/vite/bin/vite.js build",
     "dev": "vite",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:catalog": "node --test tests/catalog.test.mjs",
+    "test:security": "node --test tests/security.test.mjs",
+    "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {
     "@emotion/react": "11.14.0",

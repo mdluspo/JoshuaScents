@@ -13,7 +13,10 @@ async function request<T>(path: string, body?: unknown): Promise<T> {
     method: body === undefined ? "GET" : "POST",
     headers,
     body: body === undefined ? undefined : JSON.stringify(body),
+    signal: AbortSignal.timeout(12000),
+    redirect: "error",
   });
+  if (!response.headers.get("content-type")?.includes("application/json")) throw new StoreApiError("This feature is unavailable in the frontend-only preview. Please try again when the API server is available.", 503);
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new StoreApiError(data.error || "The request failed", response.status, data.details);
   return data as T;
@@ -42,6 +45,7 @@ export const getDeliveryQuote = (input: { address: string; latitude: number; lon
 export const findScentRecommendations = (preference: string) => request<{ recommendations: Array<{ productId: number; reason: string }> }>("/api/ai/recommend", { preference });
 
 export async function uploadProductImage(file: File) {
+  if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size <= 0 || file.size > 5 * 1024 * 1024) throw new StoreApiError("Choose a JPEG, PNG or WebP image no larger than 5 MB.", 400);
   const token = (await getSupabase()?.auth.getSession())?.data.session?.access_token;
   if (!token) throw new StoreApiError("Administrator sign-in is required", 401);
   const signResponse = await fetch("/api/media/sign", { method: "POST", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: "{}" });

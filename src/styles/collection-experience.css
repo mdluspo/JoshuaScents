@@ -1,0 +1,207 @@
+/* The collection: an editorial entry, a quiet working catalogue. */
+.collection-experience { --cl-ink:#38291f; --cl-muted:#7b6755; --cl-gold:#a9804d; --cl-line:#b59a733d; background:#fcf8f1; color:var(--cl-ink); min-height:80vh; }
+.collection-shell { width:min(1360px,100%); margin-inline:auto; padding-inline:clamp(20px,4vw,58px); }
+.collection-experience h1,.collection-experience h2,.collection-experience h3 { font-family:'Cormorant Garamond',Georgia,serif; font-weight:500; letter-spacing:-.035em; color:var(--cl-ink); }
+.collection-experience p { margin:0; }
+.collection-experience button { cursor:pointer; }
+.collection-experience button:hover { transform:none; }
+.collection-experience button:disabled { cursor:default; opacity:.45; }
+.collection-experience :is(button,input,select,summary):focus-visible { outline:2px solid #b68a51; outline-offset:3px; }
+.collection-eyebrow { font:9px/1.6 'IBM Plex Sans',sans-serif; letter-spacing:.21em; color:#967044; }
+.collection-sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+.collection-text-link { display:inline-flex; align-items:center; gap:9px; color:#705033; font:15px/1.5 'Cormorant Garamond',Georgia,serif; text-decoration:underline; text-decoration-color:#bca17d; text-underline-offset:5px; }
+.collection-text-link svg { flex-shrink:0; }
+.collection-button { display:inline-flex; align-items:center; justify-content:center; gap:24px; background:linear-gradient(115deg,#563b29,#38261c); color:#fff8ec; border:1px solid #4b3323; border-radius:6px; min-height:45px; padding:12px 24px; font:18px 'Cormorant Garamond',Georgia,serif; box-shadow:0 4px 10px #43281912; }
+.collection-button:hover { background:linear-gradient(115deg,#684930,#4b3120); }
+.collection-intro { padding:25px 0 32px; background:radial-gradient(ellipse at 95% 0,#e7d6bc66,transparent 55%),linear-gradient(180deg,#fcf8f1,#f6eee1); border-bottom:1px solid var(--cl-line); }
+.collection-breadcrumb { display:flex; align-items:center; gap:11px; font:10px 'IBM Plex Sans',sans-serif; color:#88735e; margin-bottom:27px; }
+.collection-breadcrumb > span:nth-child(2) { color:#b59a73; }
+.collection-masthead { padding:0 0 6px; }
+.collection-masthead-top { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:12px 0; border-top:1px solid #af90634d; }
+.collection-masthead-top > span { font:8px 'IBM Plex Sans',sans-serif; letter-spacing:.17em; color:#9b805f; }
+.collection-masthead-title { display:flex; gap:26px; align-items:center; padding:20px 0 24px; border-bottom:1px solid #af90634d; }
+.collection-masthead h1 { font-size:clamp(40px,6.1vw,82px); line-height:.95; letter-spacing:-.055em; margin:0; font-weight:400; }
+.collection-masthead h1 > span { color:#ad8a57; }
+.collection-masthead-bottom { display:flex; align-items:center; justify-content:space-between; gap:25px; padding-top:20px; }
+.collection-masthead-bottom > p { font:18px/1.4 'Cormorant Garamond',Georgia,serif; color:#67503b; }
+.collection-masthead-bottom em { color:#9b7852; }
+.collection-masthead-bottom > div { display:flex; align-items:center; gap:16px; font:9px 'IBM Plex Sans',sans-serif; color:#8c745a; }
+.collection-masthead-bottom i { width:1px; height:18px; background:var(--cl-line); }
+.collection-category-heading { display:flex; justify-content:space-between; align-items:center; margin:30px 0 13px; }
+.collection-category-heading > p { font:8px 'IBM Plex Sans',sans-serif; letter-spacing:.18em; color:#8b6b47; }
+.collection-category-heading .collection-text-link { font-size:14px; }
+.collection-category-rail { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px; }
+.collection-category { position:relative; height:108px; isolation:isolate; overflow:hidden; border-radius:7px; text-align:left; border:1px solid #b5987366; box-shadow:0 3px 8px #4328190a; }
+.collection-category img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:-2; }
+.collection-category-shade { position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg,#20170ed9,#20170e66); }
+.collection-category[aria-pressed=true] { outline:2px solid #af864e; outline-offset:3px; }
+.collection-category-name { display:block; color:#fff7e9; font:22px/1.05 'Cormorant Garamond',Georgia,serif; padding:15px 29px 13px 15px; }
+.collection-category-name small { display:block; font:8px/1.4 'IBM Plex Sans',sans-serif; color:#fff4e3d9; margin-top:10px; letter-spacing:.04em; }
+.collection-category-icon { position:absolute; right:10px; bottom:12px; width:21px; height:21px; display:grid; place-items:center; border:1px solid #fff8e96b; border-radius:50%; color:#fff8e9; }
+.collection-shop { display:grid; grid-template-columns:218px minmax(0,1fr); gap:35px; padding-block:37px 55px; align-items:start; }
+.collection-sidebar { position:sticky; top:104px; max-height:calc(100dvh - 125px); overflow-y:auto; padding-right:13px; scrollbar-width:thin; }
+.collection-sidebar-heading { display:flex; align-items:center; justify-content:space-between; gap:8px; border-bottom:1px solid var(--cl-line); padding-bottom:17px; }
+.collection-sidebar-heading h2 { font-size:22px; line-height:1; letter-spacing:-.025em; }
+.collection-sidebar-heading .collection-text-link { font-size:13px; }
+.collection-filter-group { border-bottom:1px solid var(--cl-line); padding:16px 0; }
+.collection-filter-group summary { list-style:none; cursor:pointer; display:flex; align-items:center; gap:8px; color:#5a422e; font:18px 'Cormorant Garamond',Georgia,serif; }
+.collection-filter-group summary::-webkit-details-marker { display:none; }
+.collection-filter-group summary > span { font:10px 'IBM Plex Sans',sans-serif; color:#a3835b; }
+.collection-filter-group summary > svg { margin-left:auto; color:#a48a6a; transition:rotate .3s; }
+.collection-filter-group[open] summary > svg { rotate:180deg; }
+.collection-filter-group fieldset { padding:12px 0 0; margin:0; border:0; min-width:0; }
+.collection-check { display:flex; align-items:center; gap:9px; position:relative; font:11px/1.6 'IBM Plex Sans',sans-serif; color:#6f5a45; min-height:31px; cursor:pointer; }
+.collection-check > input { position:absolute; width:16px; height:16px; opacity:0; margin:0; }
+.collection-check-box { flex:0 0 15px; height:15px; border:1px solid #ba9f7e; display:grid; place-items:center; border-radius:3px; background:#fffaf3; }
+.collection-check-box svg { opacity:0; }
+.collection-check input:checked + .collection-check-box { color:#fff8e9; border-color:#6c492c; background:#6c492c; }
+.collection-check input:checked + .collection-check-box svg { opacity:1; }
+.collection-check input:focus-visible + .collection-check-box { outline:2px solid #ac844e; outline-offset:3px; }
+.collection-check small { margin-left:auto; font-size:10px; color:#a18b72; font-variant-numeric:tabular-nums; }
+.collection-check.is-unavailable { opacity:.45; cursor:default; }
+.collection-filter-note { font:9px/1.8 'IBM Plex Sans',sans-serif; color:#8e7a65; margin-top:11px !important; }
+.collection-size-filter { display:flex; gap:6px; flex-wrap:wrap; }
+.collection-size-filter label { position:relative; cursor:pointer; }
+.collection-size-filter input { position:absolute; opacity:0; width:100%; height:100%; margin:0; }
+.collection-size-filter span { display:block; padding:6px 10px; border:1px solid var(--cl-line); border-radius:18px; font:11px 'IBM Plex Sans',sans-serif; color:#775b40; background:#fffaf2; }
+.collection-size-filter input:checked + span { color:#fff8e9; border-color:#4e3625; background:#4e3625; }
+.collection-size-filter input:focus-visible + span { outline:2px solid #ac844e; outline-offset:3px; }
+.collection-price-fields { display:flex; gap:7px; align-items:end; margin-top:13px; }
+.collection-price-fields label { flex:1; min-width:0; font:9px 'IBM Plex Sans',sans-serif; color:#897158; }
+.collection-price-fields input { margin-top:6px; width:100%; min-width:0; border:1px solid #b99e7a66; border-radius:5px; background:#fffaf4; padding:8px; font:12px 'IBM Plex Sans',sans-serif; color:#513a26; }
+.collection-price-fields > span { color:#aa9172; padding-bottom:9px; font-size:10px; }
+.collection-price-error { font:10px/1.7 'IBM Plex Sans',sans-serif; color:#914935; margin-block:10px !important; }
+.collection-bestseller-filter { margin-top:17px; }
+.collection-concierge { margin-top:24px; padding:19px 16px; background:linear-gradient(140deg,#f4e9d8,#fcf8ef); border:1px solid var(--cl-line); border-radius:8px; }
+.collection-concierge > svg { color:#a48356; }
+.collection-concierge h3 { font-size:25px; margin:10px 0 5px; }
+.collection-concierge p { color:#897158; font:10px/1.8 'IBM Plex Sans',sans-serif; margin-bottom:15px; }
+.collection-results { min-width:0; }
+.collection-results-heading { display:flex; align-items:end; justify-content:space-between; gap:15px; padding-bottom:20px; }
+.collection-results-heading h2 { font-size:40px; line-height:1; margin:6px 0 0; }
+.collection-results-heading > p { font:10px/1.7 'IBM Plex Sans',sans-serif; text-align:right; color:#8e765d; max-width:175px; }
+.collection-toolbar { border-top:1px solid var(--cl-line); border-bottom:1px solid var(--cl-line); padding:13px 0; margin-bottom:24px; }
+.collection-search { display:flex; align-items:center; gap:10px; border:1px solid #b59a7345; border-radius:6px; background:#fffdf7; padding:11px 13px; margin-bottom:15px; color:#a08360; }
+.collection-search:focus-within { border-color:#b08a57; box-shadow:0 0 0 2px #b08a5714; }
+.collection-search input { flex:1; min-width:0; color:#5e4430; font:12px/1.4 'IBM Plex Sans',sans-serif; outline:none; border:0; background:transparent; }
+.collection-search input::placeholder { color:#a08a72; }
+.collection-search input::-webkit-search-cancel-button { display:none; }
+.collection-search button { display:grid; place-items:center; color:#987955; }
+.collection-toolbar-bottom { display:flex; align-items:center; gap:15px; }
+.collection-toolbar-bottom > p { color:#826b54; font:11px 'IBM Plex Sans',sans-serif; }
+.collection-sort { margin-left:auto; display:flex; align-items:center; position:relative; gap:12px; font:11px 'IBM Plex Sans',sans-serif; color:#91785d; }
+.collection-sort select { appearance:none; border:0; background:transparent; color:#5e432e; padding:8px 21px 8px 6px; cursor:pointer; max-width:185px; outline-offset:0; font-size:11px; }
+.collection-sort > svg { position:absolute; right:0; pointer-events:none; }
+.collection-density { display:flex; gap:5px; border-left:1px solid var(--cl-line); padding-left:12px; }
+.collection-density button { color:#ab9577; display:grid; place-items:center; width:29px; height:29px; border-radius:4px; }
+.collection-density button[aria-pressed=true] { color:#654629; background:#eee2cf; }
+.collection-mobile-filter { display:none; }
+.collection-active-filters { display:flex; flex-wrap:wrap; gap:7px; margin:-6px 0 22px; }
+.collection-active-filters button { display:inline-flex; align-items:center; gap:10px; font:10px/1.5 'IBM Plex Sans',sans-serif; padding:6px 11px; color:#765232; border:1px solid #b8996d66; border-radius:25px; background:#f3e8d6; }
+.collection-active-filters .collection-clear { border-color:transparent; background:transparent; text-decoration:underline; text-underline-offset:3px; }
+.collection-product-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }
+.collection-product-grid.is-compact { grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; }
+.collection-product { min-width:0; display:flex; }
+.collection-product > .atelier-card { flex:1; }
+.collection-product .atelier-card { padding:8px; border-radius:9px; }
+.collection-product .atelier-card-info { padding:10px 4px 4px; gap:8px; }
+.collection-product .atelier-card-image { background:radial-gradient(ellipse at 40% 25%,#fffaf0,#f0e2cd); aspect-ratio:1.22; }
+.collection-product .atelier-card-image img { max-width:78%; height:74%; }
+.collection-product .atelier-card-name { font-size:23px; min-height:2.05em; }
+.collection-product .atelier-card-caption { font-size:10px; }
+.collection-product .atelier-card-purchase { flex-wrap:wrap; }
+.collection-product .atelier-primary { min-height:35px; padding:8px; font-size:15px; }
+.collection-product .atelier-badge { font-size:10px; padding:3px 7px; left:6px; top:6px; }
+.collection-product .atelier-favorite { width:27px; height:27px; right:6px; top:6px; }
+.collection-product .atelier-favorite svg { width:15px; height:15px; }
+.collection-product-grid.is-compact .atelier-card-name { font-size:22px; }
+.collection-product-grid.is-compact .atelier-card-purchase strong { font-size:19px; }
+.collection-no-results { padding:65px 20px; border:1px solid var(--cl-line); border-radius:13px; background:linear-gradient(145deg,#fffdf7,#f5ead9); text-align:center; }
+.collection-no-results > svg { margin:0 auto 20px; color:#b49770; }
+.collection-no-results h3 { font-size:38px; margin:8px 0 12px; }
+.collection-no-results > p:not(.collection-eyebrow) { color:#8c745d; font:12px/1.8 'IBM Plex Sans',sans-serif; max-width:360px; margin:0 auto 22px; }
+.collection-no-results > .collection-text-link { display:flex; width:fit-content; margin:19px auto 0; }
+.collection-end { display:flex; gap:15px; align-items:center; justify-content:center; margin-top:35px; }
+.collection-end p { color:#a38c71; font:9px 'IBM Plex Sans',sans-serif; white-space:nowrap; }
+.collection-end > span { flex:1; max-width:90px; height:1px; background:var(--cl-line); }
+.collection-closing { display:flex; align-items:center; gap:30px; padding-block:28px 40px; border-top:1px solid var(--cl-line); }
+.collection-closing > div { display:flex; align-items:center; gap:15px; }
+.collection-closing > div > svg { color:#a9804d; flex-shrink:0; }
+.collection-closing p { font:23px/1.15 'Cormorant Garamond',Georgia,serif; color:#725334; }
+.collection-closing > .collection-text-link { margin-left:auto; }
+.collection-back-top { display:flex; align-items:center; gap:7px; color:#a28a6c; font:9px 'IBM Plex Sans',sans-serif; }
+.collection-back-top svg { rotate:90deg; }
+.collection-filter-dialog { position:fixed; inset:0 0 0 auto; margin:0; width:min(420px,100%); max-width:100%; height:100dvh; max-height:100dvh; padding:0; border:0; background:#fcf8f0; color:var(--cl-ink); overflow:hidden; box-shadow:-15px 0 50px #43281933; }
+.collection-filter-dialog::backdrop { background:#38281b66; backdrop-filter:blur(3px); }
+.collection-filter-dialog[open] { animation:collection-drawer-enter .4s cubic-bezier(.2,.7,.3,1) both; }
+.collection-drawer { height:100%; display:flex; flex-direction:column; background:linear-gradient(135deg,#fffdf6,#f7eedf); }
+.collection-drawer > header { padding:26px 22px 20px; border-bottom:1px solid var(--cl-line); display:flex; align-items:center; justify-content:space-between; gap:15px; }
+.collection-drawer h2 { font-size:30px; margin-top:8px; line-height:1; }
+.collection-drawer > header > button { padding:6px; color:#886746; }
+.collection-drawer-body { flex:1; min-height:0; overflow:auto; padding:18px 24px 28px; }
+.collection-drawer .collection-check { min-height:39px; font-size:12px; }
+.collection-drawer .collection-filter-note { font-size:10px; }
+.collection-drawer > footer { padding:16px 24px 22px; border-top:1px solid var(--cl-line); background:#fcf8f0; text-align:center; }
+.collection-drawer > footer .collection-button { width:100%; }
+.collection-drawer > footer .collection-text-link { margin-top:11px; }
+@keyframes collection-drawer-enter { from { translate:100% 0; } to { translate:0 0; } }
+@media (max-width:1150px) {
+  .collection-shop { grid-template-columns:190px minmax(0,1fr); gap:24px; }
+  .collection-product-grid,.collection-product-grid.is-compact { grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+  .collection-density { display:none; }
+  .collection-category-name { font-size:20px; }
+}
+@media (max-width:800px) {
+  .collection-masthead-bottom { align-items:start; }
+  .collection-masthead-bottom > div { flex-wrap:wrap; justify-content:end; gap:9px; max-width:200px; }
+  .collection-category-rail { display:flex; overflow-x:auto; padding:5px 3px 10px; margin:-5px -3px -10px; scroll-snap-type:x proximity; scrollbar-width:thin; }
+  .collection-category { flex:0 0 163px; height:102px; scroll-snap-align:start; }
+  .collection-shop { display:block; padding-top:27px; }
+  .collection-sidebar { display:none; }
+  .collection-results-heading h2 { font-size:36px; }
+  .collection-mobile-filter { display:inline-flex; align-items:center; gap:7px; border:1px solid var(--cl-line); border-radius:5px; padding:8px 11px; color:#705134; font:11px 'IBM Plex Sans',sans-serif; background:#fffaf1; }
+  .collection-mobile-filter > span { font-size:9px; background:#e8d7bb; padding:1px 5px; border-radius:50%; }
+  .collection-sort { gap:3px; }
+  .collection-sort > span { display:none; }
+  .collection-closing { flex-wrap:wrap; column-gap:15px; row-gap:20px; }
+  .collection-back-top { margin-left:auto; }
+}
+@media (max-width:560px) {
+  .collection-shell { padding-inline:18px; }
+  .collection-intro { padding-top:20px; padding-bottom:23px; }
+  .collection-breadcrumb { margin-bottom:24px; }
+  .collection-masthead-top { gap:10px; }
+  .collection-masthead-top > span { font-size:6px; letter-spacing:.11em; }
+  .collection-masthead-title { gap:12px; padding-block:24px; }
+  .collection-masthead h1 { font-size:clamp(33px,8vw,45px); }
+  .collection-masthead-bottom { display:block; padding-top:17px; }
+  .collection-masthead-bottom > p { font-size:17px; }
+  .collection-masthead-bottom > div { max-width:none; justify-content:start; gap:12px; font-size:8px; margin-top:17px; }
+  .collection-category-heading { margin-top:26px; }
+  .collection-category { flex-basis:148px; }
+  .collection-category-name { font-size:21px; }
+  .collection-results-heading { padding-bottom:17px; }
+  .collection-results-heading > p { font-size:8px; max-width:112px; }
+  .collection-eyebrow { font-size:8px; letter-spacing:.15em; }
+  .collection-toolbar-bottom { gap:10px; }
+  .collection-toolbar-bottom > p { font-size:9px; }
+  .collection-sort select { font-size:10px; max-width:139px; padding-left:0; }
+  .collection-search input { font-size:11px; }
+  .collection-product-grid,.collection-product-grid.is-compact { grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px; }
+  .collection-product .atelier-card-name { font-size:21px; min-height:2.05em; }
+  .collection-product .atelier-card-purchase strong { font-size:20px; }
+  .collection-product .atelier-primary { font-size:16px; }
+  .collection-product .atelier-card-caption { font-size:9px; }
+  .collection-no-results { padding:40px 18px; }
+  .collection-no-results h3 { font-size:32px; }
+  .collection-closing p { font-size:23px; }
+  .collection-closing > .collection-text-link { margin-left:36px; }
+}
+@media (max-width:359px) {
+  .collection-product-grid,.collection-product-grid.is-compact { grid-template-columns:1fr; }
+  .collection-product .atelier-card-name { min-height:0; }
+  .collection-mobile-filter { padding:8px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .collection-filter-dialog[open] { animation:none; }
+}

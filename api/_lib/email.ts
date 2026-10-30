@@ -1,4 +1,4 @@
-import { ApiError, requiredEnv } from "./http.js";
+import { ApiError, requiredEnv, providerFetch } from "./http.js";
 
 const money = (centavos: number) => new Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP" }).format(centavos / 100);
 
@@ -6,7 +6,7 @@ export async function sendOrderEmail(order: any) {
   const apiKey = requiredEnv("RESEND_API_KEY");
   const reference = String(order.reference);
   const status = order.status === "paid" ? "Payment received" : "Order received";
-  const response = await fetch("https://api.resend.com/emails", {
+  const response = await providerFetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({

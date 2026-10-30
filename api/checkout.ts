@@ -3,22 +3,23 @@ import crypto from "node:crypto";
 import { z } from "zod";
 import { priceCart } from "./_lib/catalog.js";
 import { sendOrderEmail } from "./_lib/email.js";
-import { ApiError, allowMethods, handleApiError, noStore, requiredEnv } from "./_lib/http.js";
+import { ApiError, allowMethods, handleApiError, noStore, requiredEnv, requireCheckoutEnabled } from "./_lib/http.js";
+import { emailAddress, latitude, longitude, phoneNumber, plainText } from "./_lib/validation.js";
 import { quoteDelivery } from "./_lib/lalamove.js";
 import { createPayMongoCheckout } from "./_lib/paymongo.js";
 import { adminDb, createOrder, getOptionalUser } from "./_lib/supabase.js";
 
 const requestSchema = z.object({
   customer: z.object({
-    name: z.string().trim().min(2).max(100),
-    email: z.string().trim().email().max(200),
-    phone: z.string().trim().min(7).max(30),
-    address: z.string().trim().min(5).max(300),
-    city: z.string().trim().min(2).max(100),
-    zip: z.string().trim().min(3).max(12),
-    latitude: z.number().finite().optional(),
-    longitude: z.number().finite().optional(),
-  }),
+    name: plainText(2, 100),
+    email: emailAddress,
+    phone: phoneNumber,
+    address: plainText(5, 300),
+    city: plainText(2, 100),
+    zip: plainText(3, 12),
+    latitude: latitude.optional(),
+    longitude: longitude.optional(),
+  }).strict().refine(customer => (customer.latitude === undefined) === (customer.longitude === undefined), "Provide both coordinates or neither."),
   paymentMethod: z.enum(["paymongo", "cod"]),
   deliveryQuoteId: z.string().max(100).optional(),
   shippingCentavos: z.number().int().min(0).max(100000).default(0),
@@ -26,16 +27,18 @@ const requestSchema = z.object({
     productId: z.number().int().positive(),
     size: z.string().min(1).max(20),
     quantity: z.number().int().min(1).max(20),
-  })).min(1).max(30),
-});
+  }).strict()).min(1).max(30),
+}).strict();
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     allowMethods(req, res, ["POST"]);
     noStore(res);
+    requireCheckoutEnabled();
     const parsed = requestSchema.safeParse(req.body);
     if (!parsed.success) throw new ApiError(400, "Please check your checkout details", parsed.error.flatten());
     const input = parsed.data;
+    requireCheckoutEnabled(input.paymentMethod === "paymongo");
     const signedInUser = await getOptionalUser(req.headers.authorization);
     let priced;
     try { priced = priceCart(input.items); }

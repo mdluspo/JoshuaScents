@@ -1,0 +1,35 @@
+.admin-portal { min-height:100svh; color:#392a20; background:radial-gradient(ellipse at 80% 0,#eadbc499,transparent 65%),#fbf7ef; font:13px/1.7 'IBM Plex Sans',sans-serif; }
+.admin-topbar { display:flex; align-items:center; justify-content:space-between; gap:15px; padding:23px 5vw; border-bottom:1px solid #b49a7244; }
+.admin-topbar > a { font:21px 'Cormorant Garamond',Georgia,serif; letter-spacing:.04em; color:#392a20; }
+.admin-topbar > span,.admin-topbar button { display:flex; align-items:center; gap:9px; font-size:9px; letter-spacing:.12em; color:#9b7e57; }
+.admin-portal :is(button,a,input,select):focus-visible { outline:2px solid #ab824b; outline-offset:4px; }
+.admin-portal button { cursor:pointer; }
+.admin-portal button:disabled { cursor:default; opacity:.55; }
+.admin-entry { padding:70px 20px; display:grid; place-items:center; }
+.admin-login-card { max-width:475px; width:100%; background:linear-gradient(135deg,#fffdf8,#f7efdf); border:1px solid #c8ae8459; border-radius:16px; box-shadow:0 20px 55px #60442512; padding:40px; }
+.admin-login-card > svg { color:#ad8b5b; margin-bottom:24px; }
+.admin-eyebrow { font:9px 'IBM Plex Sans',sans-serif; letter-spacing:.2em; color:#9e7a4d; }
+.admin-portal h1,.admin-portal h2 { font-family:'Cormorant Garamond',Georgia,serif; font-weight:500; letter-spacing:-.03em; }
+.admin-login-card h1 { font-size:43px; line-height:1.02; margin:16px 0; }
+.admin-login-card > p:not(.admin-eyebrow),.admin-workspace-heading > div > p:last-child { color:#88715b; font-size:12px; }
+.admin-login-card form { display:grid; gap:17px; margin-top:25px; }
+.admin-portal label { display:block; font-size:11px; color:#80634a; }
+.admin-portal input,.admin-portal select { display:block; width:100%; padding:10px 12px; border:1px solid #b99d7770; border-radius:5px; background:#fffaf3; margin-top:6px; color:#4b3524; }
+.admin-primary { min-height:44px; width:100%; display:flex; align-items:center; justify-content:center; gap:20px; padding:10px 20px; border-radius:6px; border:1px solid #4c3321; background:linear-gradient(110deg,#5c402a,#37251b); color:#fff8ed; font:18px 'Cormorant Garamond',Georgia,serif; margin-top:7px; }
+.admin-return { display:inline-flex; align-items:center; gap:8px; margin-top:26px; color:#9a7750; font-size:11px; }
+.admin-message { margin:17px 0; padding:12px 15px; border:1px solid #bb956859; background:#f1e4d0; border-radius:6px; color:#725236; font-size:12px; }
+.admin-workspace { width:min(1200px,100%); margin:auto; padding:45px 30px 70px; }
+.admin-workspace-heading { display:flex; align-items:center; justify-content:space-between; gap:20px; }
+.admin-workspace-heading h1 { font-size:56px; line-height:1; margin:12px 0; }
+.admin-refresh { display:flex; gap:9px; align-items:center; border:1px solid #b99d7766; padding:9px 15px; border-radius:5px; color:#896646; }
+.admin-prototype-banner { padding:14px 18px; border:1px solid #b99d7755; background:#f0e4d1; border-radius:6px; margin:25px 0; color:#8a6b48; font-size:11px; }
+.admin-empty { border:1px solid #b99d7744; border-radius:12px; background:#fffaf2; padding:55px 25px; text-align:center; color:#997d5e; }
+.admin-empty h2 { color:#705032; font-size:33px; }
+.admin-order-list { display:grid; gap:13px; }
+.admin-order-list article { display:grid; grid-template-columns:minmax(0,1.4fr) minmax(120px,.6fr) minmax(180px,.8fr); gap:25px; align-items:center; background:#fffaf4; border:1px solid #b99d7744; border-radius:10px; padding:23px; box-shadow:0 5px 15px #60442508; }
+.admin-order-list h2 { font-size:27px; line-height:1.1; margin:5px 0; }
+.admin-order-list p,.admin-order-reference { font-size:10px; color:#9c805f; }
+.admin-status { display:block; text-transform:capitalize; color:#9b794e; font-size:11px; margin-top:6px; }
+.admin-order-list article strong { font:24px 'Cormorant Garamond',Georgia,serif; }
+.admin-order-list a { text-decoration:underline; color:#977049; font-size:11px; }
+@media(max-width:650px) { .admin-topbar { padding:20px; flex-wrap:wrap; } .admin-topbar > span { font-size:7px; } .admin-topbar > a { font-size:19px; } .admin-entry { padding:35px 15px; } .admin-login-card { padding:29px; } .admin-login-card h1 { font-size:36px; } .admin-workspace { padding:30px 17px; } .admin-workspace-heading h1 { font-size:43px; } .admin-order-list article { grid-template-columns:1fr auto; gap:16px; padding:19px; } .admin-order-list article > label { grid-column:1/-1; } }

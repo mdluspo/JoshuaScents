@@ -1,14 +1,15 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { z } from "zod";
-import { ApiError, allowMethods, handleApiError, noStore, requiredEnv } from "../_lib/http.js";
+import { ApiError, allowMethods, handleApiError, noStore, requiredEnv, providerFetch } from "../_lib/http.js";
+import { plainText } from "../_lib/validation.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     allowMethods(req, res, ["POST"]);
     noStore(res);
-    const parsed = z.object({ input: z.string().trim().min(3).max(200), sessionToken: z.string().uuid() }).safeParse(req.body);
+    const parsed = z.object({ input: plainText(3, 200), sessionToken: z.string().uuid() }).strict().safeParse(req.body);
     if (!parsed.success) throw new ApiError(400, "A valid address search is required");
-    const response = await fetch("https://places.googleapis.com/v1/places:autocomplete", {
+    const response = await providerFetch("https://places.googleapis.com/v1/places:autocomplete", {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-Goog-Api-Key": requiredEnv("GOOGLE_MAPS_SERVER_KEY") },
       body: JSON.stringify({

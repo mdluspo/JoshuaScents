@@ -1,0 +1,34 @@
+.wishlist-page { min-height:80vh; background:radial-gradient(ellipse at 90% 0,#eddec56b,transparent 55%),#fcf8f1; color:#3a2b20; }
+.wishlist-shell { max-width:1240px; padding:45px 35px 75px; margin:auto; }
+.wishlist-shell > header { display:flex; justify-content:space-between; align-items:center; gap:20px; padding-bottom:27px; border-bottom:1px solid #baa07a44; }
+.wishlist-eyebrow { color:#a18155; font:9px 'IBM Plex Sans',sans-serif; letter-spacing:.18em; }
+.wishlist-page h1,.wishlist-page h2 { font-family:'Cormorant Garamond',Georgia,serif; letter-spacing:-.035em; font-weight:500; }
+.wishlist-page h1 { font-size:clamp(39px,5vw,62px); line-height:1; margin:13px 0; }
+.wishlist-shell > header > div > p:last-child { font:12px/1.7 'IBM Plex Sans',sans-serif; color:#8a725b; }
+.wishlist-count { display:flex; align-items:center; gap:9px; font:12px 'IBM Plex Sans',sans-serif; white-space:nowrap; color:#a17b4a; }
+.wishlist-signin { display:flex; justify-content:space-between; align-items:center; gap:20px; border:1px solid #c6ab8355; background:linear-gradient(115deg,#f4e8d4,#fffaf2); border-radius:9px; padding:20px 24px; margin:24px 0; }
+.wishlist-signin p { font:23px/1.2 'Cormorant Garamond',Georgia,serif; color:#785434; }
+.wishlist-signin p span { font:10px/1.7 'IBM Plex Sans',sans-serif; color:#9b7d5b; }
+.wishlist-signin button { display:flex; align-items:center; gap:15px; font:16px 'Cormorant Garamond',Georgia,serif; color:#8d643d; text-decoration:underline; text-underline-offset:5px; }
+.wishlist-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:18px; margin-top:28px; }
+.wishlist-grid .atelier-card-image { aspect-ratio:1.18; background:radial-gradient(ellipse at 40% 25%,#fffaf0,#f0e2cd); }
+.wishlist-grid .atelier-card-name { font-size:24px; }
+.wishlist-grid .atelier-card-purchase { flex-wrap:wrap; }
+.wishlist-page button:hover { transform:none; }
+.wishlist-page button:focus-visible { outline:2px solid #ad8551; outline-offset:4px; }
+.wishlist-page button { cursor:pointer; }
+.wishlist-feedback { display:flex; justify-content:space-between; gap:15px; border:1px solid #ba916766; background:#f2e4d1; border-radius:6px; padding:13px 17px; margin-top:20px; font:12px/1.7 'IBM Plex Sans',sans-serif; color:#785332; }
+.wishlist-feedback button { display:flex; align-items:center; gap:8px; text-decoration:underline; white-space:nowrap; }
+.wishlist-feedback button:disabled,.wishlist-global-status button:disabled { opacity:.55; cursor:wait; }
+.wishlist-global-status button { margin-top:7px; text-decoration:underline; text-underline-offset:3px; cursor:pointer; }
+.wishlist-global-status button:focus-visible { outline:2px solid #ad8551; outline-offset:3px; }
+.wishlist-empty { max-width:550px; text-align:center; padding:70px 20px 85px; margin:auto; }
+.wishlist-empty > svg { margin:0 auto 24px; color:#b99b70; }
+.wishlist-empty h2 { font-size:39px; margin:15px 0; line-height:1.1; }
+.wishlist-empty > p:not(.wishlist-eyebrow) { font:12px/1.9 'IBM Plex Sans',sans-serif; color:#9b7e60; }
+.wishlist-empty > button { display:inline-flex; align-items:center; gap:24px; border:1px solid #4c3321; border-radius:6px; padding:12px 24px; background:#4c3321; color:#fff8ec; margin-top:25px; font:18px 'Cormorant Garamond',Georgia,serif; }
+.wishlist-footnote,.wishlist-loading { text-align:center; font:11px/1.8 'IBM Plex Sans',sans-serif; color:#a18a6e; margin-top:28px; }
+.wishlist-global-status { position:fixed; bottom:18px; left:50%; translate:-50% 0; z-index:85; max-width:min(520px,90vw); background:#fff8ec; border:1px solid #bf9c6e; border-radius:7px; padding:11px 17px; box-shadow:0 6px 25px #44291f22; color:#765237; font:12px/1.6 'IBM Plex Sans',sans-serif; }
+@media(max-width:1000px) { .wishlist-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; } }
+@media(max-width:650px) { .wishlist-shell { padding:30px 17px 50px; } .wishlist-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px; } .wishlist-signin { padding:18px; align-items:start; flex-direction:column; gap:15px; } .wishlist-signin p { font-size:22px; } .wishlist-signin p span { font-size:10px; } .wishlist-grid .atelier-card-name { font-size:22px; } .wishlist-shell > header { align-items:start; } .wishlist-count { padding-top:5px; font-size:10px; } .wishlist-feedback { flex-wrap:wrap; } }
+@media(max-width:359px) { .wishlist-grid { grid-template-columns:1fr; } }

@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { ApiError, requiredEnv } from "./http.js";
+import { ApiError, requiredEnv, requireCheckoutEnabled } from "./http.js";
 
 export async function createPayMongoCheckout(input: {
   reference: string;
@@ -8,6 +8,7 @@ export async function createPayMongoCheckout(input: {
   successUrl: string;
   cancelUrl: string;
 }) {
+  requireCheckoutEnabled(true);
   const response = await fetch("https://api.paymongo.com/v1/checkout_sessions", {
     method: "POST",
     headers: {
@@ -44,7 +45,7 @@ export function verifyPayMongoSignature(rawBody: string, header: string | undefi
   const parts = Object.fromEntries(header.split(",").map((part) => part.trim().split("=", 2)));
   const timestamp = parts.t;
   const provided = process.env.PAYMONGO_SECRET_KEY?.startsWith("sk_live_") ? parts.li : parts.te;
-  if (!timestamp || !provided) return false;
+  if (!timestamp || !provided || !/^\d{10}$/.test(timestamp) || !/^[a-f0-9]{64}$/i.test(provided)) return false;
   if (Math.abs(Date.now() / 1000 - Number(timestamp)) > 300) return false;
   const expected = crypto.createHmac("sha256", secret).update(`${timestamp}.${rawBody}`).digest("hex");
   return provided.length === expected.length && crypto.timingSafeEqual(

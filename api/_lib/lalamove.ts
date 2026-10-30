@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { ApiError, requiredEnv } from "./http.js";
+import { ApiError, requiredEnv, providerFetch } from "./http.js";
 
 export async function lalamoveRequest(path: string, body: unknown) {
   const key = requiredEnv("LALAMOVE_API_KEY");
@@ -8,7 +8,7 @@ export async function lalamoveRequest(path: string, body: unknown) {
   const serialized = JSON.stringify(body);
   const signature = crypto.createHmac("sha256", secret).update(`${timestamp}\r\nPOST\r\n${path}\r\n\r\n${serialized}`).digest("hex");
   const hostname = process.env.LALAMOVE_ENV === "production" ? "https://rest.lalamove.com" : "https://rest.sandbox.lalamove.com";
-  const response = await fetch(`${hostname}${path}`, {
+  const response = await providerFetch(`${hostname}${path}`, {
     method: "POST",
     headers: {
       Authorization: `hmac ${key}:${timestamp}:${signature}`,

@@ -141,6 +141,7 @@
 .atelier-bag-page-panel .atelier-bag-item { grid-template-columns:100px minmax(0,1fr); }
 .atelier-checkout-heading { position:relative; margin:8px 0 28px; }
 .atelier-checkout-heading h1 { font-size:48px; }
+.atelier-prototype-notice { margin:0 0 22px !important; border:1px solid #c8aa7a80; border-radius:8px; background:#f5e9d6; padding:14px 18px; color:#6b4e30; font:12px/1.7 'IBM Plex Sans',sans-serif; }
 .atelier-checkout-heading > span { position:absolute; right:0; bottom:10px; display:flex; align-items:center; gap:7px; font:11px 'IBM Plex Sans',sans-serif; color:#8f785b; }
 .atelier-checkout-grid { display:grid; grid-template-columns:minmax(0,1.35fr) minmax(310px,.9fr); gap:24px; align-items:start; }
 .atelier-checkout-form { display:flex; flex-direction:column; gap:13px; }

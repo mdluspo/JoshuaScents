@@ -1,8 +1,10 @@
-import { type FormEvent, useEffect, useMemo, useState } from "react";
-import { Heart, MapPin, Package, ShieldCheck, UserRound, X } from "lucide-react";
+import { type FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { Heart, MapPin, Package, UserRound, X } from "lucide-react";
 import { getSupabase } from "@/lib/supabase";
+import { safeDisplayUrl } from "@/lib/safe-display-url";
+import { useWishlist } from "@/lib/wishlist";
 
-type AccountTab = "profile" | "orders" | "addresses" | "favorites" | "admin";
+type AccountTab = "profile" | "orders" | "addresses" | "favorites";
 
 type Profile = {
   full_name: string | null;
@@ -41,20 +43,6 @@ type StoreOrder = {
   order_items?: OrderItem[];
 };
 
-type Favorite = {
-  product_id: number;
-  products: { id: number; name: string; brand: string; family: string } | null;
-};
-
-const ORDER_STATUSES = [
-  "pending_payment",
-  "paid",
-  "processing",
-  "shipped",
-  "delivered",
-  "cancelled",
-  "refunded",
-];
 
 const emptyAddress = {
   label: "Home",
@@ -70,7 +58,8 @@ const money = (centavos: number) => `PHP ${(centavos / 100).toLocaleString("en-P
 const date = (value: string) => new Intl.DateTimeFormat("en-PH", { dateStyle: "medium" }).format(new Date(value));
 const labelStatus = (value: string) => value.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 
-export function AccountCenterDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function AccountCenterDialog({ open, onClose, onWishlist }: { open: boolean; onClose: () => void; onWishlist?: () => void }) {
+  const wishlist = useWishlist();
   const supabase = getSupabase();
   const [tab, setTab] = useState<AccountTab>("profile");
   const [email, setEmail] = useState("");
@@ -81,8 +70,7 @@ export function AccountCenterDialog({ open, onClose }: { open: boolean; onClose:
   const [profile, setProfile] = useState<Profile>({ full_name: "", phone: "", role: "customer" });
   const [orders, setOrders] = useState<StoreOrder[]>([]);
   const [addresses, setAddresses] = useState<Address[]>([]);
-  const [favorites, setFavorites] = useState<Favorite[]>([]);
-  const [adminOrders, setAdminOrders] = useState<StoreOrder[]>([]);
+  const activeUser = useRef<string | null>(null);
   const [addressForm, setAddressForm] = useState(emptyAddress);
 
   const tabs = useMemo(() => {
@@ -92,7 +80,6 @@ export function AccountCenterDialog({ open, onClose }: { open: boolean; onClose:
       { id: "addresses", label: "Addresses", icon: MapPin },
       { id: "favorites", label: "Favorites", icon: Heart },
     ];
-    if (profile.role === "admin") items.push({ id: "admin", label: "Admin", icon: ShieldCheck });
     return items;
   }, [profile.role]);
 
@@ -108,6 +95,7 @@ export function AccountCenterDialog({ open, onClose }: { open: boolean; onClose:
       const { data } = await supabase.auth.getSession();
       if (!active) return;
       const user = data.session?.user;
+      activeUser.current = user?.id ?? null;
       setUserId(user?.id ?? null);
       setSignedInEmail(user?.email ?? null);
       if (user) await loadAccount(user.id);
@@ -116,9 +104,10 @@ export function AccountCenterDialog({ open, onClose }: { open: boolean; onClose:
 
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {
       const user = session?.user;
+      activeUser.current = user?.id ?? null;
       setUserId(user?.id ?? null);
       setSignedInEmail(user?.email ?? null);
-      if (user) void loadAccount(user.id);
+      if (user) window.setTimeout(() => { if (active && activeUser.current === user.id) void loadAccount(user.id); }, 0);
       else resetAccount();
     });
     return () => {
@@ -132,47 +121,50 @@ export function AccountCenterDialog({ open, onClose }: { open: boolean; onClose:
   }, [open, userId]);
 
   function resetAccount() {
+    activeUser.current = null;
     setProfile({ full_name: "", phone: "", role: "customer" });
     setOrders([]);
     setAddresses([]);
-    setFavorites([]);
-    setAdminOrders([]);
     setTab("profile");
   }
 
   async function loadAccount(id: string) {
     if (!supabase) return;
     setBusy(true);
-    const { data: profileData } = await supabase
+    const { data: profileData, error: profileError } = await supabase
       .from("profiles")
       .select("full_name, phone, role")
       .eq("id", id)
       .maybeSingle();
 
     const nextProfile = (profileData as Profile | null) ?? { full_name: "", phone: "", role: "customer" as const };
+    if (activeUser.current !== id) return;
     setProfile(nextProfile);
 
-    const [ordersResult, addressesResult, favoritesResult] = await Promise.all([
+    const [ordersResult, addressesResult] = await Promise.all([
       supabase
         .from("orders")
         .select("id, reference, status, payment_method, total_centavos, created_at, tracking_url, order_items(product_name, size_label, quantity, line_total_centavos)")
+        .eq("user_id", id)
         .order("created_at", { ascending: false }),
-      supabase.from("addresses").select("*").order("is_default", { ascending: false }).order("created_at", { ascending: false }),
-      supabase.from("favorites").select("product_id, products(id, name, brand, family)").order("created_at", { ascending: false }),
+      supabase.from("addresses").select("*").eq("user_id", id).order("is_default", { ascending: false }).order("created_at", { ascending: false }),
     ]);
 
+    if (activeUser.current !== id) return;
+    const failedSections = [
+      { label: "Profile", error: profileError },
+      { label: "Order history", error: ordersResult.error },
+      { label: "Saved addresses", error: addressesResult.error },
+    ].filter(section => section.error);
+    if (failedSections.length) setMessage(failedSections.map(({ label, error }) =>
+      error?.code === "PGRST205" || error?.code === "42P01"
+        ? `${label} database setup is incomplete. Ask the store owner to check the account tables.`
+        : `${label} could not be loaded. Please reopen your account to retry.`
+    ).join(" "));
+    else setMessage("");
     setOrders((ordersResult.data as StoreOrder[] | null) ?? []);
     setAddresses((addressesResult.data as Address[] | null) ?? []);
-    setFavorites((favoritesResult.data as unknown as Favorite[] | null) ?? []);
 
-    if (nextProfile.role === "admin") {
-      const { data: allOrders } = await supabase
-        .from("orders")
-        .select("id, reference, status, payment_method, total_centavos, customer_name, customer_email, created_at, tracking_url")
-        .order("created_at", { ascending: false })
-        .limit(100);
-      setAdminOrders((allOrders as StoreOrder[] | null) ?? []);
-    }
     setBusy(false);
   }
 
@@ -249,20 +241,6 @@ export function AccountCenterDialog({ open, onClose }: { open: boolean; onClose:
     if (!error) await loadAccount(userId);
   }
 
-  async function removeFavorite(productId: number) {
-    if (!supabase || !userId) return;
-    const { error } = await supabase.from("favorites").delete().eq("user_id", userId).eq("product_id", productId);
-    setMessage(error ? error.message : "Removed from favorites.");
-    if (!error) setFavorites((current) => current.filter((favorite) => favorite.product_id !== productId));
-  }
-
-  async function updateOrderStatus(orderId: string, status: string) {
-    if (!supabase || profile.role !== "admin") return;
-    const { error } = await supabase.from("orders").update({ status, updated_at: new Date().toISOString() }).eq("id", orderId);
-    setMessage(error ? error.message : "Order status updated.");
-    if (!error) setAdminOrders((current) => current.map((order) => order.id === orderId ? { ...order, status } : order));
-  }
-
   async function signOut() {
     if (supabase) await supabase.auth.signOut();
     else {
@@ -298,7 +276,7 @@ export function AccountCenterDialog({ open, onClose }: { open: boolean; onClose:
               {supabase ? "Enter your email and we will send a password-free sign-in link." : "Save your email on this device for faster guest checkout. No account or password is created."}
             </p>
             {supabase && <p className="mb-4 text-xs leading-relaxed text-black/45">You only need the email link once on this browser. You will stay signed in securely until you choose Sign out.</p>}
-            <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" className={fieldClass} />
+            <input type="email" maxLength={200} value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" className={fieldClass} />
             <button onClick={() => void sendLink()} disabled={busy} className={`${primaryClass} mt-4 w-full`}>
               {busy ? "PLEASE WAIT..." : supabase ? "EMAIL ME A SIGN-IN LINK" : "SAVE FOR GUEST CHECKOUT"}
             </button>
@@ -330,13 +308,13 @@ export function AccountCenterDialog({ open, onClose }: { open: boolean; onClose:
                   <p className="text-xs font-semibold tracking-[0.18em] text-[#9a7d45]">PROFILE DETAILS</p>
                   <h3 className="mt-2 font-['Cormorant_Garamond',serif] text-3xl font-bold">Your personal information</h3>
                   <div className="mt-6 space-y-4">
-                    <label className="block text-xs font-semibold tracking-wide">FULL NAME<input value={profile.full_name ?? ""} onChange={(event) => setProfile({ ...profile, full_name: event.target.value })} className={`${fieldClass} mt-2`} /></label>
-                    <label className="block text-xs font-semibold tracking-wide">PHONE NUMBER<input value={profile.phone ?? ""} onChange={(event) => setProfile({ ...profile, phone: event.target.value })} className={`${fieldClass} mt-2`} /></label>
+                    <label className="block text-xs font-semibold tracking-wide">FULL NAME<input maxLength={100} value={profile.full_name ?? ""} onChange={(event) => setProfile({ ...profile, full_name: event.target.value })} className={`${fieldClass} mt-2`} /></label>
+                    <label className="block text-xs font-semibold tracking-wide">PHONE NUMBER<input maxLength={30} value={profile.phone ?? ""} onChange={(event) => setProfile({ ...profile, phone: event.target.value })} className={`${fieldClass} mt-2`} /></label>
                     <label className="block text-xs font-semibold tracking-wide">EMAIL<input value={signedInEmail} disabled className={`${fieldClass} mt-2 opacity-60`} /></label>
                   </div>
                   <div className="mt-6 flex items-center gap-4">
                     <button type="submit" disabled={busy} className={primaryClass}>SAVE PROFILE</button>
-                    <span className="rounded-full border border-[#9a7d45]/35 px-3 py-1 text-xs font-semibold uppercase text-[#7d6437]">{profile.role}</span>
+                    
                   </div>
                 </form>
               )}
@@ -350,7 +328,7 @@ export function AccountCenterDialog({ open, onClose }: { open: boolean; onClose:
                       <article key={order.id} className="rounded-xl border border-black/10 bg-white p-4">
                         <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="font-semibold">{order.reference}</p><p className="text-xs text-black/45">{date(order.created_at)} · {order.payment_method.toUpperCase()}</p></div><div className="text-right"><p className="font-semibold">{money(order.total_centavos)}</p><p className="text-xs font-semibold text-[#8b6e38]">{labelStatus(order.status)}</p></div></div>
                         {order.order_items?.length ? <div className="mt-3 border-t border-black/8 pt-3 text-sm text-black/60">{order.order_items.map((item, index) => <p key={`${item.product_name}-${index}`}>{item.quantity}× {item.product_name} · {item.size_label}</p>)}</div> : null}
-                        {order.tracking_url && <a href={order.tracking_url} target="_blank" rel="noreferrer" className="mt-3 inline-block text-sm underline">Track delivery</a>}
+                        {safeDisplayUrl(order.tracking_url) && <a href={safeDisplayUrl(order.tracking_url)!} target="_blank" rel="noopener noreferrer" className="mt-3 inline-block text-sm underline">Track delivery</a>}
                       </article>
                     ))}</div>
                   )}
@@ -385,33 +363,8 @@ export function AccountCenterDialog({ open, onClose }: { open: boolean; onClose:
                 </section>
               )}
 
-              {tab === "favorites" && (
-                <section>
-                  <p className="text-xs font-semibold tracking-[0.18em] text-[#9a7d45]">FAVORITES</p>
-                  <h3 className="mt-2 font-['Cormorant_Garamond',serif] text-3xl font-bold">Saved scents</h3>
-                  {favorites.length === 0 ? <p className="mt-6 text-sm text-black/55">No favorites yet. Use the heart button on a product page to save a scent.</p> : (
-                    <div className="mt-6 grid gap-3 md:grid-cols-2">{favorites.map((favorite) => (
-                      <article key={favorite.product_id} className="flex items-center justify-between gap-4 rounded-xl border border-black/10 bg-white p-4">
-                        <div><p className="font-['Cormorant_Garamond',serif] text-xl font-semibold">{favorite.products?.name ?? `Product ${favorite.product_id}`}</p><p className="text-xs text-black/50">{favorite.products?.brand} · {favorite.products?.family}</p></div>
-                        <button onClick={() => void removeFavorite(favorite.product_id)} className="text-xs underline">Remove</button>
-                      </article>
-                    ))}</div>
-                  )}
-                </section>
-              )}
+              {tab === "favorites" && <section><p className="text-xs font-semibold tracking-[0.18em] text-[#9a7d45]">YOUR WISHLIST</p><h3 className="mt-2 font-['Cormorant_Garamond',serif] text-3xl">Saved scents</h3><p className="mt-4 text-sm text-black/60">{wishlist.count} fragrances saved. All hearts and your wishlist now stay in sync.</p><button className={`${primaryClass} mt-5`} onClick={onWishlist}>OPEN WISHLIST</button></section>}
 
-              {tab === "admin" && profile.role === "admin" && (
-                <section>
-                  <p className="text-xs font-semibold tracking-[0.18em] text-[#9a7d45]">ADMIN CONTROLS</p>
-                  <div className="mt-2 flex items-end justify-between gap-4"><h3 className="font-['Cormorant_Garamond',serif] text-3xl font-bold">Store orders</h3><p className="text-sm text-black/50">{adminOrders.length} recent orders</p></div>
-                  <div className="mt-6 space-y-3">{adminOrders.map((order) => (
-                    <article key={order.id} className="grid gap-3 rounded-xl border border-black/10 bg-white p-4 md:grid-cols-[1fr_180px] md:items-center">
-                      <div><p className="font-semibold">{order.reference} · {money(order.total_centavos)}</p><p className="text-sm text-black/55">{order.customer_name} · {order.customer_email}</p><p className="text-xs text-black/40">{date(order.created_at)}</p></div>
-                      <select value={order.status} onChange={(event) => void updateOrderStatus(order.id, event.target.value)} className={fieldClass}>{ORDER_STATUSES.map((status) => <option key={status} value={status}>{labelStatus(status)}</option>)}</select>
-                    </article>
-                  ))}</div>
-                </section>
-              )}
             </div>
           </div>
         )}

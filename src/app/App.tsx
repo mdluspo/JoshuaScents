@@ -1,9 +1,14 @@
 ﻿import { useEffect, useRef, useState } from "react";
 import { motion, useAnimationControls } from "motion/react";
-import { ShoppingCart, Search, User, Menu, X, ChevronDown, ChevronUp, Star, Check, ArrowLeft, Plus, Minus, Package, Truck, Shield, Gift, Play, Pause } from "lucide-react";
+import { ShoppingCart, Search, User, Menu, X, ChevronDown, ChevronUp, Star, Check, ArrowLeft, Plus, Minus, Package, Truck, Shield, Gift, Play, Pause, Heart } from "lucide-react";
 import { AccountCenterDialog } from "@/app/components/AccountCenterDialog";
+import { AdminPortal } from "@/app/components/AdminPortal";
+import { WishlistPage } from "@/app/components/WishlistPage";
+import { configureWishlistCatalog, useWishlist } from "@/lib/wishlist";
 import { EditorialHome } from "@/app/components/EditorialHome";
 import { DiscoveryCollection, DiscoveryDetail } from "@/app/components/DiscoveryExperience";
+import { CollectionExperience } from "@/app/components/CollectionExperience";
+import { catalogFromSearch, catalogUrl, EMPTY_CATALOG, normalizeCatalog, type CatalogState } from "@/lib/catalog";
 import { AddressAutocomplete } from "@/app/components/AddressAutocomplete";
 import { BagDrawer, BagPage, CheckoutInterface, ProductDetail, ShopProductCard, StoreActions } from "@/app/components/StorefrontInterfaces";
 import { createCheckout, getDeliveryQuote } from "@/lib/api";
@@ -25,7 +30,7 @@ import imgWhyLuxuryBg from "@/imports/HomePage-1/why-discovery-luxury-bg.png";
 import imgCollProduct from "@/imports/Collections-1/2fead9763e6ed410e1c09e3afb4c82a010b439b5.png";
 
 // â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-type Page = "home" | "collections" | "search" | "bestsellers" | "discovery" | "discoverySet" | "scentfinder" | "decantguide" | "faq" | "product" | "cart" | "checkout" | "confirmation";
+type Page = "home" | "collections" | "search" | "bestsellers" | "discovery" | "discoverySet" | "scentfinder" | "decantguide" | "faq" | "product" | "cart" | "checkout" | "confirmation" | "wishlist";
 
 type AppHistoryState = {
   joshuaScents: true;
@@ -37,12 +42,7 @@ type AppHistoryState = {
   guard?: boolean;
 };
 
-interface Filters {
-  categories: string[];
-  families: string[];
-  brands: string[];
-  bestSellers: boolean;
-}
+type Filters = CatalogState;
 
 interface Product {
   id: number;
@@ -75,6 +75,8 @@ const ALL_PRODUCTS: Product[] = [
   { id: 11, name: "Tobacco Vanille", brand: "ZENIN", family: "Warm & Spicy", category: "AFTER HOURS", notes: "Tobacco â€¢ Vanilla â€¢ Spice", price: 590, sizes: [{ label: "2ml", price: 590 }, { label: "5ml", price: 1120 }, { label: "10ml", price: 1950 }], description: "Rich tobacco flower blended with vanilla, tonka bean, cacao, and dried fruit â€” a decadent, unforgettable warmth.", img: imgCollProduct, bestSeller: true },
   { id: 12, name: "Terre d'HermÃ¨s", brand: "ZENIN", family: "Woody", category: "EVERYDAY", notes: "Woody â€¢ Earthy â€¢ Citrus", price: 300, sizes: [{ label: "2ml", price: 300 }, { label: "5ml", price: 570 }, { label: "10ml", price: 990 }], description: "Flint, grapefruit, pepper, and vetiver ground a man in the elements. Assertive yet luminous.", img: imgCollProduct, bestSeller: false },
 ];
+
+configureWishlistCatalog(ALL_PRODUCTS.map(product => product.id));
 
 const DISCOVERY_SETS = [
   { id: 1, name: "The Starter Collection", subtitle: "Five timeless fragrances to begin your journey.", count: 5, price: 990, tags: ["Fresh", "Woody", "Spicy"], productIds: [1, 2, 3, 4, 5] },
@@ -158,6 +160,7 @@ function Header({ page, navigate, cartCount, onAccount }: {
   cartCount: number;
   onAccount: () => void;
 }) {
+  const wishlist = useWishlist();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -216,7 +219,7 @@ function Header({ page, navigate, cartCount, onAccount }: {
         </nav>
 
         {/* Icons */}
-        <div className="flex items-center gap-4 shrink-0">
+        <div className="flex items-center gap-3 md:gap-4 shrink-0">
           <div className="relative flex items-center gap-2">
             <div className={`overflow-hidden transition-[width,opacity] duration-300 ${searchOpen ? "w-[150px] opacity-100 md:w-[250px]" : "w-0 opacity-0"}`}>
               <input ref={searchInputRef} value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)}
@@ -246,6 +249,7 @@ function Header({ page, navigate, cartCount, onAccount }: {
             )}
           </div>
           <button onClick={onAccount} aria-label="Open account" className="hidden md:flex hover:opacity-50 transition-opacity"><User size={20} strokeWidth={1.5} /></button>
+          <button onClick={() => navigate("wishlist")} aria-label={`Open wishlist (${wishlist.count} saved items)`} className="relative flex hover:opacity-50 transition-opacity"><Heart size={20} strokeWidth={1.5} fill={page === "wishlist" ? "currentColor" : "none"} />{wishlist.count > 0 && <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#765132] px-1 text-[9px] text-white">{wishlist.count}</span>}</button>
           <button aria-label={`Open bag (${cartCount} items)`} onClick={() => navigate("cart")} className="relative hover:opacity-50 transition-opacity">
             <ShoppingCart size={20} strokeWidth={1.5} />
             {cartCount > 0 && (
@@ -693,204 +697,15 @@ function SearchResultsPage({ query, navigate }: { query: string; navigate: (p: P
   );
 }
 
-function CollectionsPage({ navigate, initialFilters }: {
+function CollectionsPage({ navigate, initialFilters, onChange }: {
   navigate: (p: Page, d?: unknown) => void;
   initialFilters?: Partial<Filters>;
+  onChange: (state: CatalogState) => void;
 }) {
-  const CATEGORIES = ["FRESH", "TIMBER & SMOKE", "GOLDEN VANILLA", "AFTER HOURS", "EVERYDAY", "SUMMER"];
-  const FAMILIES = ["Fresh", "Woody", "Warm & Spicy", "Floral", "Oriental", "Citrus"];
-  const BRANDS = ["All Brands", "Creed", "PRMNKY", "HSI", "JEM", "ZENIN"];
-
-  const [selectedCats, setSelectedCats] = useState<string[]>(initialFilters?.categories ?? []);
-  const [selectedFamilies, setSelectedFamilies] = useState<string[]>(initialFilters?.families ?? []);
-  const [selectedBrands, setSelectedBrands] = useState<string[]>(initialFilters?.brands ?? []);
-  const [showMoreBrands, setShowMoreBrands] = useState(false);
-  const [sortBy, setSortBy] = useState("Featured");
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-
-  const toggle = (arr: string[], setArr: (v: string[]) => void, val: string) => {
-    setArr(arr.includes(val) ? arr.filter((x) => x !== val) : [...arr, val]);
-  };
-
-  const clearAll = () => {
-    setSelectedCats([]); setSelectedFamilies([]); setSelectedBrands([]);
-    setMinPrice(""); setMaxPrice("");
-  };
-
-  const visibleBrands = showMoreBrands ? BRANDS : BRANDS.slice(0, 5);
-
-  let filtered = ALL_PRODUCTS;
-  if (selectedCats.length) filtered = filtered.filter((p) => selectedCats.includes(p.category));
-  if (selectedFamilies.length) filtered = filtered.filter((p) => selectedFamilies.includes(p.family));
-  if (selectedBrands.length && !selectedBrands.includes("All Brands")) {
-    filtered = filtered.filter((p) => selectedBrands.includes(p.brand));
-  }
-  if (minPrice) filtered = filtered.filter((p) => p.price >= Number(minPrice));
-  if (maxPrice) filtered = filtered.filter((p) => p.price <= Number(maxPrice));
-
-  if (sortBy === "Price: Low to High") filtered = [...filtered].sort((a, b) => a.price - b.price);
-  if (sortBy === "Price: High to Low") filtered = [...filtered].sort((a, b) => b.price - a.price);
-
-  const CheckRow = ({ label, checked, onChange }: { label: string; checked: boolean; onChange: () => void }) => (
-    <label className="flex items-center gap-2.5 cursor-pointer group mb-1.5">
-      <div onClick={onChange}
-        className={`w-4 h-4 border rounded-sm flex items-center justify-center flex-shrink-0 transition-colors ${checked ? "bg-[#171717] border-[#171717]" : "border-[rgba(0,0,0,0.3)] group-hover:border-[#171717]"}`}>
-        {checked && <Check size={10} strokeWidth={3} className="text-white" />}
-      </div>
-      <span className="font-['IBM_Plex_Sans',sans-serif] font-light text-[13px] text-[#171717] leading-tight">{label}</span>
-    </label>
-  );
-
-  return (
-    <div className="bg-[#fbf8f1] min-h-screen">
-      {/* Page title */}
-      <div className="border-b border-[#171717]">
-      <div className="max-w-[1440px] mx-auto overflow-hidden px-4 pt-8 pb-7 text-center md:px-10 md:pt-12 md:pb-9">
-        <p className="font-['IBM_Plex_Sans',sans-serif] text-[10px] font-semibold tracking-[0.2em] text-[#9a7d45] md:text-[12px] md:tracking-[0.22em]">FRAGRANCE INDEX</p>
-        <h1 className="font-['Cormorant_Garamond',serif] font-bold text-[39px] min-[390px]:text-[45px] md:text-[70px] text-[#171717] tracking-[0.025em] md:tracking-[0.04em] mt-2 mb-3 leading-none">
-          COLLECTIONS
-        </h1>
-        <p className="mx-auto max-w-[520px] font-['IBM_Plex_Sans',sans-serif] font-light text-[14px] text-[rgba(23,23,23,0.65)] md:text-[16px]">
-          Explore our curated selection of luxury decants.
-        </p>
-        <div className="mx-auto mt-5 h-px max-w-[680px] bg-[#171717]/16 md:mt-7" />
-      </div>
-      </div>
-
-      <div className="max-w-[1440px] mx-auto px-4 md:px-10 py-6 pb-20 flex gap-8 md:py-10">
-        {/* Sidebar */}
-        <aside className="hidden md:block w-[220px] flex-shrink-0 border-r border-[#171717]/18 pr-6">
-          <div className="flex items-center justify-between mb-5 border-b border-[#171717]/18 pb-4">
-            <p className="font-['IBM_Plex_Sans',sans-serif] font-semibold text-[14px] tracking-[0.14em] text-[#171717]">FILTER</p>
-            <button onClick={clearAll} className="font-['IBM_Plex_Sans',sans-serif] font-light text-[12px] text-[rgba(23,23,23,0.5)] hover:text-[#171717] transition-colors">Clear All</button>
-          </div>
-
-          {/* Category */}
-          <p className="font-['IBM_Plex_Sans',sans-serif] font-semibold text-[12px] tracking-[0.12em] text-[#171717] mb-3">CATEGORY</p>
-          {CATEGORIES.map((c) => (
-            <CheckRow key={c} label={c.charAt(0) + c.slice(1).toLowerCase().replace(" & ", " & ")} checked={selectedCats.includes(c)} onChange={() => toggle(selectedCats, setSelectedCats, c)} />
-          ))}
-
-          <div className="h-[1px] bg-[rgba(0,0,0,0.1)] my-4" />
-
-          {/* Fragrance Family */}
-          <p className="font-['IBM_Plex_Sans',sans-serif] font-semibold text-[12px] tracking-[0.12em] text-[#171717] mb-3">FRAGRANCE FAMILY</p>
-          {FAMILIES.map((f) => (
-            <CheckRow key={f} label={f} checked={selectedFamilies.includes(f)} onChange={() => toggle(selectedFamilies, setSelectedFamilies, f)} />
-          ))}
-
-          <div className="h-[1px] bg-[rgba(0,0,0,0.1)] my-4" />
-
-          {/* Brand */}
-          <p className="font-['IBM_Plex_Sans',sans-serif] font-semibold text-[12px] tracking-[0.12em] text-[#171717] mb-3">BRAND</p>
-          {visibleBrands.map((b) => (
-            <CheckRow key={b} label={b} checked={selectedBrands.includes(b)} onChange={() => toggle(selectedBrands, setSelectedBrands, b)} />
-          ))}
-          <button onClick={() => setShowMoreBrands(!showMoreBrands)}
-            className="font-['IBM_Plex_Sans',sans-serif] font-light text-[12px] text-[rgba(23,23,23,0.55)] hover:text-[#171717] transition-colors flex items-center gap-1 mt-1">
-            {showMoreBrands ? "View less" : "View more"} <ChevronDown size={12} className={showMoreBrands ? "rotate-180" : ""} />
-          </button>
-
-          <div className="h-[1px] bg-[rgba(0,0,0,0.1)] my-4" />
-
-          {/* Price */}
-          <p className="font-['IBM_Plex_Sans',sans-serif] font-semibold text-[12px] tracking-[0.12em] text-[#171717] mb-3">PRICE</p>
-          <CheckRow label="Any Price" checked={!minPrice && !maxPrice} onChange={() => { setMinPrice(""); setMaxPrice(""); }} />
-          <div className="mt-2 space-y-2">
-            <div>
-              <p className="font-['IBM_Plex_Sans',sans-serif] text-[10px] tracking-wide text-[rgba(23,23,23,0.5)] mb-1">MIN</p>
-              <input type="number" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} placeholder="PHP"
-                className="w-full border border-[rgba(0,0,0,0.2)] rounded px-2 py-1.5 font-['IBM_Plex_Sans',sans-serif] text-[12px] bg-white focus:outline-none focus:border-[#171717]" />
-            </div>
-            <div>
-              <p className="font-['IBM_Plex_Sans',sans-serif] text-[10px] tracking-wide text-[rgba(23,23,23,0.5)] mb-1">MAX</p>
-              <input type="number" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} placeholder="PHP"
-                className="w-full border border-[rgba(0,0,0,0.2)] rounded px-2 py-1.5 font-['IBM_Plex_Sans',sans-serif] text-[12px] bg-white focus:outline-none focus:border-[#171717]" />
-            </div>
-          </div>
-        </aside>
-
-        {/* Main */}
-        <div className="flex-1 min-w-0">
-          {/* Top bar */}
-          <div className="flex items-center justify-between mb-6 border-b border-[#171717]/16 pb-4">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setMobileFiltersOpen((open) => !open)}
-                className="border border-[#171717]/18 px-3 py-2 font-['IBM_Plex_Sans',sans-serif] text-[11px] font-semibold tracking-[0.14em] text-[#171717] md:hidden"
-              >
-                FILTER
-              </button>
-              <p className="font-['IBM_Plex_Sans',sans-serif] font-light text-[13px] text-[rgba(23,23,23,0.6)] md:text-[14px]">
-                {filtered.length} Decant{filtered.length !== 1 ? "s" : ""}
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <p className="hidden font-['IBM_Plex_Sans',sans-serif] font-light text-[13px] text-[rgba(23,23,23,0.55)] min-[380px]:block">Sort By:</p>
-              <div className="relative">
-                <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}
-                  className="appearance-none font-['IBM_Plex_Sans',sans-serif] text-[13px] text-[#171717] border border-[rgba(0,0,0,0.2)] rounded px-3 py-1.5 pr-7 bg-white focus:outline-none focus:border-[#171717] cursor-pointer">
-                  <option>Featured</option>
-                  <option>Price: Low to High</option>
-                  <option>Price: High to Low</option>
-                </select>
-                <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#8D8579]" />
-              </div>
-            </div>
-          </div>
-          {mobileFiltersOpen && (
-            <div className="mb-5 border border-[#d7c8ae] bg-[#fbf8f1] p-4 md:hidden">
-              <div className="mb-4 flex items-center justify-between">
-                <p className="font-['IBM_Plex_Sans',sans-serif] text-[12px] font-semibold tracking-[0.16em] text-[#171717]">FILTER</p>
-                <button onClick={clearAll} className="font-['IBM_Plex_Sans',sans-serif] text-[12px] text-[#171717]/55">Clear</button>
-              </div>
-              <p className="mb-2 font-['IBM_Plex_Sans',sans-serif] text-[11px] font-semibold tracking-[0.12em] text-[#171717]">CATEGORY</p>
-              <div className="mb-4 flex flex-wrap gap-2">
-                {CATEGORIES.map((c) => (
-                  <button
-                    key={c}
-                    onClick={() => toggle(selectedCats, setSelectedCats, c)}
-                    className={`border px-3 py-1.5 font-['IBM_Plex_Sans',sans-serif] text-[11px] ${selectedCats.includes(c) ? "border-[#171717] bg-[#171717] text-white" : "border-[#171717]/18 text-[#171717]"}`}
-                  >
-                    {c.charAt(0) + c.slice(1).toLowerCase().replace(" & ", " & ")}
-                  </button>
-                ))}
-              </div>
-              <p className="mb-2 font-['IBM_Plex_Sans',sans-serif] text-[11px] font-semibold tracking-[0.12em] text-[#171717]">FAMILY</p>
-              <div className="flex flex-wrap gap-2">
-                {FAMILIES.map((f) => (
-                  <button
-                    key={f}
-                    onClick={() => toggle(selectedFamilies, setSelectedFamilies, f)}
-                    className={`border px-3 py-1.5 font-['IBM_Plex_Sans',sans-serif] text-[11px] ${selectedFamilies.includes(f) ? "border-[#171717] bg-[#171717] text-white" : "border-[#171717]/18 text-[#171717]"}`}
-                  >
-                    {f}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Product grid â€” 4 cols */}
-          {filtered.length === 0 ? (
-            <div className="text-center py-24">
-              <p className="font-['Cormorant_Garamond',serif] text-[28px] text-[rgba(23,23,23,0.4)]">No products match your filters.</p>
-              <button onClick={clearAll} className="mt-4 font-['IBM_Plex_Sans',sans-serif] text-[13px] text-[#171717] border-b border-[#171717] pb-px">Clear all filters</button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
-              {filtered.map((p) => <CompactProductCard key={p.id} product={p} navigate={navigate} />)}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+  return <CollectionExperience products={ALL_PRODUCTS} state={{ ...EMPTY_CATALOG, ...initialFilters }} onChange={onChange}
+    images={{ hero: imgWhyLuxuryBg, FRESH: imgFresh, "TIMBER & SMOKE": imgTimber, "GOLDEN VANILLA": imgVanilla, "AFTER HOURS": imgAfterHours, EVERYDAY: imgWhyLuxuryBg }}
+    onProduct={product => navigate("product", product)} onHome={() => navigate("home")} onFinder={() => navigate("scentfinder")} />;
 }
-
-// â”€â”€â”€ DISCOVERY SETS PAGE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function BestSellersPage({ navigate }: { navigate: (p: Page, d?: unknown) => void }) {
   const bestSellers = ALL_PRODUCTS.filter((p) => p.bestSeller);
   const signature = bestSellers[0];
@@ -999,9 +814,9 @@ function DiscoverySetPage({ setId, navigate }: { setId: number | null; navigate:
   return <DiscoveryDetail key={setId} sets={DISCOVERY_SETS} products={ALL_PRODUCTS} images={{ silk: imgWhyLuxuryBg, texture: imgDiscoveryBg }} setId={setId} onSet={id => navigate("discoverySet", id)} onProduct={product => navigate("product", product)} onFinder={() => navigate("scentfinder")} onBack={() => navigate("discovery", setId)} />;
 }
 
-function ProductPage({ product, navigate, addToCart }: { product: Product; navigate: (p: Page, d?: unknown) => void; addToCart: (p: Product, size: string, price: number, quantity?: number) => void }) {
+function ProductPage({ product, navigate, addToCart, collectionFilters }: { product: Product; navigate: (p: Page, d?: unknown) => void; addToCart: (p: Product, size: string, price: number, quantity?: number) => void; collectionFilters: Partial<Filters> }) {
   const related = [...ALL_PRODUCTS.filter(p => p.id !== product.id && p.family === product.family), ...ALL_PRODUCTS.filter(p => p.id !== product.id && p.family !== product.family)].slice(0, 4);
-  return <ProductDetail key={product.id} product={product} related={related} onOpen={p => navigate("product", p)} onBack={() => navigate("collections")} addToBag={addToCart} openBag={() => navigate("cart")} />;
+  return <ProductDetail key={product.id} product={product} related={related} onOpen={p => navigate("product", p)} onBack={() => navigate("collections", collectionFilters)} addToBag={addToCart} openBag={() => navigate("cart")} />;
 }
 
 function CartPage({ items, navigate, updateQty, removeItem }: { items: CartItem[]; navigate: (p: Page) => void; updateQty: (id: number, size: string, qty: number) => void; removeItem: (id: number, size: string) => void }) {
@@ -1009,6 +824,7 @@ function CartPage({ items, navigate, updateQty, removeItem }: { items: CartItem[
 }
 
 function CheckoutPage({ items, navigate, onOrderPlaced }: { items: CartItem[]; navigate: (p: Page) => void; onOrderPlaced: () => void }) {
+  const prototype = import.meta.env.VITE_ENABLE_CHECKOUT !== "true";
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [form, setForm] = useState({ name: "", email: localStorage.getItem("joshua-scents-guest-email") || "", phone: "", address: "", city: "", zip: "", payment: "paymongo" });
   const [coordinates, setCoordinates] = useState<{ latitude: number; longitude: number } | null>(null);
@@ -1059,7 +875,7 @@ function CheckoutPage({ items, navigate, onOrderPlaced }: { items: CartItem[]; n
 
   const continueToPayment = async () => {
     if (!validateShipping()) return;
-    if (import.meta.env.VITE_ENABLE_LALAMOVE === "true") {
+    if (!prototype && import.meta.env.VITE_ENABLE_LALAMOVE === "true") {
       if (!coordinates) { setCheckoutError("Select an address suggestion so delivery can be quoted accurately."); return; }
       try {
         setPlacing(true);
@@ -1074,6 +890,7 @@ function CheckoutPage({ items, navigate, onOrderPlaced }: { items: CartItem[]; n
   };
 
   const placeOrder = async () => {
+    if (prototype) { setCheckoutError("Checkout is preview-only. No order or payment has been created."); return; }
     setCheckoutError("");
     setPlacing(true);
     try {
@@ -1099,7 +916,7 @@ function CheckoutPage({ items, navigate, onOrderPlaced }: { items: CartItem[]; n
     setForm(current => ({ ...current, [name]: value }));
     setStep(1);
   };
-  return <CheckoutInterface items={items} form={form} onField={(name, value) => {
+  return <CheckoutInterface prototype={prototype} items={items} form={form} onField={(name, value) => {
     if (name === "payment") { setForm(current => ({ ...current, payment: value })); setStep(2); }
     else changeField(name, value);
   }} onAddress={address => {
@@ -1378,11 +1195,18 @@ function FAQPage() {
 
 // â”€â”€â”€ ROOT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export default function App() {
-  const initialPage: Page = new URLSearchParams(window.location.search).get("payment") === "success" ? "confirmation" : "home";
+  return /^\/admin\/?$/.test(window.location.pathname) ? <AdminPortal /> : <StorefrontApp />;
+}
+
+function StorefrontApp() {
+  const wishlist = useWishlist();
+  const initialParams = new URLSearchParams(window.location.search);
+  const initialPage: Page = initialParams.get("payment") === "success" && import.meta.env.VITE_ENABLE_CHECKOUT === "true" ? "confirmation" : initialParams.get("view") === "collections" ? "collections" : initialParams.get("view") === "wishlist" ? "wishlist" : "home";
+  const initialCollection = catalogFromSearch(window.location.search);
   const [page, setPage] = useState<Page>(initialPage);
   const [selectedProduct, setSelectedProduct] = useState<Product>(ALL_PRODUCTS[0]);
   const [selectedDiscoverySetId, setSelectedDiscoverySetId] = useState<number | null>(null);
-  const [collectionFilters, setCollectionFilters] = useState<Partial<Filters>>({});
+  const [collectionFilters, setCollectionFilters] = useState<Partial<Filters>>(initialCollection);
   const [searchQuery, setSearchQuery] = useState("");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [accountOpen, setAccountOpen] = useState(false);
@@ -1390,7 +1214,7 @@ export default function App() {
   const pageRef = useRef<Page>(initialPage);
   const selectedProductRef = useRef<Product>(ALL_PRODUCTS[0]);
   const selectedDiscoverySetIdRef = useRef<number | null>(null);
-  const collectionFiltersRef = useRef<Partial<Filters>>({});
+  const collectionFiltersRef = useRef<Partial<Filters>>(initialCollection);
   const searchQueryRef = useRef("");
 
   useEffect(() => {
@@ -1431,7 +1255,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    const initialState = createHistoryState("home");
+    const initialState = createHistoryState(initialPage);
     window.history.replaceState({ ...initialState, guard: true }, "", window.location.href);
     window.history.pushState(initialState, "", window.location.href);
 
@@ -1462,8 +1286,9 @@ export default function App() {
       setSelectedDiscoverySetId(typeof data === "number" ? data : null);
     }
     if (p === "collections" && data && typeof data === "object") {
-      collectionFiltersRef.current = data as Partial<Filters>;
-      setCollectionFilters(data as Partial<Filters>);
+      const filters = normalizeCatalog(data as Partial<Filters>);
+      collectionFiltersRef.current = filters;
+      setCollectionFilters(filters);
     } else if (p === "collections") {
       collectionFiltersRef.current = {};
       setCollectionFilters({});
@@ -1474,8 +1299,16 @@ export default function App() {
     }
     pageRef.current = p;
     setPage(p);
-    window.history.pushState(createHistoryState(p), "", window.location.href);
+    const nextUrl = new URL(catalogUrl(window.location.href, p === "collections" ? normalizeCatalog(collectionFiltersRef.current) : null), window.location.origin);
+    if (p === "wishlist") nextUrl.searchParams.set("view", "wishlist");
+    window.history.pushState(createHistoryState(p), "", nextUrl.pathname + nextUrl.search);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const updateCollectionState = (state: CatalogState) => {
+    collectionFiltersRef.current = state;
+    setCollectionFilters(state);
+    window.history.replaceState({ ...window.history.state, ...createHistoryState("collections") }, "", catalogUrl(window.location.href, state));
   };
 
   const addToCart = (product: Product, size: string, price: number, quantity = 1) => {
@@ -1500,7 +1333,8 @@ export default function App() {
   const renderPage = () => {
     switch (page) {
       case "home":        return <HomePage navigate={navigate} />;
-      case "collections": return <CollectionsPage navigate={navigate} initialFilters={collectionFilters} />;
+      case "collections": return <CollectionsPage navigate={navigate} initialFilters={collectionFilters} onChange={updateCollectionState} />;
+      case "wishlist":    return <WishlistPage products={ALL_PRODUCTS} onProduct={product => navigate("product", product)} onShop={() => navigate("collections")} onOpenAccount={() => setAccountOpen(true)} />;
       case "search":      return <SearchResultsPage query={searchQuery} navigate={navigate} />;
       case "bestsellers": return <BestSellersPage navigate={navigate} />;
       case "discovery":   return <DiscoveryPage navigate={navigate} selectedSetId={selectedDiscoverySetId} />;
@@ -1508,7 +1342,7 @@ export default function App() {
       case "scentfinder": return <ScentFinderPage navigate={navigate} />;
       case "decantguide": return <DecantGuidePage />;
       case "faq":         return <FAQPage />;
-      case "product":     return <ProductPage product={selectedProduct} navigate={navigate} addToCart={addToCart} />;
+      case "product":     return <ProductPage product={selectedProduct} navigate={navigate} addToCart={addToCart} collectionFilters={collectionFilters} />;
       case "cart":        return <CartPage items={cart} navigate={navigate} updateQty={updateQty} removeItem={removeItem} />;
       case "checkout":    return <CheckoutPage items={cart} navigate={navigate} onOrderPlaced={() => setCart([])} />;
       case "confirmation":return <ConfirmationPage navigate={navigate} />;
@@ -1523,7 +1357,8 @@ export default function App() {
       {page !== "confirmation" && (
         <Header page={page} navigate={(p, data) => p === "cart" ? setBagOpen(true) : navigate(p, data)} cartCount={cartCount} onAccount={() => setAccountOpen(true)} />
       )}
-      <AccountCenterDialog open={accountOpen} onClose={() => setAccountOpen(false)} />
+      <AccountCenterDialog open={accountOpen} onClose={() => setAccountOpen(false)} onWishlist={() => { setAccountOpen(false); navigate("wishlist"); }} />
+      {wishlist.error && page !== "wishlist" && <div className="wishlist-global-status" role="status"><p>{wishlist.error}</p>{wishlist.userId && <button type="button" disabled={wishlist.busy} onClick={() => void wishlist.retry()}>{wishlist.busy ? "Retrying…" : "Retry sync"}</button>}</div>}
       <StoreActions.Provider value={{ add: addToCart, openBag: () => setBagOpen(true) }}>
         <main className="flex-1">{renderPage()}</main>
       </StoreActions.Provider>
